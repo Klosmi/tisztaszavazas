@@ -5,15 +5,17 @@ import paramSerializer from '../../../../services/paramSerializer'
 export default async (req, res) => {
   const {
     query: { path, ...query },
-    body
+    body,
+    headers: {
+      'x-valasztas-kodja': election
+    }
   } = req
-
 
   const baseUrl = 'https://api.tisztaszavazas.hu' 
 
   const headers = { 
     'Authorization': process.env.TOKEN,
-    'x-valasztas-kodja': 'ogy2018', // TODO: wire to setting
+    'x-valasztas-kodja': election,
     'x-client-version': packageJson.version,
     'Content-Type': 'application/json',
   }
@@ -26,8 +28,6 @@ export default async (req, res) => {
   }
 
   const { data: response, headers: responseHeaders } = await axios(requestData)
-
-  console.log({requestData})
 
   res.statusCode = 200
   for (let [key, value] of Object.entries(responseHeaders)) {

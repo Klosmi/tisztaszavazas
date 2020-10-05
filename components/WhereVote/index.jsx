@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useContext, useReducer, useState } from 'react';
 import {
   Popover,
   Input as AntdInput,
@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import tszService from '../../services/tszService';
 import CityAutoComplete from '../CityAutoComplete';
 import StreetAutoComplete from '../StreetAutoComplete';
+import { AppContext } from '../../pages';
 
 const Table = styled.div`
   display: flex;
@@ -171,23 +172,26 @@ const fetchSzkByAddress = ({
   dispatch,
   id,
   key,
-  value
+  value,
+  election,
 }) => {;(async() => {
     dispatch({ type: 'SEARCHSZK', id, key, value })
     const record = state.find(r => r.id === id)    
     const { data: result, headers } = await tszService.getSzkByAddress({
       ...record, [key]: value
-    })
+    },
+    election)
     dispatch({ type: 'SEARCHSZK__SUCCESS', id, result, totalCount: headers['x-total-count'] })
 })()}
 
 const fetchCityList = ({
   dispatch,
   id,
-  citySubstr
+  citySubstr,
+  election,
 }) => {;(async() => {
     dispatch({ type: 'GET_CITY_LIST', id, citySubstr })
-    const cityList = await tszService.getCityList(citySubstr)
+    const cityList = await tszService.getCityList(citySubstr, election)
     dispatch({ type: 'GET_CITY_LIST__SUCCESS', id, cityList })
 })()}
 
@@ -195,9 +199,10 @@ const fetchStreets = ({
   dispatch,
   id,
   cityId,
+  election,
 }) => {;(async() => {
     dispatch({ type: 'GET_STREETS', id })
-    const streetList = await tszService.getSreets(cityId)
+    const streetList = await tszService.getSreets(cityId, election)
     dispatch({ type: 'GET_STREETS__SUCCESS', id, streetList })
 })()}
 
@@ -207,8 +212,8 @@ export default ({ onSzavazokorClick }) => {
     { id: 'd2', city: '', result: null },
   ]
   const [state, dispatch] = useReducer(reducer, initialState)
+  const { election } = useContext(AppContext)
 
-  
   const[to, setTo] = useState();
   const debounce = (cb, t = 600) => {
     clearTimeout(to)
@@ -218,7 +223,7 @@ export default ({ onSzavazokorClick }) => {
   const handleCityChange = (id, value) => {
     dispatch({ type: 'EDIT', id, key: 'city', value })
     dispatch({ type: 'EDIT', id, key: 'address', value: '' })
-    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'city', value }))
+    debounce(() => fetchSzkByAddress({ state, dispatch, id, key: 'city', value, election }))
   }
 
   const handleAddressChange = (id, value) => {
@@ -227,25 +232,24 @@ export default ({ onSzavazokorClick }) => {
 
   const handleAddressSelect = (id, value) => {
     dispatch({ type: 'EDIT', id, key: 'address', value })
-    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'address', value }))
+    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'address', value, election }))
   }
 
   const handleHouseNrChange = (id, value) => {
     dispatch({ type: 'EDIT', id, key: 'houseNr', value })
-    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'houseNr', value }))
+    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'houseNr', value, election }))
   }
   
   const handleCitySelect = (id, value, cityId) => {
     dispatch({ type: 'EDIT', id, key: 'city', value })
     dispatch({ type: 'EDIT', id, key: 'address', value: '' })
-    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'city', value }))
-    debounce(() => fetchStreets({ dispatch, id, cityId }))
-    
+    debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'city', value, election }))
+    debounce(() => fetchStreets({ dispatch, id, cityId, election })) 
   }
   
   const handleAddressSearch = async (id, citySubstr) => {
     if (!citySubstr || citySubstr.length < 3) return dispatch({ type: 'CLEAR_CITY_LIST', id })
-    debounce(() => fetchCityList({state, dispatch, id, citySubstr}), 900)
+    debounce(() => fetchCityList({ state, dispatch, id, citySubstr, election }), 900)
   }
   
   const handleLastRowClick = () => {

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Input,
 } from 'antd';
 import { ObjectInspector, TableInspector } from 'react-inspector';
 import tszService from '../../services/tszService';
 import styled from 'styled-components';
+import { AppContext } from '../../pages';
 
 const InspectorStyle = styled.div`
   ol > li {
@@ -23,11 +24,13 @@ const InspectorStyle = styled.div`
 export default ({ id }) => {
   const [singleSzkResult, setSingleSzkResult] = useState()
 
+  const { election } = useContext(AppContext)
+
   useEffect(() => {
     ;(async () => {
       setSingleSzkResult()
       if (!id) return;
-      const { data } = await tszService.getSingleSzk(id)
+      const { data } = await tszService.getSingleSzk(id, election)
       setSingleSzkResult(data)
     })();
   }, [id]);

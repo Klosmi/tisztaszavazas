@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, createContext } from 'react';
 import styled from 'styled-components'
 import Head from 'next/head';
 import {
   Layout,
+  Select
 } from 'antd';
 
 import Router, { Route } from '../components/Router';
@@ -12,20 +13,45 @@ import Menu from '../components/Menu';
 import Header from '../components/Header';
 import WhereVote from '../components/WhereVote';
 import CustomQueryContainer from '../components/CustomQueryContainer';
+import ElectionSelector from '../components/ElectionSelector';
 
 const {
   Content: AntContent,
+  Footer,
 } = Layout;
+
+const {
+  Option
+} = Select
 
 const Content = styled(AntContent)`
   padding: 48px 48px 48px 304px;
   margin-top: 64px;
 `
 
+const StyledFooter = styled(Footer)`
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    p {
+      line-height: 1;
+      margin: 0;
+      color: darkgrey;
+    }
+`
+
+export const AppContext = createContext()
+
 const Home = () => {
   const [selectedMenuKey, setSelectedMenuKey] = useState()
   const [selectedSzkId, setSelectedSzkId] = useState()
-  
+  const [election, setElection] = useState('ogy2018')
+
   const handleMenuClick = async ({ key }) => {
     setSelectedMenuKey(key)
   };
@@ -35,8 +61,9 @@ const Home = () => {
     setSelectedSzkId(id)
   }
 
+
   return (
-    <>
+    <AppContext.Provider value={{ election, setElection }}>
       <Head>
         <title>Tisztaszavazás</title>
       </Head>
@@ -61,7 +88,10 @@ const Home = () => {
           </Route>          
         </Router>
       </Content>
-    </>
+      <StyledFooter>
+        <ElectionSelector />
+      </StyledFooter>      
+    </AppContext.Provider>
   );
 };
 

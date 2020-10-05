@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Input,
   Button,
@@ -8,6 +8,7 @@ import {
 import tszService from '../../services/tszService';
 import OevkCities from '../OevkCities';
 import Router, { Route } from '../Router';
+import { AppContext } from '../../pages';
 
 const { Option } = Select;
 const { Content } = Layout;
@@ -17,8 +18,10 @@ export default ({ id }) => {
   const [queryResult, setQueryResult] = useState()
   const [queryName, setQueryName] = useState()
 
+  const { election } = useContext(AppContext)
+
   const handleOnQuery = async (query) => {
-    const { data } = await tszService.aggregate(query)
+    const { data } = await tszService.aggregate(query, election)
     setQueryResult(data)
   }
 

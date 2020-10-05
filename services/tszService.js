@@ -14,16 +14,16 @@ const fullMatchToFirstPlace = (data, citySubstr) => (
   }, [])
 )
 
-const getSingleSzk = async (id) => {
-  return await tszGet({ path: `/szavazokorok/${id}` })
+const getSingleSzk = async (id, election) => {
+  return await tszGet({ path: `/szavazokorok/${id}`, election })
 }
 
-const getAllSzk = async ({ skip = 0, limit = 25, query = {} }) => {
+const getAllSzk = async ({ skip = 0, limit = 25, query = {}, election = 'ogy2018' }) => {
   query = { ...query, skip, limit }
-  return await tszGet({ path: `/szavazokorok${paramSerializer(query)}` })
+  return await tszGet({ path: `/szavazokorok${paramSerializer(query)}`, election })
 }
 
-const getSzkByAddress = async ({ city, address, houseNr }) => {
+const getSzkByAddress = async ({ city, address, houseNr }, election) => {
   const steetSide = houseNr%2 ? 'Páratlan házszámok' : 'Páros házszámok'
   
   return await tszGet({
@@ -35,24 +35,27 @@ const getSzkByAddress = async ({ city, address, houseNr }) => {
       'kozteruletek.vegsoHazszam': houseNr && `{ $gte: ${houseNr} }`,
       'kozteruletek.megjegyzes': houseNr && `/${steetSide}|Teljes közterület|Folyamatos házszámok/`,
       limit: 200,
-    }
+    },
+    election,
   })
 }
 
-const aggregate = async data => {
+const aggregate = async (data, election) => {
   return tszGet({
     path: '/szavazokorok',
-    data
+    data,
+    election
   })
 }
 
-const getCityList = async citySubstr => {
+const getCityList = async (citySubstr, election) => {
   let { data } = await tszGet({
     path: '/kozigegysegek',
     query: {
       kozigEgysegNeve: `/${diacriticRegex(citySubstr)}/i`,
       limit: 50
-    }
+    },
+    election
   })
 
   data = data.map(({ _id, kozigEgysegNeve }) => ({ value: _id, label: kozigEgysegNeve }))
@@ -60,9 +63,10 @@ const getCityList = async citySubstr => {
   return fullMatchToFirstPlace(data, citySubstr)
 }
 
-const getSreets = async cityId => { 
+const getSreets = async (cityId, election) => { 
   let { data } = await tszGet({
-    path: `/kozigegysegek/${cityId}`
+    path: `/kozigegysegek/${cityId}`,
+    election,
   })
 
   if (!data.kozteruletek) return []

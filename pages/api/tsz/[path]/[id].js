@@ -4,6 +4,9 @@ import packageJson from '../../../../package.json'
 export default async (req, res) => {
   const {
     query: { path, id },
+    headers: {
+      'x-valasztas-kodja': election
+    },
     data
   } = req
 
@@ -11,7 +14,7 @@ export default async (req, res) => {
 
   const headers = { 
     'Authorization': process.env.TOKEN,
-    'x-valasztas-kodja': 'ogy2018', // TODO: wire to setting
+    'x-valasztas-kodja': election,
     'x-client-version': packageJson.version,
     'Content-Type': 'application/json',
   }

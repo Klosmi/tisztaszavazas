@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import List from '../List';
 import tszService from '../../services/tszService';
 import schema from './schema'
+import { AppContext } from '../../pages';
 
 const columns = [
   { id: 'city', accessor: 'kozigEgyseg.kozigEgysegNeve', label: "Város" },
@@ -15,10 +16,12 @@ export default ({ onClickRecord }) => {
   const [paginator, setPaginator] = useState({ page: 1, pageSize: 25 })
   const [isLoading, setIsLoading] = useState(false)
 
+  const { election } = useContext(AppContext)
+
   const loadSzks = async ({query = {}, skip, limit}) => {
     setSzkListResult([])
     setIsLoading(true)
-    const { data, headers } = await tszService.getAllSzk({ limit, skip, query })
+    const { data, headers } = await tszService.getAllSzk({ limit, skip, query, election })
     setTotalCount(+headers['x-total-count'])
     setSzkListResult(data)
     setIsLoading(false)
