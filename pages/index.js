@@ -6,8 +6,6 @@ import {
 } from 'antd';
 
 import Router, { Route } from '../components/Router';
-import UserSettings from '../components/UserSettings';
-import AppSettings from '../components/AppSettings';
 import AllRecords from '../components/AllRecords';
 import SingleRecord from '../components/SingleRecord';
 import Menu from '../components/Menu';
@@ -54,12 +52,6 @@ const Home = () => {
           </Route>
           <Route slug="single-szk">
             <SingleRecord id={selectedSzkId} />
-          </Route>
-          <Route slug="user-settings">
-            <UserSettings />
-          </Route>
-          <Route slug="app-settings">
-            <AppSettings />
           </Route>
           <Route slug="where-vote">
             <WhereVote onSzavazokorClick={handleSelectSzk} />

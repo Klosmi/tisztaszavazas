@@ -36,12 +36,5 @@ export default ({ onClick, selectedKeys }) => (
         <Menu.Item key="custom-query">Egyedi lekérdezések</Menu.Item>
       </Menu.ItemGroup>
     </SubMenu>
-    <SubMenu
-      key="sub2"
-      title={<span><span>Beállítások</span></span>}
-      >
-        <Menu.Item key="user-settings">Felhasználó</Menu.Item>
-        <Menu.Item key="app-settings">Alkalmazás</Menu.Item>
-      </SubMenu>
   </Menu>  
 )
