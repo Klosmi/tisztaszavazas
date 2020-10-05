@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  Input,
+  Spin,
 } from 'antd';
 import { ObjectInspector, TableInspector } from 'react-inspector';
 import tszService from '../../services/tszService';
@@ -34,6 +34,8 @@ export default ({ id }) => {
       setSingleSzkResult(data)
     })();
   }, [id]);
+
+  if (!singleSzkResult) return <Spin />
 
   return (
     <InspectorStyle>
