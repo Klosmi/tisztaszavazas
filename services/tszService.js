@@ -1,5 +1,6 @@
 import paramSerializer from './paramSerializer'
 import diacriticRegex from '../functions/diacriticRegex'
+import tszGet from './tszGet'
 
 
 const fullMatchToFirstPlace = (data, citySubstr) => (

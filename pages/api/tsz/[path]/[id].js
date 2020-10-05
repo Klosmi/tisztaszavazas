@@ -1,16 +1,11 @@
 import axios from 'axios'
-import packageJson from '../../../package.json'
-import paramSerializer from '../../../services/paramSerializer'
+import packageJson from '../../../../package.json'
 
 export default async (req, res) => {
   const {
-    query: { path, ...query },
+    query: { path, id },
     data
   } = req
-  // const query = req.query
-  // const data = req.data
-
-  // console.log({req})
 
   const baseUrl = 'https://api.tisztaszavazas.hu' 
 
@@ -20,18 +15,20 @@ export default async (req, res) => {
     'x-client-version': packageJson.version,
     'Content-Type': 'application/json',
   }
-  
-  const { data: response, headers: responseHeaders } = await axios({
+
+  const requestData = {
     method: data ? 'POST' : 'GET',
-    url: `${baseUrl}/${path}${paramSerializer(query)}`,
+    url: `${baseUrl}/${path}/${id}`,
     headers,
     data
-  })
+  }
 
-  console.log(responseHeaders)
+  const { data: response, headers: responseHeaders } = await axios(requestData)
 
   res.statusCode = 200
+  for (let [key, value] of Object.entries(responseHeaders)) {
+    res.setHeader(key, value)
+  }
+
   res.json(response)
-  // res.statusCode = 200
-  // res.json('hello')  
 }
