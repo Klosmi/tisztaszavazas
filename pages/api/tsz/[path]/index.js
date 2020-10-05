@@ -5,8 +5,9 @@ import paramSerializer from '../../../../services/paramSerializer'
 export default async (req, res) => {
   const {
     query: { path, ...query },
-    data
+    body
   } = req
+
 
   const baseUrl = 'https://api.tisztaszavazas.hu' 
 
@@ -18,13 +19,15 @@ export default async (req, res) => {
   }
 
   const requestData = {
-    method: data ? 'POST' : 'GET',
+    method: body ? 'POST' : 'GET',
     url: `${baseUrl}/${path}${paramSerializer(query)}`,
     headers,
-    data
+    data: body
   }
 
   const { data: response, headers: responseHeaders } = await axios(requestData)
+
+  console.log({requestData})
 
   res.statusCode = 200
   for (let [key, value] of Object.entries(responseHeaders)) {
