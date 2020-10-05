@@ -5,7 +5,6 @@ import {
   Layout,
 } from 'antd';
 
-import 'antd/dist/antd.css';
 import Router, { Route } from '../components/Router';
 import UserSettings from '../components/UserSettings';
 import AppSettings from '../components/AppSettings';
