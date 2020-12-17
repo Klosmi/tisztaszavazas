@@ -10,8 +10,6 @@ export default async (req, res) => {
     data
   } = req
 
-  const baseUrl = 'https://api.tisztaszavazas.hu' 
-
   const headers = { 
     'Authorization': process.env.TOKEN,
     'x-valasztas-kodja': election,
@@ -21,7 +19,7 @@ export default async (req, res) => {
 
   const requestData = {
     method: data ? 'POST' : 'GET',
-    url: `${baseUrl}/${path}/${id}`,
+    url: `${process.env.NEXT_PUBLIC_API_BASE}/${path}/${id}`,
     headers,
     data
   }
