@@ -74,6 +74,7 @@ export default ({ id }) => {
     valasztokerulet: {
       leiras: valasztokeruletLeirasa
     },
+    valasztasHuOldal,
     valasztokSzama,
     akadalymentes,
     szavazohelyisegHelye: {
@@ -100,6 +101,7 @@ export default ({ id }) => {
       {!akadalymentes && <Tag color="red">nem akadálymentes</Tag>}
     </div>
     <Item label={`${megyeNeve === "Budapest" ? 'Kerület' : 'Település'} szavazóköreinek száma`} >{kozigEgysegSzavazokoreinekSzama}</Item>
+    <Item><a target="_new" href={`${process.env.NEXT_PUBLIC_API_BASE}${valasztasHuOldal}`}>Szavazókör oldala a valasztas.hu-n</a></Item>
   </Descriptions>
   <Tabs defaultActiveKey="1">
     <TabPane tab="Közterületek" key="1">
