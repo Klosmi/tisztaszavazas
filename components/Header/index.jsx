@@ -34,24 +34,11 @@ const TokenAlert = styled.span`
   color: red;
 `
 
-export default () => {
-  // const ipcRenderer = electron.ipcRenderer || false;
-  const [tokenInputValue, setTokenInputValue] = useState()
-
-  useEffect(() => {
-    // if (ipcRenderer) {
-      // const { token } = ipcRenderer.sendSync('get-config')
-      setTokenInputValue(process.env.TOKEN)
-    // }
-  }, [])
-
-  return (
-    <Header>
-      <LogoWrap href="https://tisztaszavazas.hu" target="_new">
-        <Logo width={150} />
-      </LogoWrap>
-      {/*!tokenInputValue && <TokenAlert>Adjon meg egy érvényes személyes kulcsot a beállításokban és indítsa újra a programot.</TokenAlert>*/}
-      <Version>{packageJson.version}</Version>
-    </Header>
-  )
-}
+export default () => (
+  <Header>
+    <LogoWrap href="/">
+      <Logo width={150} />
+    </LogoWrap>
+    <Version>{packageJson.version}</Version>
+  </Header>
+)

@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import tszService from '../../services/tszService';
 import CityAutoComplete from '../CityAutoComplete';
 import StreetAutoComplete from '../StreetAutoComplete';
-import { AppContext } from '../../pages';
+import { AppContext } from '../Layout'
 
 const Table = styled.div`
   display: flex;

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import List from '../List';
 import tszService from '../../services/tszService';
 import schema from './schema'
-import { AppContext } from '../../pages';
+import { AppContext } from '../Layout'
 
 const columns = [
   { id: 'city', accessor: 'kozigEgyseg.kozigEgysegNeve', label: "Város" },
@@ -10,7 +10,7 @@ const columns = [
   { id: 'addr', accessor: 'szavazokorCime', label: "Cím" },
 ]
 
-export default ({ onClickRecord }) => {
+export default () => {
   const [szkListResult, setSzkListResult] = useState()
   const [totalCont, setTotalCount] = useState()
   const [paginator, setPaginator] = useState({ page: 1, pageSize: 25 })
@@ -44,7 +44,6 @@ export default ({ onClickRecord }) => {
     <List
       listData={szkListResult}
       totalCont={totalCont}
-      onSelectSzk={onClickRecord}
       columns={columns}
       onPageChange={handlePaginatorChagne}
       paginator={paginator}

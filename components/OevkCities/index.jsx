@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ReactJson from 'react-json-viewer'
 import {
   Input,
-  Button,
   Space,
 } from 'antd';
 import styled from 'styled-components';
+import { AppContext } from '../Layout';
+import tszService from '../../services/tszService';
 
 const Flex = styled.div`
   display: flex;
@@ -33,16 +34,26 @@ const getQueryString = ({ megye, oevkSzama }) => `
   ]
 `
 
-export default ({ onQuery, queryResult }) => {
+const OevkCities = () => {
   const [queryParams, setQueryParams] = useState({
     megye: 'Borsod',
     oevkSzama: 6
   })
+  const [queryResult, setQueryResult] = useState()
+  const { election } = useContext(AppContext)
 
-  const handleQuerySendClick = () => {
-    const query = getQueryString(queryParams)
-    onQuery(JSON.parse(query))
-  }
+  useEffect(() => {
+    let query
+    try {
+      query = JSON.parse(getQueryString(queryParams))
+    } catch(e){
+      return
+    }
+    tszService.aggregate(query, election)
+    .then(({ data }) => setQueryResult(data))
+    .catch(e => console.log(e))
+
+  }, [queryParams])
 
   const onChange = ({ target: { name, value }}) => {
     setQueryParams({ ...queryParams, [name]: value })
@@ -52,7 +63,7 @@ export default ({ onQuery, queryResult }) => {
     <>
       <Space direction="vertical">
         <Input
-          addonBefore="Választókerület teljes neve"
+          addonBefore="Választókerület neve"
           name="megye"
           onChange={onChange}
           placeholder="Megye"
@@ -64,10 +75,11 @@ export default ({ onQuery, queryResult }) => {
           onChange={onChange}
           placeholder="OEVK száma"
           value={queryParams.oevkSzama}
-        />
-        <Button onClick={handleQuerySendClick}>Keresés</Button>
-        <ReactJson json={queryResult} />
+        />        
+        {queryResult && <ReactJson json={queryResult} />}
       </Space>
     </>
   )
 }
+
+export default OevkCities

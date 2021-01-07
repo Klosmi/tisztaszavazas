@@ -10,6 +10,7 @@ import {
 import FreeTable, { applyCustomField } from 'free-table'
 import styled from 'styled-components';
 import diacriticRegex from '../../functions/diacriticRegex'
+import { useRouter } from 'next/router'
 
 const { Option, OptGroup } = Select;
 
@@ -20,27 +21,34 @@ const InputWrap = styled.div`
     min-width: 250px;
   }
 `
-export default ({ onSelectSzk, listData, columns, onPageChange, paginator, isLoading, onFilter, totalCont, schema }) => {
+export default ({ listData, columns, onPageChange, paginator, isLoading, onFilter, totalCont, schema }) => {
   const initialState = { param: null, value: null }
   const [state, setState] = useState(initialState)
   const [query, setQuery] = useState({})
   const [searchMode, setSearchMode] = useState('fuzzy')
-  const [paramType, setParamType] = useState()
+  const router = useRouter()
+
 
   const getParamType = param => (
     schema.find(({ path }) => path === param)?.type
   )
 
-  const SzkLink = (rowData) => (
-    <td>
-      <Button
-        type="link"
-        onClick={() => onSelectSzk(rowData.data._id)}
-      >
-        Megnéz
-      </Button>
-    </td>
-  )
+  const SzkLink = (rowData) => {
+    const handleSzkClick = () => (
+      router.push(`szavazokor-adatai/${rowData.data._id}`)
+    )
+
+    return (
+      <td>
+        <Button
+          type="link"
+          onClick={handleSzkClick}
+        >
+          Megnéz
+        </Button>
+      </td>
+    )
+  }
 
   const getQuery = (param, value) => {
     let searchValue = value;
