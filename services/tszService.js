@@ -1,7 +1,19 @@
+import axios from "axios"
 import paramSerializer from './paramSerializer'
 import diacriticRegex from '../functions/diacriticRegex'
-import tszGet from './tszGet'
 
+const tszGet = async ({ path, data, query, election }) => {
+  const url =`/api/tsz/${path}${paramSerializer(query)}`
+
+  const { data: d, headers } =  await axios({
+    url,
+    method: data ? 'POST' : 'GET',
+    data,
+    headers: { 'x-valasztas-kodja': election }
+  })
+
+  return { data: d, headers }
+}
 
 const fullMatchToFirstPlace = (data, citySubstr) => (
   data.reduce((acc, option) => {
