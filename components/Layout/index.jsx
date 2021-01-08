@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 import styled from 'styled-components'
 import Head from 'next/head';
+import { useRouter } from 'next/router'
 import {
   Layout
 } from 'antd';
@@ -8,7 +9,7 @@ import {
 import Menu from '../Menu';
 import Header from '../Header'
 import ElectionSelector from '../ElectionSelector'
-import { useRouter } from 'next/router'
+import GlobalStyle from '../GlobalStyle'
 
 const {
   Content: AntContent,
