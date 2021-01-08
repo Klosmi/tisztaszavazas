@@ -35,7 +35,7 @@ export default ({ listData, columns, onPageChange, paginator, isLoading, onFilte
 
   const SzkLink = (rowData) => {
     const handleSzkClick = () => (
-      router.push(`szavazokor-adatai/${rowData.data._id}`)
+      open(`/szavazokor-adatai/${rowData.data._id}`)
     )
 
     return (

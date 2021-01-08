@@ -8,7 +8,7 @@ const SingleSzkPage = () => {
   const { id } = router.query
 
   return (
-    <Layot>
+    <Layot menu={false}>
       <SingleRecord id={id} />
     </Layot>
   )

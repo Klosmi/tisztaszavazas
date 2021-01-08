@@ -16,7 +16,7 @@ const {
 } = Layout;
 
 const Content = styled(AntContent)`
-  padding: 48px 48px 48px 304px;
+  padding: ${({ withMenu }) => withMenu ? '48px 48px 48px 304px' : '48px 48px 48px 48px'};
   margin-top: 64px;
 `
 const StyledFooter = styled(Footer)`
@@ -37,7 +37,7 @@ const StyledFooter = styled(Footer)`
 
 export const AppContext = createContext()
 
-const Home = ({ children }) => {
+const Home = ({ children, menu = true }) => {
   const router = useRouter()
   const [election, setElection] = useState('ogy2018')
   const [selectedMenuKey, setSelectedMenuKey] = useState('szavazokorok-listaja')
@@ -52,12 +52,15 @@ const Home = ({ children }) => {
       <Head>
         <title>Tisztaszavazás</title>
       </Head>
+      <GlobalStyle />
       <Header />
-      <Menu
-        onClick={handleMenuClick}
-        selectedKeys={selectedMenuKey}
-      />
-      <Content>
+      {menu && (
+        <Menu
+          onClick={handleMenuClick}
+          selectedKeys={selectedMenuKey}
+        />
+      )}
+      <Content withMenu={menu}>
         {children}
       </Content>
       <StyledFooter>
