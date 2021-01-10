@@ -44,32 +44,6 @@ const ZipOevkMapping = () => {
     setSzkResult(res)
   }
 
-  const options = {
-    fillColor: "#386FB3",
-    strokeColor: "#386FB3",
-    fillOpacity: .3,
-    strokeOpacity: .8,
-    strokeWeight: 1,
-    clickable: true,
-    draggable: false,
-    editable: false,
-    geodesic: false,
-    zIndex: 1
-  }
-
-  const zipPolyOptions = {
-    fillColor: "#386FB3",
-    strokeColor: "#FF3333",
-    fillOpacity: 0,
-    strokeOpacity: .8,
-    strokeWeight: 2,
-    clickable: false,
-    draggable: false,
-    editable: false,
-    geodesic: false,
-    zIndex: 1
-  }
-
   const [lng, lat] = szkResult?.[0]?.korzethatar.coordinates[0][0] || []
 
   let zipPolygons
@@ -115,18 +89,16 @@ const ZipOevkMapping = () => {
         <MapBase
           center={{ lat, lng }}
         >
-        {szkResult.map(({ korzethatar }) => (
-          <MapBase.Polygon
-            paths={korzethatar.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-            options={options}
-          />
-        ))}
-        {zipPolygons?.map?.(zipPolygon => (
-          <MapBase.Polygon
-            paths={zipPolygon.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-            options={zipPolyOptions}
-          />
-        ))}
+          {szkResult.map(({ korzethatar }) => (
+            <MapBase.SzkPolygon
+              paths={korzethatar.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+            />
+          ))}
+          {zipPolygons?.map?.(zipPolygon => (
+            <MapBase.ZipPolygon
+              paths={zipPolygon.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+            />
+          ))}
         </MapBase>)}
         <Legend stroke="#FF3333AA" fill="#386FB300" text="Irányítószámhoz tartozó körzet" />
         <Legend stroke="#386FB3CC" fill="#386FB355" text="Szavazókör körzete" />

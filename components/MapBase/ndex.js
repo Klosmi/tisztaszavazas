@@ -27,6 +27,49 @@ const options = {
 class MapBase extends Component {
   static Marker = MarkerImport
   static Polygon = PolygonImport
+  static SzkPolygon = ({
+    options = {},
+    ...rest
+  }) => (
+    <PolygonImport
+      options={{
+      fillColor: "#386FB3",
+      strokeColor: "#386FB3",
+      fillOpacity: .3,
+      strokeOpacity: .8,
+      strokeWeight: 1,
+      clickable: true,
+      draggable: false,
+      editable: false,
+      geodesic: false,
+      zIndex: 1,
+      ...options
+      }}
+      {...rest}
+    />
+  )
+
+  static ZipPolygon = ({
+    options = {},
+    ...rest
+  }) => (
+    <PolygonImport
+      options={{
+        fillColor: "#386FB3",
+        strokeColor: "#FF3333",
+        fillOpacity: 0,
+        strokeOpacity: .8,
+        strokeWeight: 2,
+        clickable: false,
+        draggable: false,
+        editable: false,
+        geodesic: false,
+        zIndex: 1,
+      ...options
+      }}
+      {...rest}
+    />
+  )  
 
   render() {
     return (
