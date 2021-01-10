@@ -1,9 +1,9 @@
-import { useEffect, useContext } from 'react';
-import zipService from '../../services/zipService';
+import { useEffect } from 'react';
 
-const ZipQuery = ({
+const QueryApi = ({
   queryString,
-  onResult = () => null
+  onResult = () => null,
+  promise
 }) => {
   useEffect(() => {
     if (!queryString) return
@@ -14,7 +14,7 @@ const ZipQuery = ({
       console.log(e)
       return
     }
-    zipService.aggregate(query)
+    promise(query)
     .then(({ data }) => onResult(data))
     .catch(e => console.log(e))
 
@@ -23,4 +23,4 @@ const ZipQuery = ({
   return  null
 }
 
-export default ZipQuery
+export default QueryApi
