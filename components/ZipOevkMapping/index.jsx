@@ -6,17 +6,23 @@ import ZipQuery from '../ZipQuery';
 import ReactJson from 'react-json-viewer'
 
 
-const validateQueryParams = ({ zip }) => {
-  return (+zip <= 9999 && +zip > 1000)
+const isParamValid = ({ name, value }) => {
+  if (name === 'zip'){
+    return (+value <= 9999 && +value > 1000)
+  }
 }
 
-
 const ZipOevkMapping = () => {
+  const [inputValues, setInputValues] = useState({})
   const [queryParams, setQueryParams] = useState({})
   const [zipResult, setZipResult] = useState()
 
   const handleChange = ({ target: { name, value }}) => {
-    setQueryParams({ ...queryParams, [name]: value })
+    setInputValues({ ...inputValues, [name]: value })
+
+    if (isParamValid({ name, value })) {
+      setQueryParams({ ...queryParams, [name]: value })
+    }
   }
 
   const handleZipResult = ([{ zip, administrativeUnits }]) => {
@@ -32,7 +38,7 @@ const ZipOevkMapping = () => {
       <Input
         onChange={handleChange}
         name="zip"
-        value={queryParams.zip}
+        value={inputValues.zip}
       />
       <ZipQuery
         queryString={`[{ "$match": { "zip": ${queryParams.zip} } }]`}
