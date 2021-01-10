@@ -1,0 +1,49 @@
+import React, { Component } from 'react';
+import {
+  GoogleMap,
+  LoadScript,
+  Marker as MarkerImport,
+  Polygon as PolygonImport
+} from '@react-google-maps/api';
+import { Children } from 'react';
+
+const containerStyle = {
+  width: '100%',
+  height: '400px'
+};
+
+const options = {
+  fillColor: "#386FB3",
+  strokeColor: "#386FB3",
+  fillOpacity: .3,
+  strokeOpacity: .8,
+  strokeWeight: 1,
+  clickable: false,
+  draggable: false,
+  editable: false,
+  geodesic: false,
+  zIndex: 1
+}
+
+class MapBase extends Component {
+  static Marker = MarkerImport
+  static Polygon = PolygonImport
+
+  render() {
+    return (
+      <LoadScript
+        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY}
+      >
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={this.props.center}
+          zoom={15}
+        >
+          {this.props.children}         
+        </GoogleMap>
+      </LoadScript>
+    )
+  }
+}
+
+export default MapBase
