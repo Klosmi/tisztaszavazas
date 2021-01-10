@@ -5,7 +5,6 @@ import {
   Marker as MarkerImport,
   Polygon as PolygonImport
 } from '@react-google-maps/api';
-import { Children } from 'react';
 
 const containerStyle = {
   width: '100%',
