@@ -8,6 +8,7 @@ import zipService from '../../services/zipService';
 import tszService from '../../services/tszService';
 import { AppContext } from '../Layout';
 import MapBase from '../MapBase/ndex';
+import Legend from '../Legend';
 
 const isParamValid = ({ name, value }) => {
   if (name === 'zip'){
@@ -127,6 +128,8 @@ const ZipOevkMapping = () => {
           />
         ))}
         </MapBase>)}
+        <Legend stroke="#FF3333AA" fill="#386FB300" text="Irányítószámhoz tartozó körzet" />
+        <Legend stroke="#386FB3CC" fill="#386FB355" text="Szavazókör körzete" />
     </>
   )
 }
