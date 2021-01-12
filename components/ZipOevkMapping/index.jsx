@@ -68,9 +68,8 @@ const ZipOevkMapping = () => {
         onResult={handleZipResult}
       />
       {zipResult.polygon && (<QueryApi
-        promise={q => tszService.aggregate(q, election)}
+        promise={q => tszService.aggregate(q, election, '/valasztokeruletek')}
         queryString={`[
-          {   "$project": { "valasztokerulet": 1, "korzethatar": 1, "kozigEgyseg": 1, "szavazokorSzama": 1 } },
           {
               "$match": {
                   "korzethatar": {
