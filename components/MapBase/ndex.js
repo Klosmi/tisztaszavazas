@@ -79,7 +79,7 @@ class MapBase extends Component {
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={this.props.center}
-          zoom={15}
+          zoom={this.props.zoom || 15}
         >
           {this.props.children}         
         </GoogleMap>

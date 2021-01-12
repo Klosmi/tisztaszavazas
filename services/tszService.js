@@ -52,9 +52,9 @@ const getSzkByAddress = async ({ city, address, houseNr }, election) => {
   })
 }
 
-const aggregate = async (data, election) => {
+const aggregate = async (data, election, path='/szavazokorok') => {
   return tszGet({
-    path: '/szavazokorok',
+    path,
     data,
     election
   })
