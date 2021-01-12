@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import ReactJson from 'react-json-viewer'
 import {
   Input,
@@ -6,11 +6,13 @@ import {
 import { AppContext } from '../Layout';
 import tszService from '../../services/tszService';
 import MapBase from '../MapBase/ndex';
-import QueryApi from '../QueryApi';
 import styled from 'styled-components';
 
-const Space = styled.div`
-  margin: 14px 0;
+const Wrap = styled.div`
+  display: flex;
+  * {
+    margin: 6px 6px 0 0;
+  }
 `
 
 const OevkCities = () => {
@@ -29,7 +31,6 @@ const OevkCities = () => {
 
   const [lng, lat] = szkResult?.[0]?.korzethatar.coordinates[0][0] || []
 
-
   const geoJsonToPoly = geo => (
     geo?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))    
   )
@@ -43,6 +44,61 @@ const OevkCities = () => {
     valasztokSzama: 0,
     kozigEgysegNeve: 0
   })
+
+  useEffect(() => {
+    if (!queryParams.oevkSzama || !queryParams.megye) return
+    const query = [
+      { $match: {
+        "valasztokerulet.leiras": { $regex: queryParams.megye },
+        "valasztokerulet.szam": +queryParams.oevkSzama
+      } },
+      { $group: {
+          _id: "$kozigEgyseg",
+          szavazokorDarab: { $sum: 1 },
+          valasztokSzama: { $sum: "$valasztokSzama" }
+      } },  
+      { $sort: { "_id.kozigEgysegNeve": 1 } },
+      { $project: {
+        kozigEgysegNeve: "$_id.kozigEgysegNeve",
+        valasztokSzama: 1,
+        szavazokorDarab: 1,
+        _id: 0,
+        rank: 1      
+      } }
+    ]
+    tszService.aggregate(query, election)
+    .then(({ data }) => setQueryResult(data))
+    .catch(e => console.log(e))
+  },[queryParams, election])
+
+  useEffect(() => {
+    if (!queryParams.oevkSzama || !queryParams.megye) return
+    const query = [
+      { $match: {
+        "valasztokerulet.leiras": { $regex: queryParams.megye },
+        "valasztokerulet.szam": +queryParams.oevkSzama
+      } },
+      { $project: {
+        korzethatar: 1,
+        valasztokSzama: 1
+      } }
+    ]
+    tszService.aggregate(query, election)
+    .then(({ data }) => setSzkResult(data))
+    .catch(e => console.log(e))
+  }, [queryParams, election])
+
+  useEffect(() => {
+    if (!queryParams.oevkSzama || !queryParams.megye) return
+    const query = [
+      { $match: {
+        leiras: { $regex: queryParams.megye },
+        szam: +queryParams.oevkSzama
+      } }
+    ]
+    tszService.aggregate(query, election, '/valasztokeruletek')
+    .then(({ data }) => setOevkPolygon(data[0]?.korzethatar))
+  }, [queryParams, election])
 
   return (
     <>
@@ -61,57 +117,9 @@ const OevkCities = () => {
         placeholder="OEVK száma"
         value={queryParams.oevkSzama}
       />
-      <QueryApi
-        promise={q => tszService.aggregate(q, election)}
-        queryString={`[
-          { "$match": {
-            "valasztokerulet.leiras": { "$regex": "${queryParams.megye}" },
-            "valasztokerulet.szam": ${queryParams.oevkSzama}
-          } },
-          { "$group": {
-              "_id": "$kozigEgyseg",
-              "szavazokorDarab": { "$sum": 1 },
-              "valasztokSzama": { "$sum": "$valasztokSzama" }
-          } },  
-          { "$sort": { "_id.kozigEgysegNeve": 1 } },
-          { "$project": {
-            "kozigEgysegNeve": "$_id.kozigEgysegNeve",
-            "valasztokSzama": 1,
-            "szavazokorDarab": 1,
-            "_id": 0,
-            "rank": 1      
-          } }
-        ]`}
-        onResult={setQueryResult}
-      />
-      <QueryApi
-        promise={q => tszService.aggregate(q, election)}
-        queryString={`[
-          { "$match": {
-            "valasztokerulet.leiras": { "$regex": "${queryParams.megye}" },
-            "valasztokerulet.szam": ${queryParams.oevkSzama}
-          } },
-          { "$project": {
-            "korzethatar": 1,
-            "valasztokSzama": 1
-          } }
-        ]`}
-        onResult={setSzkResult}
-      />
-      <QueryApi
-        promise={q => tszService.aggregate(q, election, '/valasztokeruletek')}
-        queryString={`[
-          { "$match": {
-            "leiras": { "$regex": "${queryParams.megye}" },
-            "szam": ${queryParams.oevkSzama}
-          } }
-        ]`}
-        onResult={([{korzethatar}]) => setOevkPolygon(korzethatar)}
-      />
+      <Wrap>
       {queryResult && (
-        <Space>
-          <ReactJson json={[...queryResult, summary ]} />
-        </Space>
+        <ReactJson json={[...queryResult, summary ]} />
       )}
       {szkResult && (
         <MapBase
@@ -130,6 +138,7 @@ const OevkCities = () => {
           ))}            
         </MapBase>
       )}
+      </Wrap>
     </>
   )
 }
