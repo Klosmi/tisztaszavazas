@@ -1,8 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Input,
 } from 'antd';
-import QueryApi from '../QueryApi';
 import ReactJson from 'react-json-viewer'
 import zipService from '../../services/zipService';
 import tszService from '../../services/tszService';
@@ -20,17 +19,9 @@ const ZipOevkMapping = () => {
   const [inputValues, setInputValues] = useState({})
   const [queryParams, setQueryParams] = useState({})
   const [zipResult, setZipResult] = useState({})
-  const [szkResult, setSzkResult] = useState([])
+  const [oevkResult, setOevkResult] = useState([])
 
   const { election } = useContext(AppContext)
-
-  const handleChange = ({ target: { name, value }}) => {
-    setInputValues({ ...inputValues, [name]: value })
-
-    if (isParamValid({ name, value })) {
-      setQueryParams({ ...queryParams, [name]: value })
-    }
-  }
 
   const handleZipResult = ([{ zip, administrativeUnits, polygon }]) => {
     setZipResult({
@@ -40,11 +31,46 @@ const ZipOevkMapping = () => {
     })
   }
 
-  const handleSzkResult = res  => {
-    setSzkResult(res)
+  useEffect(() => {
+    if (!queryParams.zip) return
+    const query = [
+      { $match: { zip: + queryParams.zip } }
+    ]
+    
+    zipService.aggregate(query, election)
+    .then(({ data }) => handleZipResult(data))
+    .catch(e => console.log(e))
+  },[queryParams, election])  
+
+  useEffect(() => {
+    if (!zipResult.polygon) return
+
+    const query = [
+      {
+        $match: {
+          korzethatar: {
+            $geoIntersects: {
+              $geometry: zipResult.polygon
+            }
+          }
+        }
+      }
+    ]
+    
+    tszService.aggregate(query, election, '/valasztokeruletek')
+    .then(({ data }) => setOevkResult(data))
+    .catch(e => console.log(e))
+  },[zipResult, election])    
+
+  const handleChange = ({ target: { name, value }}) => {
+    setInputValues({ ...inputValues, [name]: value })
+
+    if (isParamValid({ name, value })) {
+      setQueryParams({ ...queryParams, [name]: value })
+    }
   }
 
-  const [lng, lat] = szkResult?.[0]?.korzethatar.coordinates[0][0] || []
+  const [lng = 19, lat = 47] = zipResult?.polygon?.coordinates[0][0] || []
 
   let zipPolygons
 
@@ -56,51 +82,34 @@ const ZipOevkMapping = () => {
 
   return (
     <>
-      <h1>Irányítószámok szavazókörei</h1>
+      <h1>Irányítószámhoz tartozó OEVK</h1>
       <Input
         onChange={handleChange}
         name="zip"
         value={inputValues.zip}
       />
-      <QueryApi
-        promise={zipService.aggregate}
-        queryString={`[{ "$match": { "zip": ${queryParams.zip} } }]`}
-        onResult={handleZipResult}
-      />
-      {zipResult.polygon && (<QueryApi
-        promise={q => tszService.aggregate(q, election, '/valasztokeruletek')}
-        queryString={`[
-          {
-              "$match": {
-                  "korzethatar": {
-                      "$geoIntersects": {
-                          "$geometry": ${JSON.stringify(zipResult.polygon)}
-                      }
-                  }
-              }
-          }
-      ]`}
-        onResult={handleSzkResult}
-      />
-      )}
       <ReactJson json={{ irsz: zipResult.irsz, település: zipResult.település }} />
-      {szkResult && (
-        <MapBase
-          center={{ lat, lng }}
-        >
-          {szkResult.map(({ korzethatar }) => (
-            <MapBase.SzkPolygon
-              paths={korzethatar.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-            />
-          ))}
-          {zipPolygons?.map?.(zipPolygon => (
-            <MapBase.ZipPolygon
-              paths={zipPolygon.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-            />
-          ))}
-        </MapBase>)}
-        <Legend stroke="#FF3333AA" fill="#386FB300" text="Irányítószámhoz tartozó körzet" />
-        <Legend stroke="#386FB3CC" fill="#386FB355" text="Szavazókör körzete" />
+      {zipResult && (
+        <>
+          <MapBase
+            center={{ lat, lng }}
+            zoom={10}
+          >
+            {oevkResult?.map?.(({ korzethatar }) => (
+              <MapBase.SzkPolygon
+                paths={korzethatar.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+              />
+            ))}
+            {zipPolygons?.map?.(zipPolygon => (
+              <MapBase.ZipPolygon
+                paths={zipPolygon.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+              />
+            ))}
+          </MapBase>
+          <Legend stroke="#FF3333AA" fill="#386FB300" text="Irányítószámhoz tartozó körzet" />
+          <Legend stroke="#386FB3CC" fill="#386FB355" text="OEVK körzete" />
+          </>
+        )}
     </>
   )
 }
