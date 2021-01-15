@@ -108,15 +108,16 @@ const OevkCities = () => {
   }, [queryParams, election])
 
   useEffect(() => {
-    if (!queryResult?.length) return
+    if (!queryResult?.length) {
+      setSettlementResult(null)
+      return
+    }
     const query = [{ $facet: 
       queryResult.reduce((acc, { kozigEgysegNeve }, i) => ({
         ...acc,
         [i]: [{ $match: { name: kozigEgysegNeve } }, { $project: { name: 1, boundaries: 1 }}]
       }), {})
     }]
-
-    console.log({query})
 
     zipService.aggregate(query, '/settlements')
     .then(handleSettlementResult)
