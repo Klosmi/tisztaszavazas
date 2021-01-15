@@ -7,6 +7,7 @@ import { AppContext } from '../Layout';
 import tszService from '../../services/tszService';
 import MapBase from '../MapBase/ndex';
 import styled from 'styled-components';
+import zipService from '../../services/zipService';
 
 const Wrap = styled.div`
   display: flex;
@@ -23,6 +24,7 @@ const OevkCities = () => {
   const [queryResult, setQueryResult] = useState()
   const [szkResult, setSzkResult] = useState()
   const [oevkPolygon, setOevkPolygon] = useState()
+  const [settlementResult, setSettlementResult] = useState()
   const { election } = useContext(AppContext)
 
   const onChange = ({ target: { name, value }}) => {
@@ -44,6 +46,11 @@ const OevkCities = () => {
     valasztokSzama: 0,
     kozigEgysegNeve: 0
   })
+
+  const handleSettlementResult = ({ data }) => {
+    const settlements = Object.values(data[0]).map(([settlement]) => settlement)
+    setSettlementResult(settlements)
+  }
 
   useEffect(() => {
     if (!queryParams.oevkSzama || !queryParams.megye) return
@@ -100,6 +107,22 @@ const OevkCities = () => {
     .then(({ data }) => setOevkPolygon(data[0]?.korzethatar))
   }, [queryParams, election])
 
+  useEffect(() => {
+    if (!queryResult?.length) return
+    const query = [{ $facet: 
+      queryResult.reduce((acc, { kozigEgysegNeve }, i) => ({
+        ...acc,
+        [i]: [{ $match: { name: kozigEgysegNeve } }, { $project: { name: 1, boundaries: 1 }}]
+      }), {})
+    }]
+
+    console.log({query})
+
+    zipService.aggregate(query, '/settlements')
+    .then(handleSettlementResult)
+
+  }, [queryResult])
+
   return (
     <>
       <h1>OEVK települései</h1>
@@ -126,16 +149,16 @@ const OevkCities = () => {
           center={{ lat, lng }}
           zoom={10}
         >
-          {szkResult.map(({ korzethatar }) => (
+          {settlementResult.map(({ boundaries }) => (
             <>
               <MapBase.SzkPolygon
-                paths={korzethatar.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-              />
-              <MapBase.ZipPolygon
-                paths={geoJsonToPoly(oevkPolygon)}
+                paths={boundaries.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
               />
             </>
-          ))}            
+          ))}
+          <MapBase.ZipPolygon
+            paths={geoJsonToPoly(oevkPolygon)}
+          />
         </MapBase>
       )}
       </Wrap>
