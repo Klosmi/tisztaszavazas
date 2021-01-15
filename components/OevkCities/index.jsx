@@ -8,12 +8,17 @@ import tszService from '../../services/tszService';
 import MapBase from '../MapBase/ndex';
 import styled from 'styled-components';
 import zipService from '../../services/zipService';
+import Legend from '../Legend';
 
 const Wrap = styled.div`
   display: flex;
   * {
     margin: 6px 6px 0 0;
   }
+`
+
+const MapWrap = styled.div`
+  width: 100%;
 `
 
 const OevkCities = () => {
@@ -146,21 +151,25 @@ const OevkCities = () => {
         <ReactJson json={[...queryResult, summary ]} />
       )}
       {szkResult && (
-        <MapBase
-          center={{ lat, lng }}
-          zoom={10}
-        >
-          {settlementResult?.map?.(settlement => (
-            <>
-              <MapBase.SzkPolygon
-                paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-              />
-            </>
-          ))}
-          <MapBase.ZipPolygon
-            paths={geoJsonToPoly(oevkPolygon)}
-          />
-        </MapBase>
+        <MapWrap>
+          <MapBase
+            center={{ lat, lng }}
+            zoom={10}
+          >
+            {settlementResult?.map?.(settlement => (
+              <>
+                <MapBase.SzkPolygon
+                  paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+                />
+              </>
+            ))}
+            <MapBase.ZipPolygon
+              paths={geoJsonToPoly(oevkPolygon)}
+            />
+          </MapBase>
+          <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" />
+          <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
+        </MapWrap>
       )}
       </Wrap>
     </>
