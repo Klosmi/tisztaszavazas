@@ -149,10 +149,10 @@ const OevkCities = () => {
           center={{ lat, lng }}
           zoom={10}
         >
-          {settlementResult?.map?.(({ boundaries }) => (
+          {settlementResult?.map?.(settlement => (
             <>
               <MapBase.SzkPolygon
-                paths={boundaries.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+                paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
               />
             </>
           ))}
