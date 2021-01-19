@@ -39,7 +39,7 @@ export default ({ onClick }) => {
           <Menu.Item key="szavazokorok-listaja">Összes szavazókör</Menu.Item>
           <Menu.Item key="szavazokorok-lakcim-szerint">Szavazókörök lakcím alapján</Menu.Item>
           <SubMenu key="egyedi-lekerdezesek" title="Egyedi lekérdezések" def>
-            <Menu.Item key="oevk-telepulesei">OEVK települései és a szavazókörök száma</Menu.Item>
+            <Menu.Item key="egyedi-lekerdezesek/oevk-telepulesei">OEVK települései és a szavazókörök száma</Menu.Item>
             <Menu.Item key="egyedi-lekerdezesek/iranyitoszam-szavazokorei">Irányítószám-OEVK</Menu.Item>
           </SubMenu>
         </Menu.ItemGroup>
