@@ -8,6 +8,7 @@ import MapBase from '../MapBase/ndex';
 import styled from 'styled-components';
 import zipService from '../../services/zipService';
 import Legend from '../Legend';
+import useValasztokerulet from '../../hooks/useValasztokerulet';
 
 const Wrap = styled.div`
   display: flex;
@@ -32,7 +33,6 @@ const OevkCities = ({
   })
   const [queryResult, setQueryResult] = useState()
   const [szkResult, setSzkResult] = useState()
-  const [oevk, setOevk] = useState()
   const [settlementResult, setSettlementResult] = useState()
 
   const onChange = ({ target: { name, value }}) => {
@@ -103,17 +103,8 @@ const OevkCities = ({
     .catch(e => console.log(e))
   }, [queryParams, election])
 
-  useEffect(() => {
-    if (!queryParams.oevkSzama || !queryParams.megye) return
-    const query = [
-      { $match: {
-        leiras: { $regex: queryParams.megye },
-        szam: +queryParams.oevkSzama
-      } }
-    ]
-    tszService.aggregate(query, election, '/valasztokeruletek')
-    .then(({ data }) => setOevk(data[0]))
-  }, [queryParams, election])
+
+  const oevk = useValasztokerulet({ oevkSzama, megye, election })
 
   useEffect(() => {
     if (!queryResult?.length) {
