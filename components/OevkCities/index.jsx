@@ -161,7 +161,7 @@ const OevkCities = ({
                 />
               </>
             ))}
-            <MapBase.ZipPolygon
+            <MapBase.EvkPolygon
               paths={geoJsonToPoly(oevk?.korzethatar)}
             />
           </MapBase>
