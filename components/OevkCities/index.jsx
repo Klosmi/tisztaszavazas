@@ -4,7 +4,7 @@ import {
   Input,
 } from 'antd';
 import tszService from '../../services/tszService';
-import MapBase from '../MapBase/ndex';
+import MapBase from '../MapBase';
 import styled from 'styled-components';
 import zipService from '../../services/zipService';
 import Legend from '../Legend';

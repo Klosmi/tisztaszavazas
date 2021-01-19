@@ -4,9 +4,8 @@ import {
 } from 'antd';
 import ReactJson from 'react-json-viewer'
 import zipService from '../../services/zipService';
-import tszService from '../../services/tszService';
 import { AppContext } from '../../pages/_app'
-import MapBase from '../MapBase/ndex';
+import MapBase from '../MapBase';
 import Legend from '../Legend';
 import useValasztokerulet from '../../hooks/useValasztokerulet';
 
