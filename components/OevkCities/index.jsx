@@ -32,7 +32,7 @@ const OevkCities = ({
   })
   const [queryResult, setQueryResult] = useState()
   const [szkResult, setSzkResult] = useState()
-  const [oevkPolygon, setOevkPolygon] = useState()
+  const [oevk, setOevk] = useState()
   const [settlementResult, setSettlementResult] = useState()
 
   const onChange = ({ target: { name, value }}) => {
@@ -112,7 +112,7 @@ const OevkCities = ({
       } }
     ]
     tszService.aggregate(query, election, '/valasztokeruletek')
-    .then(({ data }) => setOevkPolygon(data[0]?.korzethatar))
+    .then(({ data }) => setOevk(data[0]))
   }, [queryParams, election])
 
   useEffect(() => {
@@ -134,7 +134,7 @@ const OevkCities = ({
 
   return (
     <>
-      <h1>OEVK települései</h1>
+      <h1>{oevk?.leiras || 'OEVK'} települései</h1>
       {showSearch && (
         <>
           <Input
@@ -171,7 +171,7 @@ const OevkCities = ({
               </>
             ))}
             <MapBase.ZipPolygon
-              paths={geoJsonToPoly(oevkPolygon)}
+              paths={geoJsonToPoly(oevk?.korzethatar)}
             />
           </MapBase>
           <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" />
