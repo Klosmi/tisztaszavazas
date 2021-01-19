@@ -3,7 +3,7 @@ import ReactJson from 'react-json-viewer'
 import {
   Input,
 } from 'antd';
-import { AppContext } from '../Layout';
+import { AppContext } from '../../pages/_app'
 import tszService from '../../services/tszService';
 import MapBase from '../MapBase/ndex';
 import styled from 'styled-components';

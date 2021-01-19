@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
 import Head from 'next/head';
 import {
@@ -35,11 +35,8 @@ const StyledFooter = styled(Footer)`
   }
 `
 
-export const AppContext = createContext()
-
 const Home = ({ children, menu = true }) => {
   const router = useRouter()
-  const [election, setElection] = useState('ogy2018')
   const [selectedMenuKey, setSelectedMenuKey] = useState('szavazokorok-listaja')
 
   const handleMenuClick = ({key}) => {
@@ -48,7 +45,7 @@ const Home = ({ children, menu = true }) => {
   }
 
   return (
-    <AppContext.Provider value={{ election, setElection }}>
+    <>
       <Head>
         <title>Tisztaszavazás</title>
       </Head>
@@ -65,7 +62,7 @@ const Home = ({ children, menu = true }) => {
       <StyledFooter>
         <ElectionSelector />
       </StyledFooter>      
-    </AppContext.Provider>
+    </>
   )
 }
 

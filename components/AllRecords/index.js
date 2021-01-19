@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import List from '../List';
 import tszService from '../../services/tszService';
 import schema from './schema'
-import { AppContext } from '../Layout'
+import { AppContext } from '../../pages/_app'
 
 const columns = [
   { id: 'city', accessor: 'kozigEgyseg.kozigEgysegNeve', label: "Város" },
@@ -35,10 +35,8 @@ export default () => {
   }    
 
   useEffect(() => {
-    ;(async () => {
-      await loadSzks({})
-    })();
-  }, [])
+    loadSzks({})
+  }, [election])
 
   return (
     <List

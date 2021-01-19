@@ -5,7 +5,7 @@ import {
 import ReactJson from 'react-json-viewer'
 import zipService from '../../services/zipService';
 import tszService from '../../services/tszService';
-import { AppContext } from '../Layout';
+import { AppContext } from '../../pages/_app'
 import MapBase from '../MapBase/ndex';
 import Legend from '../Legend';
 

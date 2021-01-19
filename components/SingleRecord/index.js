@@ -13,7 +13,7 @@ import {
 import { ObjectInspector } from 'react-inspector';
 import tszService from '../../services/tszService';
 import styled from 'styled-components';
-import { AppContext } from '../Layout'
+import { AppContext } from '../../pages/_app'
 import SzkMap from '../SzkMap'
 
 const { Panel } = Collapse;
