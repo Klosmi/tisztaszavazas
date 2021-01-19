@@ -93,4 +93,5 @@ export default {
   aggregate,
   getCityList,
   getSreets,
+  tszGet
 }
