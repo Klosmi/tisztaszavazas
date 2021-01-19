@@ -37,7 +37,7 @@ const ZipOevkMapping = () => {
       { $match: { zip: + queryParams.zip } }
     ]
     
-    zipService.aggregate(query, election)
+    zipService.aggregate(query)
     .then(({ data }) => handleZipResult(data))
     .catch(e => console.log(e))
   },[queryParams, election])  
