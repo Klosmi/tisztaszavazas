@@ -1,9 +1,8 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactJson from 'react-json-viewer'
 import {
   Input,
 } from 'antd';
-import { AppContext } from '../../pages/_app'
 import tszService from '../../services/tszService';
 import MapBase from '../MapBase/ndex';
 import styled from 'styled-components';
@@ -21,16 +20,20 @@ const MapWrap = styled.div`
   width: 100%;
 `
 
-const OevkCities = () => {
+const OevkCities = ({
+  megye = 'Nógrád',
+  oevkSzama = 1,
+  election = "ogy2018",
+  showSearch = true
+}) => {
   const [queryParams, setQueryParams] = useState({
-    megye: 'Borsod',
-    oevkSzama: 6
+    megye,
+    oevkSzama
   })
   const [queryResult, setQueryResult] = useState()
   const [szkResult, setSzkResult] = useState()
   const [oevkPolygon, setOevkPolygon] = useState()
   const [settlementResult, setSettlementResult] = useState()
-  const { election } = useContext(AppContext)
 
   const onChange = ({ target: { name, value }}) => {
     setQueryParams({ ...queryParams, [name]: value })
@@ -132,20 +135,24 @@ const OevkCities = () => {
   return (
     <>
       <h1>OEVK települései</h1>
-      <Input
-        addonBefore="Választókerület neve"
-        name="megye"
-        onChange={onChange}
-        placeholder="Megye"
-        value={queryParams.megye}
-      />
-      <Input
-        addonBefore="Választókerület száma"
-        name="oevkSzama"
-        onChange={onChange}
-        placeholder="OEVK száma"
-        value={queryParams.oevkSzama}
-      />
+      {showSearch && (
+        <>
+          <Input
+            addonBefore="Választókerület neve"
+            name="megye"
+            onChange={onChange}
+            placeholder="Megye"
+            value={queryParams.megye}
+          />
+          <Input
+            addonBefore="Választókerület száma"
+            name="oevkSzama"
+            onChange={onChange}
+            placeholder="OEVK száma"
+            value={queryParams.oevkSzama}
+          />
+        </>
+      )}
       <Wrap>
       {queryResult && (
         <ReactJson json={[...queryResult, summary ]} />
