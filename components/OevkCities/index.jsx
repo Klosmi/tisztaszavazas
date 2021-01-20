@@ -129,7 +129,7 @@ const OevkCities = ({
       {showSearch && (
         <>
           <Input
-            addonBefore="Választókerület neve"
+            addonBefore="Megye neve"
             name="megye"
             onChange={onChange}
             placeholder="Megye"
@@ -154,6 +154,10 @@ const OevkCities = ({
             center={{ lat, lng }}
             zoom={10}
           >
+            <MapBase.EvkPolygon
+              unfilled
+              paths={geoJsonToPoly(oevk?.korzethatar)}
+            />          
             {settlementResult?.map?.(settlement => (
               <>
                 <MapBase.SzkPolygon
@@ -161,9 +165,6 @@ const OevkCities = ({
                 />
               </>
             ))}
-            <MapBase.EvkPolygon
-              paths={geoJsonToPoly(oevk?.korzethatar)}
-            />
           </MapBase>
           <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" />
           <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />

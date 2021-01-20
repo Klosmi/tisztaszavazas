@@ -84,7 +84,7 @@ const ZipOevkMapping = () => {
     <Wrapper>
       <h1>OEVK irányítószám körzetei</h1>
       <Input
-        addonBefore="Választókerület neve"
+        addonBefore="Megye neve"
         name="megye"
         onChange={handleChange}
         placeholder="Megye"

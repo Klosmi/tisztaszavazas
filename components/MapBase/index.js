@@ -73,13 +73,14 @@ class MapBase extends Component {
 
   static EvkPolygon = ({
     options = {},
+    unfilled,
     ...rest
   }) => (
     <PolygonImport
       options={{
         fillColor: "#FF4444",
         strokeColor: "#FF5555",
-        fillOpacity: .3,
+        fillOpacity: unfilled ? 0 : .3,
         strokeOpacity: .8,
         strokeWeight: 2,
         clickable: false,
