@@ -104,7 +104,7 @@ const OevkCities = ({
   }, [queryParams, election])
 
 
-  const oevk = useValasztokerulet({ oevkSzama, megye, election })
+  const oevk = useValasztokerulet({ ...queryParams, election })
 
   useEffect(() => {
     if (!queryResult?.length) {
