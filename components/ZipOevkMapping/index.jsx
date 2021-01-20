@@ -2,12 +2,21 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import {
   Input,
 } from 'antd';
+import buffer from '@turf/buffer'
+import { polygon } from '@turf/helpers'
 import ReactJson from 'react-json-viewer'
 import zipService from '../../services/zipService';
 import { AppContext } from '../../pages/_app'
 import MapBase from '../MapBase';
 import Legend from '../Legend';
-import useValasztokerulet from '../../hooks/useValasztokerulet';
+import useValasztokerulet from '../../hooks/useValasztokerulet'
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  * {
+    margin-bottom: 4px;
+  }
+`
 
 const ZipOevkMapping = () => {
   const [inputValues, setInputValues] = useState({})
@@ -39,13 +48,19 @@ const ZipOevkMapping = () => {
 
   const { leiras, korzethatar } = useValasztokerulet({ ...inputValues, election }) || {}
 
+  let transformed
+  
+  if (korzethatar) {
+    transformed = buffer(polygon(korzethatar.coordinates), -500, { units: 'meters' }).geometry
+  }
+
   useEffect(() => {
     const query = [
       {
         $match: {
           polygon: {
             $geoIntersects: {
-              $geometry: korzethatar
+              $geometry: transformed
             }
           }
         }
@@ -66,10 +81,8 @@ const ZipOevkMapping = () => {
 
 
   return (
-    <>
+    <Wrapper>
       <h1>OEVK irányítószám körzetei</h1>
-      <h3>{leiras}</h3>
-      <br /><br />
       <Input
         addonBefore="Választókerület neve"
         name="megye"
@@ -84,14 +97,14 @@ const ZipOevkMapping = () => {
         placeholder="OEVK száma"
         value={inputValues.oevkSzama}
       />      
-      
+      <h3>{leiras}</h3>      
       {zipResult && (
         <>
           <MapBase
             center={{ lat, lng }}
             zoom={10}
           >
-            <MapBase.SzkPolygon
+            <MapBase.EvkPolygon
               paths={korzethatar?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
             />
             {zipResult?.map?.(({ zipPolygons }) => zipPolygons.map(zipPolygon =>
@@ -100,12 +113,12 @@ const ZipOevkMapping = () => {
               />
             ))}
           </MapBase>
-          <ReactJson json={zipResult.map(({ irsz, település }) => ({ irsz, település}))} />          
-          <Legend stroke="#FF3333AA" fill="#386FB300" text="Irányítószámhoz tartozó körzet" />
-          <Legend stroke="#386FB3CC" fill="#386FB355" text="OEVK körzete" />
+          <Legend stroke="#FF5555DD" fill="#FF444444" text="OEVK körzethatára" />
+          <Legend stroke="#326B40" fill="#326B4000" text="Irányítószám körzet" />
+          <ReactJson json={zipResult.map(({ irsz, település }) => ({ irsz, település}))} />
         </>
       )}
-    </>
+    </Wrapper>
   )
 }
 

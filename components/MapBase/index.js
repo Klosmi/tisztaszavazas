@@ -55,7 +55,7 @@ class MapBase extends Component {
   }) => (
     <PolygonImport
       options={{
-        fillColor: "#326B40",
+        fillColor: "#386FB3",
         strokeColor: "#326B40",
         fillOpacity: 0,
         strokeOpacity: .8,
@@ -77,9 +77,9 @@ class MapBase extends Component {
   }) => (
     <PolygonImport
       options={{
-        fillColor: "#386FB3",
-        strokeColor: "#FF3333",
-        fillOpacity: 0,
+        fillColor: "#FF4444",
+        strokeColor: "#FF5555",
+        fillOpacity: .3,
         strokeOpacity: .8,
         strokeWeight: 2,
         clickable: false,
