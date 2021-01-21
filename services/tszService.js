@@ -27,19 +27,19 @@ const fullMatchToFirstPlace = (data, citySubstr) => (
 )
 
 const getSingleSzk = async (id, election) => {
-  return await tszGet({ path: `/szavazokorok/${id}`, election })
+  return await tszGet({ path: `szavazokorok/${id}`, election })
 }
 
 const getAllSzk = async ({ skip = 0, limit = 25, query = {}, election = 'ogy2018' }) => {
   query = { ...query, skip, limit }
-  return await tszGet({ path: `/szavazokorok${paramSerializer(query)}`, election })
+  return await tszGet({ path: `szavazokorok${paramSerializer(query)}`, election })
 }
 
 const getSzkByAddress = async ({ city, address, houseNr }, election) => {
   const steetSide = houseNr%2 ? 'Páratlan házszámok' : 'Páros házszámok'
   
   return await tszGet({
-    path: `/szavazokorok`,
+    path: `szavazokorok`,
     query: {
       'kozigEgyseg.kozigEgysegNeve': `${city}`,
       'kozteruletek.kozteruletNev': address,
@@ -52,7 +52,7 @@ const getSzkByAddress = async ({ city, address, houseNr }, election) => {
   })
 }
 
-const aggregate = async (data, election, path='/szavazokorok') => {
+const aggregate = async (data, election, path='szavazokorok') => {
   return tszGet({
     path,
     data,
@@ -62,7 +62,7 @@ const aggregate = async (data, election, path='/szavazokorok') => {
 
 const getCityList = async (citySubstr, election) => {
   let { data } = await tszGet({
-    path: '/kozigegysegek',
+    path: 'kozigegysegek',
     query: {
       kozigEgysegNeve: `/${diacriticRegex(citySubstr)}/i`,
       limit: 50
