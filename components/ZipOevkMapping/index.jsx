@@ -67,7 +67,7 @@ const ZipOevkMapping = () => {
       }
     ]
 
-    zipService.aggregate(query, '/zipcodes')
+    zipService.aggregate({ query, path = '/zipcodes' })
     .then(({ data }) => handleZipResult(data))
 
   }, [korzethatar])
@@ -77,8 +77,6 @@ const ZipOevkMapping = () => {
   }, [inputValues, setInputValues])
 
   const [lng = 19, lat = 47] = korzethatar?.coordinates[0][0] || []
-
-
 
   return (
     <Wrapper>

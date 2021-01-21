@@ -191,7 +191,7 @@ const fetchCityList = ({
   election,
 }) => {;(async() => {
     dispatch({ type: 'GET_CITY_LIST', id, citySubstr })
-    const cityList = await tszService.getCityList(citySubstr, election)
+    const cityList = await tszService.getCityList({ citySubstr, election })
     dispatch({ type: 'GET_CITY_LIST__SUCCESS', id, cityList })
 })()}
 
@@ -202,7 +202,7 @@ const fetchStreets = ({
   election,
 }) => {;(async() => {
     dispatch({ type: 'GET_STREETS', id })
-    const streetList = await tszService.getSreets(cityId, election)
+    const streetList = await tszService.getSreets({ cityId, election })
     dispatch({ type: 'GET_STREETS__SUCCESS', id, streetList })
 })()}
 

@@ -26,7 +26,7 @@ const fullMatchToFirstPlace = (data, citySubstr) => (
   }, [])
 )
 
-const getSingleSzk = async (id, election) => {
+const getSingleSzk = async ({ id, election }) => {
   return await tszGet({ path: `szavazokorok/${id}`, election })
 }
 
@@ -52,15 +52,15 @@ const getSzkByAddress = async ({ city, address, houseNr }, election) => {
   })
 }
 
-const aggregate = async (data, election, path='szavazokorok') => {
+const aggregate = async ({query, election, path='szavazokorok'}) => {
   return tszGet({
     path,
-    data,
+    data: query,
     election
   })
 }
 
-const getCityList = async (citySubstr, election) => {
+const getCityList = async ({ citySubstr, election }) => {
   let { data } = await tszGet({
     path: 'kozigegysegek',
     query: {
@@ -75,7 +75,7 @@ const getCityList = async (citySubstr, election) => {
   return fullMatchToFirstPlace(data, citySubstr)
 }
 
-const getSreets = async (cityId, election) => { 
+const getSreets = async ({ cityId, election }) => { 
   let { data } = await tszGet({
     path: `/kozigegysegek/${cityId}`,
     election,

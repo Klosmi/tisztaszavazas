@@ -55,7 +55,7 @@ export default ({ id }) => {
     ;(async () => {
       setSingleSzkResult()
       if (!id) return;
-      const { data } = await tszService.getSingleSzk(id, election)
+      const { data } = await tszService.getSingleSzk({ id, election })
       setSingleSzkResult(data)
     })();
   }, [id]);

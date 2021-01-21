@@ -81,7 +81,7 @@ const OevkCities = ({
         rank: 1      
       } }
     ]
-    tszService.aggregate(query, election)
+    tszService.aggregate({ query, election })
     .then(({ data }) => setQueryResult(data))
     .catch(e => console.log(e))
   },[queryParams, election])
@@ -98,7 +98,7 @@ const OevkCities = ({
         valasztokSzama: 1
       } }
     ]
-    tszService.aggregate(query, election)
+    tszService.aggregate({ query, election })
     .then(({ data }) => setSzkResult(data))
     .catch(e => console.log(e))
   }, [queryParams, election])
@@ -118,7 +118,7 @@ const OevkCities = ({
       }), {})
     }]
 
-    zipService.aggregate(query, '/settlements')
+    zipService.aggregate({ query, path='/settlements' })
     .then(handleSettlementResult)
 
   }, [queryResult])

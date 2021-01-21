@@ -12,7 +12,7 @@ const useValasztokerulet = ({ oevkSzama, megye, election }) => {
         szam: +oevkSzama
       } }
     ]
-    tszService.aggregate(query, election, '/valasztokeruletek')
+    tszService.aggregate({ query, election, path: '/valasztokeruletek' })
     .then(({ data }) => setVk(data[0]))
   }, [oevkSzama, megye, election])
 

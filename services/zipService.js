@@ -18,10 +18,10 @@ const getAllZips = async ({ skip = 0, limit = 25, query = {} }) => {
   return await zipGet({ path: `/zipcodes${paramSerializer(query)}` })
 }
 
-const aggregate = async (body, path = '/zipcodes') => {
+const aggregate = async ({ query, path = '/zipcodes' }) => {
   return zipGet({
     path,
-    body,
+    body: query,
   })
 }
 
