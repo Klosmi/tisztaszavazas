@@ -56,7 +56,7 @@ class MapBase extends Component {
     <PolygonImport
       options={{
         fillColor: "#386FB3",
-        strokeColor: "#FF3333",
+        strokeColor: "#326B40",
         fillOpacity: 0,
         strokeOpacity: .8,
         strokeWeight: 2,
@@ -69,7 +69,30 @@ class MapBase extends Component {
       }}
       {...rest}
     />
-  )  
+  )
+
+  static EvkPolygon = ({
+    options = {},
+    unfilled,
+    ...rest
+  }) => (
+    <PolygonImport
+      options={{
+        fillColor: "#FF4444",
+        strokeColor: "#FF5555",
+        fillOpacity: unfilled ? 0 : .3,
+        strokeOpacity: .8,
+        strokeWeight: 2,
+        clickable: false,
+        draggable: false,
+        editable: false,
+        geodesic: false,
+        zIndex: 1,
+      ...options
+      }}
+      {...rest}
+    />
+  )
 
   render() {
     return (
