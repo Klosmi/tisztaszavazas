@@ -75,6 +75,16 @@ const getCityList = async ({ citySubstr, election }) => {
   return fullMatchToFirstPlace(data, citySubstr)
 }
 
+const getCityIdByName = async ({ cityName, election }) => {
+  console.log({cityName})
+  let { data } = await tszGet({
+    path: '/kozigegysegek',
+    query: { kozigEgysegNeve: cityName },
+    election
+  })
+  return data[0]._id
+}
+
 const getSreets = async ({ cityId, election }) => { 
   let { data } = await tszGet({
     path: `/kozigegysegek/${cityId}`,
@@ -93,5 +103,6 @@ export default {
   aggregate,
   getCityList,
   getSreets,
-  tszGet
+  tszGet,
+  getCityIdByName,
 }

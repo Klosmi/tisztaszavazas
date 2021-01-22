@@ -8,6 +8,7 @@ import tszService from '../../services/tszService';
 import CityAutoComplete from '../CityAutoComplete';
 import StreetAutoComplete from '../StreetAutoComplete';
 import { AppContext } from '../../pages/_app'
+import zipService from '../../services/zipService';
 
 const Table = styled.div`
   display: flex;
@@ -88,7 +89,8 @@ const reducer = (state, action = {}) => {
     case 'SEARCHSZK__SUCCESS': return state.map(record => (
       record.id === id ? { ...record, result, totalCount } : record
     ))
-    case 'GET_CITY_LIST__SUCCESS': return state.map(record => (
+    case 'GET_CITY_LIST__SUCCESS': 
+    return state.map(record => (
       record.id === id ? { ...record, cityList } : record
     ))
     case 'GET_STREETS__SUCCESS': return state.map(record => (
@@ -199,17 +201,19 @@ const fetchStreets = ({
   dispatch,
   id,
   cityId,
+  cityName,
   election,
 }) => {;(async() => {
     dispatch({ type: 'GET_STREETS', id })
+    const cityId = await tszService.getCityIdByName({ cityName, election })
     const streetList = await tszService.getSreets({ cityId, election })
     dispatch({ type: 'GET_STREETS__SUCCESS', id, streetList })
 })()}
 
-export default ({ onSzavazokorClick }) => {
+const WhereVote = ({ onSzavazokorClick }) => {
   const initialState = [
-    { id: 'd1', city: '', result: null },
-    { id: 'd2', city: '', result: null },
+    { id: 'd1', zip: '', city: '', result: null },
+    { id: 'd2', zip: '', city: '', result: null },
   ]
   const [state, dispatch] = useReducer(reducer, initialState)
   const { election } = useContext(AppContext)
@@ -218,6 +222,34 @@ export default ({ onSzavazokorClick }) => {
   const debounce = (cb, t = 600) => {
     clearTimeout(to)
     setTo(setTimeout(cb, t))
+  }
+
+  const handleZipChange = async (id, zip) => {
+    if (!isNaN(+zip) && +zip <= 9999) {
+      dispatch({ type: 'EDIT', id, key: 'zip', value: zip })
+      if (zip > 999){
+        dispatch({ type: 'EDIT', id, key: 'city', value: '' })
+        
+        const { data } = await zipService.getCity({ zip })
+
+        const cityList = data[0]?.administrativeUnits
+        .filter(({ name }) => name !== 'Budapest')
+        .map(({ name }) => {
+          const value = name.replace('. kerület', '.ker')
+          return { value, label: value }
+        })
+
+        if (cityList?.length === 1){
+          const cityName = cityList[0].label
+          dispatch({ type: 'EDIT', id, key: 'city', value: cityName })
+          debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'city', value: cityName, election }))
+          debounce(() => fetchStreets({ dispatch, id, cityName, election }))       
+        } else if (cityList?.length > 1){
+          dispatch({ type: 'GET_CITY_LIST__SUCCESS', id, cityList })          
+        }
+
+      }
+    }
   }
 
   const handleCityChange = (id, value) => {
@@ -240,11 +272,11 @@ export default ({ onSzavazokorClick }) => {
     debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'houseNr', value, election }))
   }
   
-  const handleCitySelect = (id, value, cityId) => {
+  const handleCitySelect = (id, value, cityName) => {
     dispatch({ type: 'EDIT', id, key: 'city', value })
     dispatch({ type: 'EDIT', id, key: 'address', value: '' })
     debounce(() => fetchSzkByAddress({state, dispatch, id, key: 'city', value, election }))
-    debounce(() => fetchStreets({ dispatch, id, cityId, election })) 
+    debounce(() => fetchStreets({ dispatch, id, cityName, election })) 
   }
   
   const handleAddressSearch = async (id, citySubstr) => {
@@ -257,10 +289,16 @@ export default ({ onSzavazokorClick }) => {
     if (isBeforeLastRowEmpty) dispatch({ type: 'ADD_ROW' })
   }
 
-  const Row = ({ id, city, address, houseNr, result, onClick, disabled, cityList, streetList, totalCount }) => (
+  const Row = ({ id, zip, city, address, houseNr, result, onClick, disabled, cityList, streetList, totalCount }) => (
     <RowWrap onClick={onClick} key={id}>
+      <Input
+        width={60}
+        onChange={({ target }) => handleZipChange(id, target.value)}
+        value={zip}
+      />
       <CityAutoComplete
-        onSelect={(cityId, { label }) => handleCitySelect(id, label, cityId)}
+        value={city}
+        onSelect={(_cityId, { label }) => handleCitySelect(id, label, label)}
         onChange={value => handleCityChange(id, value)}
         onSearch={value => handleAddressSearch(id, value)}
         options={cityList}
@@ -283,11 +321,10 @@ export default ({ onSzavazokorClick }) => {
     </RowWrap>
   )
 
-  console.log({state})
-  
   return (
     <Table>
       <Thead>
+        <div>Irsz</div>
         <div>Város</div>
         <div>Cím</div>
         <div className="hsz">Házszám</div>
@@ -301,3 +338,5 @@ export default ({ onSzavazokorClick }) => {
     </Table>
   )
 }
+
+export default WhereVote

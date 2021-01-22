@@ -118,7 +118,7 @@ const OevkCities = ({
       }), {})
     }]
 
-    zipService.aggregate({ query, path='/settlements' })
+    zipService.aggregate({ query, path: '/settlements' })
     .then(handleSettlementResult)
 
   }, [queryResult])
