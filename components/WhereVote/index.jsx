@@ -18,19 +18,20 @@ const Table = styled.div`
 const Thead = styled.div`
   display: flex;
   flex-direction: row;
-  div {
-    font-weight: bold;
-    min-width: 200px;
-    padding-left: 12px;
+`
 
-    &.hsz {
-      min-width: 80px;
-      padding-left: 6px;
-    }
+const Th = styled.div`
+  font-weight: bold;
+  min-width: ${({ width = 200 }) => width }px;
+  padding-left: 12px;
 
-    &.vk {
-      min-width: 350px;
-    }
+  &.hsz {
+    min-width: 80px;
+    padding-left: 6px;
+  }
+
+  &.vk {
+    min-width: 350px;
   }
 `
 
@@ -324,12 +325,12 @@ const WhereVote = ({ onSzavazokorClick }) => {
   return (
     <Table>
       <Thead>
-        <div>Irsz</div>
-        <div>Város</div>
-        <div>Cím</div>
-        <div className="hsz">Házszám</div>
-        <div className="vk">Választókerület</div>
-        <div>Szavazókör</div>
+        <Th width="60">Irsz</Th>
+        <Th>Város</Th>
+        <Th>Cím</Th>
+        <Th className="hsz">Házszám</Th>
+        <Th className="vk">Választókerület</Th>
+        <Th>Szavazókör</Th>
       </Thead>
       <Tbody>
         {state.map(Row)}
