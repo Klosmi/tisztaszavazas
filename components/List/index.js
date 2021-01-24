@@ -21,7 +21,17 @@ const InputWrap = styled.div`
     min-width: 250px;
   }
 `
-export default ({ listData, columns, onPageChange, paginator, isLoading, onFilter, totalCont, schema }) => {
+const List = ({
+  listData,
+  columns,
+  onPageChange,
+  paginator,
+  isLoading,
+  onFilter,
+  totalCont,
+  schema,
+  election,
+  }) => {
   const initialState = { param: null, value: null }
   const [state, setState] = useState(initialState)
   const [query, setQuery] = useState({})
@@ -35,7 +45,7 @@ export default ({ listData, columns, onPageChange, paginator, isLoading, onFilte
 
   const SzkLink = (rowData) => {
     const handleSzkClick = () => (
-      open(`/szavazokor-adatai/${rowData.data._id}`)
+      open(`/szavazokor-adatai/${election}/${rowData.data._id}`)
     )
 
     return (
@@ -169,3 +179,5 @@ export default ({ listData, columns, onPageChange, paginator, isLoading, onFilte
     </>
   )
 }
+
+export default List

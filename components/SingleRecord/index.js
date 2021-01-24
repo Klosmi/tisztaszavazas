@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react'
+import { LogoutOutlined } from '@ant-design/icons'
 
 import {
   Collapse,
@@ -13,7 +14,6 @@ import {
 import { ObjectInspector } from 'react-inspector';
 import tszService from '../../services/tszService';
 import styled from 'styled-components';
-import { AppContext } from '../../pages/_app'
 import SzkMap from '../SzkMap'
 
 const { Panel } = Collapse;
@@ -46,10 +46,8 @@ const columns = [
   },
 ]
 
-export default ({ id }) => {
+const SingleRecord = ({ election, id }) => {
   const [singleSzkResult, setSingleSzkResult] = useState()
-
-  const { election } = useContext(AppContext)
 
   useEffect(() => {
     ;(async () => {
@@ -101,7 +99,7 @@ export default ({ id }) => {
       {!akadalymentes && <Tag color="red">nem akadálymentes</Tag>}
     </div>
     <Item label={`${megyeNeve === "Budapest" ? 'Kerület' : 'Település'} szavazóköreinek száma`} >{kozigEgysegSzavazokoreinekSzama}</Item>
-    <Item><a target="_new" href={`${process.env.NEXT_PUBLIC_API_BASE}${valasztasHuOldal}`}>Szavazókör oldala a valasztas.hu-n</a></Item>
+    <Item><a target="_new" href={`${process.env.NEXT_PUBLIC_API_BASE}${valasztasHuOldal}`}><LogoutOutlined /> Szavazókör oldala a valasztas.hu-n</a></Item>
   </Descriptions>
   <Tabs defaultActiveKey="1">
     <TabPane tab="Közterületek" key="1">
@@ -133,3 +131,6 @@ export default ({ id }) => {
     </>
   )
 }
+
+
+export default SingleRecord

@@ -48,6 +48,7 @@ export default () => {
       isLoading={isLoading}
       onFilter={loadSzks}
       schema={schema}
+      election={election}
     />
   )
 }
