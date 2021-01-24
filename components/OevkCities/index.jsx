@@ -52,11 +52,6 @@ const OevkCities = ({
     kozigEgysegNeve: 0
   })
 
-  const handleSettlementResult = ({ data }) => {
-    const settlements = Object.values(data[0]).map(([settlement]) => settlement)
-    setSettlementResult(settlements)
-  }
-
   useEffect(() => {
     if (!queryParams.oevkSzama || queryParams.megye?.length < 4) return
     const query = [
@@ -93,15 +88,15 @@ const OevkCities = ({
       setSettlementResult(null)
       return
     }
-    const query = [{ $facet: 
-      queryResult.reduce((acc, { kozigEgysegNeve }, i) => ({
-        ...acc,
-        [i]: [{ $match: { name: kozigEgysegNeve } }, { $project: { name: 1, boundaries: 1 }}]
-      }), {})
-    }]
+
+    const query = [
+      { $match: {
+          name: { $in: queryResult.map(({ kozigEgysegNeve }) => kozigEgysegNeve.replace('.ker', '. kerület')) }
+      }}
+    ]
 
     zipService.aggregate({ query, path: '/settlements' })
-    .then(handleSettlementResult)
+    .then(({ data }) => setSettlementResult(data))
 
   }, [queryResult])
 
