@@ -32,14 +32,11 @@ const OevkCities = ({
     oevkSzama
   })
   const [queryResult, setQueryResult] = useState()
-  const [szkResult, setSzkResult] = useState()
   const [settlementResult, setSettlementResult] = useState()
 
   const onChange = ({ target: { name, value }}) => {
     setQueryParams({ ...queryParams, [name]: value })
   }
-
-  const [lng, lat] = szkResult?.[0]?.korzethatar.coordinates[0][0] || []
 
   const geoJsonToPoly = geo => (
     geo?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))    
@@ -61,7 +58,7 @@ const OevkCities = ({
   }
 
   useEffect(() => {
-    if (!queryParams.oevkSzama || !queryParams.megye) return
+    if (!queryParams.oevkSzama || queryParams.megye?.length < 4) return
     const query = [
       { $match: {
         "valasztokerulet.leiras": { $regex: queryParams.megye },
@@ -86,25 +83,10 @@ const OevkCities = ({
     .catch(e => console.log(e))
   },[queryParams, election])
 
-  useEffect(() => {
-    if (!queryParams.oevkSzama || !queryParams.megye) return
-    const query = [
-      { $match: {
-        "valasztokerulet.leiras": { $regex: queryParams.megye },
-        "valasztokerulet.szam": +queryParams.oevkSzama
-      } },
-      { $project: {
-        korzethatar: 1,
-        valasztokSzama: 1
-      } }
-    ]
-    tszService.aggregate({ query, election })
-    .then(({ data }) => setSzkResult(data))
-    .catch(e => console.log(e))
-  }, [queryParams, election])
-
 
   const oevk = useValasztokerulet({ ...queryParams, election })
+
+  const [lng, lat] = oevk?.korzethatar.coordinates[0][0] || []
 
   useEffect(() => {
     if (!queryResult?.length) {
@@ -148,7 +130,7 @@ const OevkCities = ({
       {queryResult && (
         <ReactJson json={[...queryResult, summary ]} />
       )}
-      {szkResult && (
+      {oevk && (
         <MapWrap>
           <MapBase
             center={{ lat, lng }}

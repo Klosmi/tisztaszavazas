@@ -5,7 +5,7 @@ const useValasztokerulet = ({ oevkSzama, megye, election }) => {
   const [vk, setVk] = useState()
 
   useEffect(() => {
-    if (!oevkSzama || !megye) return
+    if (!oevkSzama || !megye.length > 3) return
     const query = [
       { $match: {
         leiras: { $regex: megye },
