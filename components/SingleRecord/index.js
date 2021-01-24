@@ -92,6 +92,9 @@ const SingleRecord = ({ election, id }) => {
     },
     korzethatar: {
       coordinates: { 0: korzethatarCoordinates }
+    },
+    valasztas: {
+      leiras: valasztasLeirasa
     }
   } = singleSzkResult
 
@@ -101,7 +104,7 @@ const SingleRecord = ({ election, id }) => {
         title={`${kozigEgysegNeve} ${szavazokorSzama}. szavazókör`}
         breadcrumb={{ routes:   [{
           path: 'index',
-          breadcrumbName: 'Országgyűlési választások, 2018',
+          breadcrumbName: valasztasLeirasa,
         }]}}
         subTitle={szavazokorCime}
       />    
