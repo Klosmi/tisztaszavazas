@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components'
 import Head from 'next/head';
 import {
-  Layout
+  Layout as AntLayout
 } from 'antd';
 
 import Menu from '../Menu';
@@ -13,7 +13,7 @@ import { useRouter } from 'next/router'
 const {
   Content: AntContent,
   Footer,
-} = Layout;
+} = AntLayout
 
 const Content = styled(AntContent)`
   padding: ${({ withMenu }) => withMenu ? '48px 48px 48px 304px' : '48px 48px 48px 48px'};
@@ -35,7 +35,7 @@ const StyledFooter = styled(Footer)`
   }
 `
 
-const Home = ({ children, menu = true }) => {
+const Layout = ({ children, menu = true, footer = true }) => {
   const router = useRouter()
   const [selectedMenuKey, setSelectedMenuKey] = useState('szavazokorok-listaja')
 
@@ -59,11 +59,13 @@ const Home = ({ children, menu = true }) => {
       <Content withMenu={menu}>
         {children}
       </Content>
-      <StyledFooter>
-        <ElectionSelector />
-      </StyledFooter>      
+      {footer && (
+        <StyledFooter>
+          <ElectionSelector />
+        </StyledFooter>
+      )}
     </>
   )
 }
 
-export default Home
+export default Layout
