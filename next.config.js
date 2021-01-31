@@ -6,6 +6,11 @@ module.exports = {
         destination: '/osszes-szavazokor/ogy2018',
         permanent: false,
       },
+      {
+        source: '/szavazokorok-listaja',
+        destination: '/osszes-szavazokor/ogy2018',
+        permanent: false,
+      },
     ]
   },
 }
