@@ -7,13 +7,14 @@ import {
 import buffer from '@turf/buffer'
 import { polygon } from '@turf/helpers'
 import { DownloadOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
 import ReactJson from 'react-json-viewer'
 import zipService from '../../services/zipService';
 import { AppContext } from '../../pages/_app'
 import MapBase from '../MapBase';
 import Legend from '../Legend';
 import useValasztokerulet from '../../hooks/useValasztokerulet'
-import styled from 'styled-components';
+import optionFilter from '../../functions/optionFilter'
 
 const { Item } = Form
 
@@ -52,8 +53,6 @@ const ZipOevkMapping = () => {
   const [zipResult, setZipResult] = useState()
   const [selectedVk, setSelectedVk] = useState()
   const [downloadData, setDownloadData] = useState()
-
-  console.log({selectedVk})
 
   const { election } = useContext(AppContext)
 
@@ -121,10 +120,6 @@ const ZipOevkMapping = () => {
 
   const [lng = 19, lat = 47] = korzethatar?.coordinates[0][0] || []
 
-  const filterFn = (input, option) => (
-    option.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0
-  )
-
   return (
     <Wrapper>
       <h1>OEVK irányítószám körzetei</h1>
@@ -134,7 +129,7 @@ const ZipOevkMapping = () => {
         <Select
           showSearch
           placeholder="Választókerület"
-          filterOption={filterFn}
+          filterOption={optionFilter}
           onSelect={setSelectedVk}
           options={allVks?.map(({ _id: value, leiras: label }) => ({ value, label }))}
         />

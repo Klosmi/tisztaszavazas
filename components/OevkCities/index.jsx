@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import zipService from '../../services/zipService'
 import Legend from '../Legend'
 import useValasztokerulet from '../../hooks/useValasztokerulet'
+import optionFilter from '../../functions/optionFilter'
 
 const { Item } = Form
 
@@ -110,6 +111,7 @@ const OevkCities = ({
             placeholder="Választókerület"
             onSelect={setSelectedVk}
             options={allVks?.map(({ _id: value, leiras: label }) => ({ value, label }))}
+            filterOption={optionFilter}
           />
         </Item>
       )}
