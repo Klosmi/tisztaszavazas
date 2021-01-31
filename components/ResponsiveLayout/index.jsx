@@ -1,4 +1,5 @@
-import { Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd'
+import Head from 'next/head'
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -108,6 +109,10 @@ const ResponsiveLayout = ({ children, menu = true }) => {
   return (
     <LayoutStyled>
       <GlobalStyle />
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />      
+        <title>Tisztaszavazás</title>
+      </Head>      
       {menu && (
         <SiderStyled
           trigger={null}
