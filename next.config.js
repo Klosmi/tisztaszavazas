@@ -4,7 +4,7 @@ module.exports = {
       {
         source: '/',
         destination: '/osszes-szavazokor/ogy2018',
-        permanent: true,
+        permanent: false,
       },
     ]
   },
