@@ -71,6 +71,7 @@ const ContentStyled = styled(Content)`
 const SiderStyled = styled(Sider)`
   position: sticky;
   top: 0;
+  height: 100vh;
   ${({ zerowidth }) => zerowidth ? `
     &.ant-layout-sider-collapsed {
       width: 0px !important;
