@@ -6,21 +6,36 @@ import {
   Input,
   Select,
   Alert,
+  PageHeader,
 } from 'antd';
 import FreeTable, { applyCustomField } from 'free-table'
 import styled from 'styled-components';
 import diacriticRegex from '../../functions/diacriticRegex'
-import { useRouter } from 'next/router'
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 
 const { Option, OptGroup } = Select;
 
 const InputWrap = styled.div`
   display: flex;
   flex-direction: row;
-  div {
-    min-width: 250px;
-  }
 `
+
+const PageHeaderStyled = styled(PageHeader)`
+  padding: 16px 4px;
+`
+
+const InputWrapStyled = styled(InputWrap)`
+  ${({ md }) => md ? `
+  flex-direction: row;
+  ` : `
+  flex-direction: column;
+  `}
+`
+
+const SelectStyled = styled(Select)`
+  min-width: ${({ width, lg }) => lg ? width : 0}px;
+`
+
 const List = ({
   listData,
   columns,
@@ -31,13 +46,14 @@ const List = ({
   totalCont,
   schema,
   election,
+  electionDescription,
   }) => {
   const initialState = { param: null, value: null }
   const [state, setState] = useState(initialState)
   const [query, setQuery] = useState({})
   const [searchMode, setSearchMode] = useState('fuzzy')
-  const router = useRouter()
 
+  const breakpoints = useBreakpoint()
 
   const getParamType = param => (
     schema.find(({ path }) => path === param)?.type
@@ -104,11 +120,20 @@ const List = ({
 
   return (
     <>
-      <InputWrap>
-        <Select
+      <PageHeaderStyled
+        title="Szavazókörök"
+        breadcrumb={{ routes:   [{
+          path: 'index',
+          breadcrumbName: electionDescription || '...',
+        }]}}
+      />
+      <InputWrapStyled {...breakpoints}>
+        <SelectStyled
           onChange={handleSelectChange}
           placeholder="mező"
           value={state.param}
+          width={250}
+          {...breakpoints}
           >
           <OptGroup label="Közigazgatási egység">
             <Option value="kozigEgyseg.kozigEgysegNeve">Közigazgatási egység neve</Option>
@@ -131,16 +156,16 @@ const List = ({
             <Option value="kozteruletek.vegsoHazszam">a legnagyobb hászáma</Option>
             <Option value="kozteruletek.megjegyzes">oldala</Option>
           </OptGroup>  
-        </Select>
+        </SelectStyled>
         <Input
           onPressEnter={handleSearchSubmit}
           placeholder="keresett érték"
           onChange={handleSearchChange}
           value={state.value}
-          addonAfter={getParamType(state.param) === String && selectAfter}          
+          addonAfter={breakpoints.md && getParamType(state.param) === String && selectAfter}
         />
         <Button onClick={handleSearchSubmit}>Keresés</Button>
-      </InputWrap>
+      </InputWrapStyled>
       <br />
       {!totalCont && !isLoading && (
         <Alert
@@ -160,6 +185,7 @@ const List = ({
             onChange={(page, pageSize) => onPageChange(page, pageSize, query)}
             current={paginator.page}
             pageSize={paginator.pageSize}
+            simple={!breakpoints.md}
           />
           <FreeTable
             columns={columns}

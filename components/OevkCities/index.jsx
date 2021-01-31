@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import ReactJson from 'react-json-viewer'
 import {
   Form,
-  Input,
+  PageHeader,
   Select,
 } from 'antd';
 import tszService from '../../services/tszService'
@@ -12,11 +12,14 @@ import zipService from '../../services/zipService'
 import Legend from '../Legend'
 import useValasztokerulet from '../../hooks/useValasztokerulet'
 import optionFilter from '../../functions/optionFilter'
+import useValasztas from '../../hooks/useValasztas';
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 
 const { Item } = Form
 
 const Wrap = styled.div`
   display: flex;
+  flex-direction: ${({ horizontal }) => horizontal ? 'row' : 'column' };
   * {
     margin: 6px 6px 0 0;
   }
@@ -24,6 +27,10 @@ const Wrap = styled.div`
 
 const MapWrap = styled.div`
   width: 100%;
+`
+
+const PageHeaderStyled = styled(PageHeader)`
+  padding: 16px 4px;
 `
 
 const OevkCities = ({
@@ -34,6 +41,8 @@ const OevkCities = ({
   const [settlements, setSettlements] = useState()
   const [settlementResult, setSettlementResult] = useState()
 
+  const { leiras: electionDescription } = useValasztas({ election }) || {}
+
   const geoJsonToPoly = geo => (
     geo?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))    
   )
@@ -42,14 +51,14 @@ const OevkCities = ({
 
   const oevk = getVkDetails({ id: selectedVk, election }) || {}
 
-  const summary = settlements?.reduce((acc, { szavazokorDarab, valasztokSzama }) => ({
-    szavazokorDarab: acc.szavazokorDarab + (szavazokorDarab || 0),
-    valasztokSzama: acc.valasztokSzama + valasztokSzama,
-    kozigEgysegNeve: acc.kozigEgysegNeve + 1
+  const summary = settlements?.reduce((acc, s) => ({
+    szk: acc.szk + (s.szk || 0),
+    "választók száma": acc["választók száma"] + s["választók száma"],
+    település: acc.település + 1
   }),{
-    szavazokorDarab: 0,
-    valasztokSzama: 0,
-    kozigEgysegNeve: 0
+    szk: 0,
+    "választók száma": 0,
+    település: 0
   })
 
   useEffect(() => {
@@ -60,14 +69,14 @@ const OevkCities = ({
       } },
       { $group: {
           _id: "$kozigEgyseg",
-          szavazokorDarab: { $sum: 1 },
-          valasztokSzama: { $sum: "$valasztokSzama" }
+          szk: { $sum: 1 },
+          "választók száma": { $sum: "$valasztokSzama" }
       } },  
       { $sort: { "_id.kozigEgysegNeve": 1 } },
       { $project: {
-        kozigEgysegNeve: "$_id.kozigEgysegNeve",
-        valasztokSzama: 1,
-        szavazokorDarab: 1,
+        település: "$_id.kozigEgysegNeve",
+        "választók száma": 1,
+        szk: 1,
         _id: 0,
         rank: 1      
       } }
@@ -90,7 +99,7 @@ const OevkCities = ({
 
     const query = [
       { $match: {
-          name: { $in: settlements.map(({ kozigEgysegNeve }) => kozigEgysegNeve.replace('.ker', '. kerület')) }
+          name: { $in: settlements.map(({ település }) => település.replace('.ker', '. kerület')) }
       }}
     ]
 
@@ -99,9 +108,17 @@ const OevkCities = ({
 
   }, [settlements])
 
+  const { lg } = useBreakpoint()
+
   return (
     <>
-      <h1>Valasztókerületek</h1>
+      <PageHeaderStyled
+        title="Választókerületek"
+        breadcrumb={{ routes:   [{
+          path: 'index',
+          breadcrumbName: electionDescription || '...',
+        }]}}
+      />
       {showSearch && (
         <Item
         label="Választókerület"
@@ -115,7 +132,7 @@ const OevkCities = ({
           />
         </Item>
       )}
-      <Wrap>
+      <Wrap horizontal={lg}>
       {settlements && (
         <ReactJson json={[...settlements, summary ]} />
       )}

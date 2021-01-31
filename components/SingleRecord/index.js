@@ -16,6 +16,8 @@ import { ObjectInspector } from 'react-inspector';
 import tszService from '../../services/tszService';
 import styled from 'styled-components';
 import SzkMap from '../SzkMap'
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
+import { CONTENT_PADDING } from '../ResponsiveLayout'
 
 const { Panel } = Collapse;
 const { Item } = Descriptions;
@@ -49,14 +51,37 @@ const columns = [
 
 const TabsStyled = styled(Tabs)`
   margin-top: 30px;
+  overflow: visible;
+  .ant-table-wrapper {
+    ${({ xs }) => xs ? `
+      margin: 0 -${CONTENT_PADDING}px;
+      max-width: unset;
+    `:''}
+  }
 `
 
 const PageHeaderStyled = styled(PageHeader)`
-  padding: 16px 0;
+  padding: 16px 4px;
+`
+
+const DescriptionsStyled = styled(Descriptions).attrs(({ xs, md }) => {
+  if (md) return { column: 2 }
+  return { column: 1 }
+})`
+  .ant-descriptions-item-content {
+    background: white;
+  }
+
+  ${({ xs }) => xs ? `
+    .ant-descriptions-item-label { display: none ;}
+    margin: 0 -${CONTENT_PADDING}px;
+  ` : ''
+  }
 `
 
 const SingleRecord = ({ election, id }) => {
   const [singleSzkResult, setSingleSzkResult] = useState()
+  const { md, xs } = useBreakpoint()
 
   useEffect(() => {
     ;(async () => {
@@ -107,9 +132,11 @@ const SingleRecord = ({ election, id }) => {
           breadcrumbName: valasztasLeirasa,
         }]}}
         subTitle={szavazokorCime}
+        xs={xs}
       />    
-      <Descriptions
-        column={{ lg: 2, md: 1, sm: 1, xs: 1 }}
+      <DescriptionsStyled
+        xs={xs}
+        md={md}
         bordered>
         <Item label="Választókerület">{valasztokeruletLeirasa}</Item>
         <Item label="Szavazókör címe" >{szavazokorCime}</Item>
@@ -120,10 +147,10 @@ const SingleRecord = ({ election, id }) => {
         <Item label="Egyéb információk">
           {akadalymentes && <Tag color="green">akadálymentes</Tag>}
           {!akadalymentes && <Tag color="red">nem akadálymentes</Tag>}
-          <a style={{ float: 'right' }} target="_new" href={`${process.env.NEXT_PUBLIC_API_BASE}${valasztasHuOldal}`}><LogoutOutlined /> Szavazókör oldala a valasztas.hu-n</a>
+          <a style={{ float: 'right' }} target="_new" href={`${process.env.NEXT_PUBLIC_API_BASE}${valasztasHuOldal}`}><LogoutOutlined /> valasztas.hu {!xs && ('szavazóköri oldal')}</a>
         </Item>
-      </Descriptions>
-      <TabsStyled defaultActiveKey="1">
+      </DescriptionsStyled>
+      <TabsStyled defaultActiveKey="1" xs={xs}>
         <TabPane tab="Térkép" key="1">
           <Space>
             <Text type="secondary">A pontos adatok a táblázatban szerepelnek, a térképi megjelenés kizárólag tájékoztató jellegű!</Text>      

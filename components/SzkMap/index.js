@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { GoogleMap, LoadScript, Marker, Polygon } from '@react-google-maps/api';
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
+import styled from 'styled-components';
+import { CONTENT_PADDING } from '../ResponsiveLayout'
 
 const containerStyle = {
   width: '100%',
   height: '500px'
-};
-
+}
 
 const options = {
   fillColor: "#386FB3",
@@ -20,30 +22,34 @@ const options = {
   zIndex: 1
 }
 
-class SzkMap extends Component {
-  render() {
-    return (
-      <main>
+const Wrapper = styled.div`
+  ${({ xs }) => xs ? `margin: 0 -${CONTENT_PADDING}px;` : '' }
+`
+
+const SzkMap = ({ center, polygonPath }) => {
+  const { xs } = useBreakpoint()
+
+  return (
+    <Wrapper xs={xs}>
       <LoadScript
         googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY}
       >
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={this.props.center}
+          center={center}
           zoom={15}
         >
           <Marker
-            position={this.props.center}
+            position={center}
           />
           <Polygon
-            paths={this.props.polygonPath}
+            paths={polygonPath}
             options={options}
           />          
         </GoogleMap>
       </LoadScript>
-      </main>
-    )
-  }
+    </Wrapper>
+  )
 }
 
 export default SzkMap

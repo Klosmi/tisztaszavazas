@@ -96,6 +96,15 @@ const getSreets = async ({ cityId, election }) => {
   return data.kozteruletek.map(({ kozteruletNev }) => ({ value: kozteruletNev }))
 }
 
+const getElection = async ({ kod }) => {
+  let { data } = await tszGet({
+    path: `/valasztasok`,
+    query: { kod }
+  })
+
+  return data
+}
+
 export default {
   getAllSzk,
   getById,
@@ -105,4 +114,5 @@ export default {
   getSreets,
   tszGet,
   getCityIdByName,
+  getElection,
 }

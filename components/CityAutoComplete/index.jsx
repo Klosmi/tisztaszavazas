@@ -1,8 +1,30 @@
-import React, { useState } from 'react';
-import { AutoComplete } from 'antd';
+import React, { useState } from 'react'
+import { AutoComplete } from 'antd'
+import { CaretDownOutlined } from '@ant-design/icons'
+import styled from 'styled-components'
 
-export default ({ onSelect, onSearch, onChange: propOnChange, options = [], value: propValue = '' }) => {
+const Wrap = styled.div`
+  position: relative;
+  border: none;
+`
+
+const CaretDownStyled = styled(CaretDownOutlined)`
+  position: absolute;
+  z-index: 4;
+  right: 6px;
+  top: 10px;
+`
+
+const CityAutoComplete = ({
+  onSelect,
+  onSearch,
+  onChange: propOnChange,
+  options = [],
+  value: propValue = '',
+  ...rest
+}) => {
   const [value, setValue] = useState(propValue)
+  // const [isOpen, setIsOpen] = useState(false)
 
   const onChange = (value, { label }) => {
     setValue(label || value);
@@ -10,18 +32,25 @@ export default ({ onSelect, onSearch, onChange: propOnChange, options = [], valu
     if (!value && !label) onSearch(null)
   }
 
+  const handleOnSelect = (...attr) => {
+    onSelect(...attr)
+  }
+
   return (
-    <AutoComplete
-      value={propValue || value}
-      options={options}
-      style={{
-        width: 200,
-      }}
-      onSelect={onSelect}
-      onSearch={onSearch}
-      onChange={onChange}
-      placeholder="Település"
-      spellCheck={false}
-    />
+    <Wrap>
+      <AutoComplete
+        value={propValue || value}
+        options={options}
+        onSelect={handleOnSelect}
+        onSearch={onSearch}
+        onChange={onChange}
+        placeholder="Település"
+        spellCheck={false}
+        {...rest}
+      />
+      {!!options?.length && !value && <CaretDownStyled />}
+    </Wrap>    
   );
 };
+
+export default CityAutoComplete

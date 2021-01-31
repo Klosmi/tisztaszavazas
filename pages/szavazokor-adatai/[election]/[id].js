@@ -1,16 +1,16 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Layot from '../../../components/Layout'
 import SingleRecord from '../../../components/SingleRecord';
+import ResponsiveLayout from '../../../components/ResponsiveLayout';
 
 const SingleSzkPage = () => {
   const router = useRouter()
   const { id, election } = router.query
 
   return (
-    <Layot menu={false} footer={false}>
+    <ResponsiveLayout menu={false} footer={false}>
       <SingleRecord id={id} election={election} />
-    </Layot>
+    </ResponsiveLayout>
   )
 }
 

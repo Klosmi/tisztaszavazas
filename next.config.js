@@ -3,7 +3,7 @@ module.exports = {
     return [
       {
         source: '/',
-        destination: '/szavazokorok-listaja',
+        destination: '/osszes-szavazokor/ogy2018',
         permanent: true,
       },
     ]

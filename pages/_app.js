@@ -1,4 +1,3 @@
-import '../styles/globals.css'
 import 'antd/dist/antd.css'
 import { createContext, useState } from 'react';
 

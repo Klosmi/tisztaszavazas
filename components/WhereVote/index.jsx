@@ -1,14 +1,16 @@
-import React, { useContext, useReducer, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import {
   Popover,
-  Input as AntdInput,
+  Input,
+  PageHeader,
 } from 'antd';
 import styled from 'styled-components'
 import tszService from '../../services/tszService';
 import CityAutoComplete from '../CityAutoComplete';
 import StreetAutoComplete from '../StreetAutoComplete';
-import { AppContext } from '../../pages/_app'
 import zipService from '../../services/zipService';
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
+import useValasztas from '../../hooks/useValasztas';
 
 const Table = styled.div`
   display: flex;
@@ -42,14 +44,35 @@ const Tbody = styled.div`
 
 const RowWrap = styled.div`
   display: flex;
-  flex-direction: row;
+  ${({ lg, sm }) => {
+    if (lg){
+      return 'flex-direction: row;'
+    }
+    return `
+      flex-direction: column;
+      margin-bottom: 32px;
+    `
+
+  }}
+
   input:disabled {
     cursor: pointer;
   }
 `
 
-const Input = styled(AntdInput)`
-  ${({ width = 200 }) => `width: ${width}px;`}
+const RowWrapInner = styled.div`
+  display: flex;
+  flex-direction: ${({ sm }) => sm ? 'row' : 'column' };
+`
+
+const CityAutoCompleteStyled = styled(CityAutoComplete)`
+  min-width: 200px;
+  width: 100%;
+`
+
+const StreetAutoCompleteStyled = styled(StreetAutoComplete)`
+  min-width: 200px;
+  width: 100%;
 `
 
 const SzavazokorLinkWrap = styled.div`
@@ -76,6 +99,19 @@ const OevkWrap = styled.div`
   ${({ isPointer }) => {
     if (isPointer) {
       return `cursor: pointer;`
+    }
+  }}
+`
+
+const PageHeaderStyled = styled(PageHeader)`
+  padding: 16px 4px;
+`
+
+const InputStyled = styled(Input)`
+  height: 32px;
+  ${({ sm, width }) => {
+    if (sm) {
+      return `min-width: ${width}px; width: ${width}px;`
     }
   }}
 `
@@ -128,7 +164,7 @@ const SzavazokorLink = ({ result, onClick, totalCount }) => {
         <Popover content={popoverContent} trigger="hover, click">
           <SzavazokorLinkWrap
             isPointer>
-            {totalCount} szavazókör
+            {totalCount} db szavazókör
           </SzavazokorLinkWrap>
         </Popover>      
       )
@@ -136,7 +172,7 @@ const SzavazokorLink = ({ result, onClick, totalCount }) => {
 
     return (
       <SzavazokorLinkWrap>
-        {totalCount} szavazókör
+        {totalCount} db szavazókör
       </SzavazokorLinkWrap>
     )
   }
@@ -211,13 +247,17 @@ const fetchStreets = ({
     dispatch({ type: 'GET_STREETS__SUCCESS', id, streetList })
 })()}
 
-const WhereVote = ({ onSzavazokorClick }) => {
+const WhereVote = ({ onSzavazokorClick, election }) => {
   const initialState = [
     { id: 'd1', zip: '', city: '', result: null },
     { id: 'd2', zip: '', city: '', result: null },
   ]
+
+  const breakpoints = useBreakpoint()
+
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { election } = useContext(AppContext)
+
+  const electionData = useValasztas({ election })
 
   const[to, setTo] = useState();
   const debounce = (cb, t = 600) => {
@@ -254,6 +294,10 @@ const WhereVote = ({ onSzavazokorClick }) => {
   }
 
   const handleCityChange = (id, value) => {
+    if (value === ''){
+      handleZipChange(id, state?.find?.(row => row.id === id)?.zip)
+      return
+    }
     dispatch({ type: 'EDIT', id, key: 'city', value })
     dispatch({ type: 'EDIT', id, key: 'address', value: '' })
     debounce(() => fetchSzkByAddress({ state, dispatch, id, key: 'city', value, election }))
@@ -291,52 +335,79 @@ const WhereVote = ({ onSzavazokorClick }) => {
   }
 
   const Row = ({ id, zip, city, address, houseNr, result, onClick, disabled, cityList, streetList, totalCount }) => (
-    <RowWrap onClick={onClick} key={id}>
-      <Input
-        width={60}
-        onChange={({ target }) => handleZipChange(id, target.value)}
-        value={zip}
-      />
-      <CityAutoComplete
-        value={city}
-        onSelect={(_cityId, { label }) => handleCitySelect(id, label, label)}
-        onChange={value => handleCityChange(id, value)}
-        onSearch={value => handleAddressSearch(id, value)}
-        options={cityList}
-      />
-      <StreetAutoComplete
-        onSelect={value => handleAddressSelect(id, value)}
-        onChange={value => handleAddressChange(id, value)}
-        onSearch={() => null}
-        options={streetList || []}
-        value={address}
-      />
-      <Input
-        disabled={disabled}
-        width={80}
-        value={houseNr}
-        onChange={result?.length === 1 ? () => null : ({ target }) => handleHouseNrChange(id, target.value)}
-      />
-      <EvkLink result={result} />
-      <SzavazokorLink result={result} totalCount={totalCount} onClick={onSzavazokorClick} />
+    <RowWrap onClick={onClick} key={id} {...breakpoints}>
+      <RowWrapInner {...breakpoints}>
+        <InputStyled
+          width={60}
+          onChange={({ target }) => handleZipChange(id, target.value)}
+          value={zip}
+          placeholder="Irányítószám"
+          {...breakpoints}
+        />
+        <CityAutoCompleteStyled
+          value={city}
+          onSelect={(_cityId, { label }) => handleCitySelect(id, label, label)}
+          onChange={value => handleCityChange(id, value)}
+          onSearch={value => handleAddressSearch(id, value)}
+          options={cityList}
+        />
+        <StreetAutoCompleteStyled
+          onSelect={value => handleAddressSelect(id, value)}
+          onChange={value => handleAddressChange(id, value)}
+          onSearch={() => null}
+          options={streetList || []}
+          value={address}
+        />
+        <InputStyled
+          width={80}
+          disabled={disabled}
+          placeholder="Házszám"
+          value={houseNr}
+          onChange={result?.length === 1 ? () => null : ({ target }) => handleHouseNrChange(id, target.value)}
+          {...breakpoints}
+        />
+      </RowWrapInner>
+      <RowWrapInner {...breakpoints}>
+        <EvkLink result={result} />
+        <SzavazokorLink result={result} totalCount={totalCount} onClick={onSzavazokorClick} />
+      </RowWrapInner>
     </RowWrap>
   )
 
+console.log({state})
+
   return (
-    <Table>
-      <Thead>
-        <Th width="60">Irsz</Th>
-        <Th>Város</Th>
-        <Th>Cím</Th>
-        <Th className="hsz">Házszám</Th>
-        <Th className="vk">Választókerület</Th>
-        <Th>Szavazókör</Th>
-      </Thead>
-      <Tbody>
-        {state.map(Row)}
-        <Row disabled onClick={handleLastRowClick} />
-      </Tbody>
-    </Table>
+    <>
+      <PageHeaderStyled
+        title="Szavazókör lakcím alapján"
+        breadcrumb={{ routes:   [{
+          path: 'index',
+          breadcrumbName: electionData?.leiras || '...',
+        }]}}
+      />    
+      <Table>
+        <Thead>
+          {breakpoints.sm && (
+            <>
+              <Th width="60">Irsz</Th>
+              <Th>Város</Th>
+              <Th>Cím</Th>
+              <Th className="hsz">Házszám</Th>
+            </>
+          )}
+          {breakpoints.lg && (
+            <>
+              <Th className="vk">Választókerület</Th>
+              <Th>Szavazókör</Th>
+            </>
+          )}
+        </Thead>
+        <Tbody>
+          {state.map(Row)}
+          <Row disabled onClick={handleLastRowClick} />
+        </Tbody>
+      </Table>
+    </>
   )
 }
 

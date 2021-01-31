@@ -1,22 +1,24 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import List from '../List';
 import tszService from '../../services/tszService';
 import schema from './schema'
-import { AppContext } from '../../pages/_app'
+import useValasztas from '../../hooks/useValasztas';
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 
-const columns = [
-  { id: 'city', accessor: 'kozigEgyseg.kozigEgysegNeve', label: "Város" },
-  { id: 'bon', accessor: 'szavazokorSzama', label: "Száma" },
-  { id: 'addr', accessor: 'szavazokorCime', label: "Cím" },
-]
-
-export default () => {
+const AllRecords = ({ election }) => {
   const [szkListResult, setSzkListResult] = useState()
   const [totalCont, setTotalCount] = useState()
   const [paginator, setPaginator] = useState({ page: 1, pageSize: 25 })
   const [isLoading, setIsLoading] = useState(false)
 
-  const { election } = useContext(AppContext)
+  const { md } = useBreakpoint()
+
+  const columns = [
+    { id: 'city', accessor: 'kozigEgyseg.kozigEgysegNeve', label: "Város" },
+    { id: 'bon', accessor: 'szavazokorSzama', label: "Száma" },
+  ]
+
+  if (md) columns.push({ id: 'addr', accessor: 'szavazokorCime', label: "Cím" },)
 
   const loadSzks = async ({query = {}, skip, limit}) => {
     setSzkListResult([])
@@ -26,6 +28,8 @@ export default () => {
     setSzkListResult(data)
     setIsLoading(false)
   }
+
+  const electionData = useValasztas({ election })
 
   const handlePaginatorChagne = async (page, pageSize, query) => {
     setPaginator({page, pageSize})
@@ -40,6 +44,7 @@ export default () => {
 
   return (
     <List
+      electionDescription={electionData?.leiras}
       listData={szkListResult}
       totalCont={totalCont}
       columns={columns}
@@ -52,3 +57,5 @@ export default () => {
     />
   )
 }
+
+export default AllRecords

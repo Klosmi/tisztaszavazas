@@ -9,6 +9,7 @@ import Menu from '../Menu';
 import Header from '../Header'
 import ElectionSelector from '../ElectionSelector'
 import { useRouter } from 'next/router'
+import GlobalStyle from '../GlobalStyle';
 
 const {
   Content: AntContent,
@@ -46,6 +47,7 @@ const Layout = ({ children, menu = true, footer = true }) => {
 
   return (
     <>
+      <GlobalStyle />
       <Head>
         <title>Tisztaszavazás</title>
       </Head>
