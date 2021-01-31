@@ -133,31 +133,31 @@ const OevkCities = ({
         </Item>
       )}
       <Wrap horizontal={lg}>
-      {settlements && (
-        <ReactJson json={[...settlements, summary ]} />
-      )}
-      {oevk && (
-        <MapWrap>
-          <MapBase
-            center={{ lat, lng }}
-            zoom={9}
-          >
-            <MapBase.EvkPolygon
-              unfilled
-              paths={geoJsonToPoly(oevk?.korzethatar)}
-            />          
-            {settlementResult?.map?.(settlement => (
-              <>
-                <MapBase.SzkPolygon
-                  paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
-                />
-              </>
-            ))}
-          </MapBase>
-          <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" />
-          <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
-        </MapWrap>
-      )}
+        {oevk && (
+          <MapWrap>
+            <MapBase
+              center={{ lat, lng }}
+              zoom={9}
+            >
+              <MapBase.EvkPolygon
+                unfilled
+                paths={geoJsonToPoly(oevk?.korzethatar)}
+              />          
+              {settlementResult?.map?.(settlement => (
+                <>
+                  <MapBase.SzkPolygon
+                    paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+                  />
+                </>
+              ))}
+            </MapBase>
+            <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" />
+            <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
+          </MapWrap>
+        )}
+        {settlements && (
+          <ReactJson json={[...settlements, summary ]} />
+        )}      
       </Wrap>
     </>
   )
