@@ -121,14 +121,14 @@ const OevkCities = ({
       />
       {showSearch && (
         <Item
-        label="Választókerület"
         >
           <Select
             showSearch
-            placeholder="Választókerület"
+            placeholder="Választókerület keresése"
             onSelect={setSelectedVk}
             options={allVks?.map(({ _id: value, leiras: label }) => ({ value, label }))}
             filterOption={optionFilter}
+            notFoundContent={<div>Betöltés...</div>}
           />
         </Item>
       )}
