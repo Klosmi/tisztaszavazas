@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import ReactJson from 'react-json-viewer'
 import {
+  Form,
   Input,
+  Select,
 } from 'antd';
-import tszService from '../../services/tszService';
-import MapBase from '../MapBase';
-import styled from 'styled-components';
-import zipService from '../../services/zipService';
-import Legend from '../Legend';
-import useValasztokerulet from '../../hooks/useValasztokerulet';
+import tszService from '../../services/tszService'
+import MapBase from '../MapBase'
+import styled from 'styled-components'
+import zipService from '../../services/zipService'
+import Legend from '../Legend'
+import useValasztokerulet from '../../hooks/useValasztokerulet'
+
+const { Item } = Form
 
 const Wrap = styled.div`
   display: flex;
@@ -22,27 +26,22 @@ const MapWrap = styled.div`
 `
 
 const OevkCities = ({
-  megye = 'Nógrád',
-  oevkSzama = 1,
   election = "ogy2018",
   showSearch = true
 }) => {
-  const [queryParams, setQueryParams] = useState({
-    megye,
-    oevkSzama
-  })
-  const [queryResult, setQueryResult] = useState()
+  const [selectedVk, setSelectedVk] = useState()
+  const [settlements, setSettlements] = useState()
   const [settlementResult, setSettlementResult] = useState()
-
-  const onChange = ({ target: { name, value }}) => {
-    setQueryParams({ ...queryParams, [name]: value })
-  }
 
   const geoJsonToPoly = geo => (
     geo?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))    
   )
 
-  const summary = queryResult?.reduce((acc, { szavazokorDarab, valasztokSzama }) => ({
+  const { getAllVks, getVkDetails } = useValasztokerulet
+
+  const oevk = getVkDetails({ id: selectedVk, election }) || {}
+
+  const summary = settlements?.reduce((acc, { szavazokorDarab, valasztokSzama }) => ({
     szavazokorDarab: acc.szavazokorDarab + (szavazokorDarab || 0),
     valasztokSzama: acc.valasztokSzama + valasztokSzama,
     kozigEgysegNeve: acc.kozigEgysegNeve + 1
@@ -53,11 +52,10 @@ const OevkCities = ({
   })
 
   useEffect(() => {
-    if (!queryParams.oevkSzama || queryParams.megye?.length < 4) return
+    if (!oevk.leiras) return
     const query = [
       { $match: {
-        "valasztokerulet.leiras": { $regex: queryParams.megye },
-        "valasztokerulet.szam": +queryParams.oevkSzama
+        "valasztokerulet.leiras": oevk.leiras,
       } },
       { $group: {
           _id: "$kozigEgyseg",
@@ -74,62 +72,56 @@ const OevkCities = ({
       } }
     ]
     tszService.aggregate({ query, election })
-    .then(({ data }) => setQueryResult(data))
+    .then(({ data }) => setSettlements(data))
     .catch(e => console.log(e))
-  },[queryParams, election])
+  },[oevk, election])
 
 
-  const oevk = useValasztokerulet({ ...queryParams, election })
+  const allVks = getAllVks({ election })
 
-  const [lng, lat] = oevk?.korzethatar.coordinates[0][0] || []
+  const [lng, lat] = oevk?.korzethatar?.coordinates[0][0] || [19, 47]
 
   useEffect(() => {
-    if (!queryResult?.length) {
+    if (!settlements?.length) {
       setSettlementResult(null)
       return
     }
 
     const query = [
       { $match: {
-          name: { $in: queryResult.map(({ kozigEgysegNeve }) => kozigEgysegNeve.replace('.ker', '. kerület')) }
+          name: { $in: settlements.map(({ kozigEgysegNeve }) => kozigEgysegNeve.replace('.ker', '. kerület')) }
       }}
     ]
 
     zipService.aggregate({ query, path: '/settlements' })
     .then(({ data }) => setSettlementResult(data))
 
-  }, [queryResult])
+  }, [settlements])
 
   return (
     <>
-      <h1>{oevk?.leiras || 'OEVK'} települései</h1>
+      <h1>Valasztókerületek</h1>
       {showSearch && (
-        <>
-          <Input
-            addonBefore="Megye neve"
-            name="megye"
-            onChange={onChange}
-            placeholder="Megye"
-            value={queryParams.megye}
+        <Item
+        label="Választókerület"
+        >
+          <Select
+            showSearch
+            placeholder="Választókerület"
+            onSelect={setSelectedVk}
+            options={allVks?.map(({ _id: value, leiras: label }) => ({ value, label }))}
           />
-          <Input
-            addonBefore="Választókerület száma"
-            name="oevkSzama"
-            onChange={onChange}
-            placeholder="OEVK száma"
-            value={queryParams.oevkSzama}
-          />
-        </>
+        </Item>
       )}
       <Wrap>
-      {queryResult && (
-        <ReactJson json={[...queryResult, summary ]} />
+      {settlements && (
+        <ReactJson json={[...settlements, summary ]} />
       )}
       {oevk && (
         <MapWrap>
           <MapBase
             center={{ lat, lng }}
-            zoom={10}
+            zoom={9}
           >
             <MapBase.EvkPolygon
               unfilled

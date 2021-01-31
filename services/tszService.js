@@ -26,8 +26,8 @@ const fullMatchToFirstPlace = (data, citySubstr) => (
   }, [])
 )
 
-const getSingleSzk = async ({ id, election }) => {
-  return await tszGet({ path: `szavazokorok/${id}`, election })
+const getById = async ({ path = 'szavazokorok' , id, election }) => {
+  return await tszGet({ path: `${path}/${id}`, election })
 }
 
 const getAllSzk = async ({ skip = 0, limit = 25, query = {}, election = 'ogy2018' }) => {
@@ -98,7 +98,7 @@ const getSreets = async ({ cityId, election }) => {
 
 export default {
   getAllSzk,
-  getSingleSzk,
+  getById,
   getSzkByAddress,
   aggregate,
   getCityList,

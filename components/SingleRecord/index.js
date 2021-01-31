@@ -62,7 +62,7 @@ const SingleRecord = ({ election, id }) => {
     ;(async () => {
       setSingleSzkResult()
       if (!id) return;
-      const { data } = await tszService.getSingleSzk({ id, election })
+      const { data } = await tszService.getById({ path: 'szavazokorok', id, election })
       setSingleSzkResult(data)
     })();
   }, [id]);
