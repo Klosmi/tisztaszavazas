@@ -1,11 +1,11 @@
 import React from 'react'
 import ZipOevkMapping from '../../components/ZipOevkMapping';
-import Layot from '../../components/Layout'
+import ResponsiveLayout from '../../components/ResponsiveLayout';
 
 const IranyitoszamSzavazokorei = () => (
-  <Layot>
+  <ResponsiveLayout menu={false}>
     <ZipOevkMapping />
-  </Layot>
+  </ResponsiveLayout>
 )
 
 export default IranyitoszamSzavazokorei
