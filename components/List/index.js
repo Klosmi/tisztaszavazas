@@ -25,10 +25,17 @@ const PageHeaderStyled = styled(PageHeader)`
 `
 
 const InputWrapStyled = styled(InputWrap)`
-  ${({ md }) => md ? `
-  flex-direction: row;
-  ` : `
-  flex-direction: column;
+  transition: .3s;
+  overflow: hidden;
+
+  ${({ md, visible }) => `
+    ${md ? `flex-direction: row;` : `flex-direction: column;`}
+    
+    ${visible ? `
+      max-height: 200px;
+    `:`
+      max-height: 0;
+    `}
   `}
 `
 
@@ -52,6 +59,7 @@ const List = ({
   const [state, setState] = useState(initialState)
   const [query, setQuery] = useState({})
   const [searchMode, setSearchMode] = useState('fuzzy')
+  const [isFilterVisible, setIsFilterVisible] = useState(false)
 
   const breakpoints = useBreakpoint()
 
@@ -127,7 +135,7 @@ const List = ({
           breadcrumbName: electionDescription || '...',
         }]}}
       />
-      <InputWrapStyled {...breakpoints}>
+      <InputWrapStyled {...breakpoints} visible={isFilterVisible}>
         <SelectStyled
           onChange={handleSelectChange}
           placeholder="mező"
@@ -165,6 +173,7 @@ const List = ({
           addonAfter={breakpoints.md && getParamType(state.param) === String && selectAfter}
         />
         <Button onClick={handleSearchSubmit}>Keresés</Button>
+        <Button style={{ float: 'right' }} onClick={handleResetClick}>Visszaállítás</Button>        
       </InputWrapStyled>
       <br />
       {!totalCont && !isLoading && (
@@ -176,7 +185,11 @@ const List = ({
       {!!totalCont && (
         <>
           <span><strong>Összesen: {totalCont}</strong></span>
-          <Button style={{ float: 'right' }} onClick={handleResetClick}>Visszaállítás</Button>
+          <Button
+            style={{ float: 'right' }}
+            onClick={() => setIsFilterVisible(!isFilterVisible)}>
+            {isFilterVisible ? 'Szűrés elrejtése' : 'Szűrés'}
+          </Button>
           <br /> <br />
           <Pagination
             showSizeChanger
