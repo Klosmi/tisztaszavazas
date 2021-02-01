@@ -115,7 +115,7 @@ const ResponsiveLayout = ({ children, menu = true }) => {
         <title>Tisztaszavazás</title>
         <meta property="og:title" content="Tiszta szavazás" key="title" />
         <meta property="og:description" content="Minden, amit a választásokról tudni kell." />
-        <meta property="og:image" content="/tisztaszavazas_banner.jpg" />
+        <meta property="og:image" content="https://app.tisztaszavazas.hu/tisztaszavazas-banner.jpg" />
         <meta property="og:url" content="http://app.tisztaszavazas.hu" />        
       </Head>      
       {menu && (
