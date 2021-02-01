@@ -113,6 +113,10 @@ const ResponsiveLayout = ({ children, menu = true }) => {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />      
         <title>Tisztaszavazás</title>
+        <meta property="og:title" content="Tiszta szavazás" key="title" />
+        <meta property="og:description" content="Minden, amit a választásokról tudni kell." />
+        <meta property="og:image" content="/tisztaszavazas_banner.jpg" />
+        <meta property="og:url" content="http://app.tisztaszavazas.hu" />        
       </Head>      
       {menu && (
         <SiderStyled
