@@ -41,7 +41,7 @@ const areaFixes = (data, evkName) => {
 
   for (let [evkNameSubstr, zips] of exclusions) {
     if (evkName?.includes(evkNameSubstr)){
-      return data.filter(({ irsz }) => !zips.includes(irsz))
+      return data?.filter(({ irsz }) => !zips.includes(irsz))
     }    
   }
 

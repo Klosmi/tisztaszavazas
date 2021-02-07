@@ -33,5 +33,3 @@ yarn-error.log*
 # vercel
 .vercel
 .env
-components/ZipOevkMapping/komoroZipdata.json
-components/ZipOevkMapping/sopronZipData.json
