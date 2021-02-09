@@ -172,6 +172,7 @@ const OevkResult = ({
   console.log({szavazatok})
 
   const getFilColor = ({ name }) => {
+    if (!szavazatok?.[name]?.ellenzek || !szavazatok?.[name]?.fidesz) return 'lightgray'
     return szavazatok?.[name]?.ellenzek > szavazatok?.[name]?.fidesz ? 'lightblue' : 'orange'
   }
 
