@@ -33,10 +33,6 @@ const PageHeaderStyled = styled(PageHeader)`
   padding: 16px 4px;
 `
 
-const zipDataReducer = data => data.map(({ zip, administrativeUnits }) => ({
-  zip,
-  settlementNames: administrativeUnits.map(({ name }) => name)
-}))
 
 const OevkCities = ({
   election = "ogy2018",
@@ -45,7 +41,6 @@ const OevkCities = ({
   const [selectedVk, setSelectedVk] = useState()
   const [settlements, setSettlements] = useState([])
   const [settlementResult, setSettlementResult] = useState()
-  const [zipData, setZipData] = useState()
 
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -82,23 +77,6 @@ const OevkCities = ({
     .catch(e => console.log(e))
   },[oevk, election])
 
-  useEffect(() => {
-    if (!oevk.leiras) return
-    const query = [
-      { $match: {
-        'administrativeUnits.name': { $in: settlements.map(({ település }) => település)}
-      } },
-      { $project: { polygon: 0, streets: 0 } },
-      { $limit: 800 }
-    ]
-    zipService.aggregate({ query })
-    .then(({ data }) => {
-      setZipData(zipDataReducer(data))
-    })
-    .catch(e => console.log(e))
-  },[settlements])  
-
-
   const allVks = getAllVks({ election })
 
   const [lng, lat] = oevk?.korzethatar?.coordinates[0][0] || [19, 47]
@@ -126,19 +104,16 @@ const OevkCities = ({
     szk: acc.szk + (s.szk || 0),
     "választók száma": acc["választók száma"] + s.valasztokSzama,
     település: acc.település + 1,
-    zips: '',
   }),{
     szk: 0,
     "választók száma": 0,
     település: 0,
-    zips: '',
   })
 
   const viewData = [
     ...settlements.map(({ szk,valasztokSzama, település }) => ({
       szk,
       "választók száma": valasztokSzama,
-      zips: zipData?.filter(({ settlementNames }) => settlementNames.includes(település)).map(({zip}) => zip).join(', ') || '',
       település
     })),
     summary
