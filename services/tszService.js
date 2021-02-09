@@ -105,6 +105,17 @@ const getElection = async ({ kod }) => {
   return data
 }
 
+
+const getVotes = async ({ election, query }) => {
+  const { data } = await tszGet({
+    path: '/szavazatok',
+    election,
+    data: query
+  })
+
+  return data
+}
+
 export default {
   getAllSzk,
   getById,
@@ -115,4 +126,5 @@ export default {
   tszGet,
   getCityIdByName,
   getElection,
+  getVotes,
 }
