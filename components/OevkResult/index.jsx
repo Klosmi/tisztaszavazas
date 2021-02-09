@@ -225,8 +225,8 @@ const OevkResult = ({
               ))}
             </MapBase>
             <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" />
-            <Legend stroke="#386FB300" fill="orange" text="Fidesz győzelem" />
-            <Legend stroke="#386FB300" fill="lightblue" text="Ellenzéki győzelem" />
+            <Legend stroke="#386FB300" fill="orange" text="Fidesz eredmény magasabb" />
+            <Legend stroke="#386FB300" fill="lightblue" text="Ellenzéki ('MSZP-PM', 'JOBBIK', 'DK', 'MOMENTUM', 'LMP') összesített eredmény magasabb" />
           </MapWrap>
         )}
         {viewData && (
