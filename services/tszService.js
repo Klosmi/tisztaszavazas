@@ -113,7 +113,7 @@ const getVotes = async ({ election, query }) => {
   const { data } = await tszGet({
     path: '/szavazatok',
     election,
-    data: query
+    data: { query }
   })
 
   return data

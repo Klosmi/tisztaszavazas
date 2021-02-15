@@ -55,9 +55,9 @@ const OevkResult = ({
 
   useEffect(() => {
     if (!oevk.leiras) return
-    const query = [
+    const query = `[
       { $match: {
-        "valasztokerulet.leiras": oevk.leiras,
+        "valasztokerulet.leiras": "${oevk.leiras}",
       } },
       { $group: {
           _id: "$kozigEgyseg",
@@ -72,7 +72,8 @@ const OevkResult = ({
         _id: 0,
         rank: 1      
       } }
-    ]
+    ]`
+
     tszService.aggregate({ query, election })
     .then(({ data }) => setSettlements(data))
     .catch(e => console.log(e))
@@ -88,11 +89,13 @@ const OevkResult = ({
       return
     }
 
-    const query = [
+    const s = settlements.map(({ település }) => település.replace('.ker', '. kerület'))
+
+    const query = `[
       { $match: {
-          name: { $in: settlements.map(({ település }) => település.replace('.ker', '. kerület')) }
+          name: { $in: ${JSON.stringify(s)} }
       }}
-    ]
+    ]`
 
     zipService.aggregate({ query, path: '/settlements' })
     .then(({ data }) => setSettlementResult(data))
@@ -100,7 +103,6 @@ const OevkResult = ({
   }, [settlements])
 
   useEffect(() => {
-
     const reduce = ([{ ellenzek, fidesz }]) => {
       const result = {}
       for (let { _id, szavazatok } of ellenzek){
@@ -114,30 +116,27 @@ const OevkResult = ({
     }
 
     if (!oevk.leiras) return
-    const getQuery = partok => ([
+
+    const getQuery = partok => `[
       { $match: {
-        'jeloles.jelolo.szervezet.rovidNev': { $in: partok },
+        'jeloles.jelolo.szervezet.rovidNev': { $in: ${JSON.stringify(partok)} },
         'jeloles.pozicio': "Egyéni választókerületi képviselő",
-        'szavazokor.valasztokerulet.leiras': oevk.leiras              
+        'szavazokor.valasztokerulet.leiras': "${oevk.leiras}"
       } },
       { $group: {
         _id: "$szavazokor.kozigEgyseg.kozigEgysegNeve",
         szavazatok: { $sum: "$ervenyesSzavazat" }
       } }
-    ])
+    ]`
 
     tszService.getVotes({
       election,
-      query: [
+      query: `[
         { $facet: {
-          fidesz: [
-            ...getQuery(['FIDESZ']),
-          ],
-          ellenzek: [
-            ...getQuery(['MSZP', 'JOBBIK', 'DK', 'MOMENTUM', 'LMP']),    
-          ]
+          fidesz: ${getQuery(['FIDESZ'])},
+          ellenzek: ${getQuery(['MSZP', 'JOBBIK', 'DK', 'MOMENTUM', 'LMP'])}
         }},
-      ]
+      ]`
     })
     .then(data => setSzavazatok(reduce(data)))
   }, [oevk, election])
@@ -168,8 +167,6 @@ const OevkResult = ({
     })),
     summary
   ]
-
-  console.log({szavazatok})
 
   const getFilColor = ({ name }) => {
     if (!szavazatok?.[name]?.ellenzek || !szavazatok?.[name]?.fidesz) return 'lightgray'
