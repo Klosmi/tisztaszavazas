@@ -126,17 +126,17 @@ const ZipOevkMapping = () => {
   }, [korzethatar])  
 
   useEffect(() => {
-    const query = [
+    const query = `[
       {
         $match: {
           polygon: {
             $geoIntersects: {
-              $geometry: transformed
+              $geometry: ${JSON.stringify(transformed)}
             }
           }
         }
       }
-    ]
+    ]`
 
     zipService.aggregate({ query, path: '/zipcodes' })
     .then(({ data }) => setZipResult(data))
@@ -145,9 +145,9 @@ const ZipOevkMapping = () => {
 
   useEffect(() => {
     if (!oevk.leiras) return
-    const query = [
+    const query = `[
       { $match: {
-        "valasztokerulet.leiras": oevk.leiras,
+        "valasztokerulet.leiras": "${oevk.leiras}",
       } },
       { $group: {
           _id: "$kozigEgyseg",
@@ -162,7 +162,7 @@ const ZipOevkMapping = () => {
         _id: 0,
         rank: 1      
       } }
-    ]
+    ]`
     tszService.aggregate({ query, election })
     .then(({ data }) => setSettlements(reduceSettlements(data)))
     .catch(e => console.log(e))

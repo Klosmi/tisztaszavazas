@@ -12,9 +12,9 @@ const getVkDetails = ({ leiras, election, id }) => {
       tszService.getById({ path: 'valasztokeruletek', id, election })
       .then(({ data }) => setVk(data))
     } else {
-      query = [
-        { $match: { leiras } }
-      ]
+      query = `[
+        { $match: { "${leiras}" } }
+      ]`
       tszService.aggregate({ query, election, path: '/valasztokeruletek' })
       .then(({ data }) => setVk(data[0]))
     }
