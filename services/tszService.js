@@ -9,7 +9,10 @@ const tszGet = async ({ path, data, query, election }) => {
     url,
     method: data ? 'POST' : 'GET',
     data,
-    headers: { 'x-valasztas-kodja': election }
+    headers: {
+      'x-valasztas-kodja': election,
+      'Content-Type': 'application/json'
+    }
   })
 
   return { data: d, headers }
@@ -55,7 +58,7 @@ const getSzkByAddress = async ({ city, address, houseNr }, election) => {
 const aggregate = async ({query, election, path='szavazokorok'}) => {
   return tszGet({
     path,
-    data: query,
+    data: { query },
     election
   })
 }

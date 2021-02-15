@@ -54,9 +54,9 @@ const OevkCities = ({
 
   useEffect(() => {
     if (!oevk.leiras) return
-    const query = [
+    const query = `[
       { $match: {
-        "valasztokerulet.leiras": oevk.leiras,
+        "valasztokerulet.leiras": "${oevk.leiras}",
       } },
       { $group: {
           _id: "$kozigEgyseg",
@@ -71,7 +71,7 @@ const OevkCities = ({
         _id: 0,
         rank: 1      
       } }
-    ]
+    ]`
     tszService.aggregate({ query, election })
     .then(({ data }) => setSettlements(data))
     .catch(e => console.log(e))
@@ -87,11 +87,13 @@ const OevkCities = ({
       return
     }
 
-    const query = [
+    const s = settlements.map(({ település }) => település.replace('.ker', '. kerület'))
+
+    const query = `[
       { $match: {
-          name: { $in: settlements.map(({ település }) => település.replace('.ker', '. kerület')) }
+          name: { $in: ${JSON.stringify(s)}  }
       }}
-    ]
+    ]`
 
     zipService.aggregate({ query, path: '/settlements' })
     .then(({ data }) => setSettlementResult(data))

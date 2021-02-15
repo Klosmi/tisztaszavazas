@@ -21,7 +21,7 @@ const getAllZips = async ({ skip = 0, limit = 25, query = {} }) => {
 const aggregate = ({ query, path = '/zipcodes' }) => (
   zipGet({
     path,
-    body: query,
+    body: { query },
   })
 )
 
