@@ -9,7 +9,7 @@ const getVkDetails = ({ leiras, election, id }) => {
     let query
 
     if (id){
-      tszService.getById({ path: 'valasztokeruletek', id, election })
+      tszService.getById({ path: '/valasztokeruletek', id, election })
       .then(({ data }) => setVk(data))
     } else {
       query = `[

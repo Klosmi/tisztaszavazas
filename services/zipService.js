@@ -2,7 +2,7 @@ import axios from "axios"
 import paramSerializer from './paramSerializer'
 
 const zipGet = async ({ path, body: data, query }) => {
-  const url =`/api/zip/${path}${paramSerializer(query)}`
+  const url =`/api/zip${path}${paramSerializer(query)}`
 
   const { data: d, headers } =  await axios({
     url,
