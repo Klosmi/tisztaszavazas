@@ -11,18 +11,6 @@ const containerStyle = {
   height: '600px'
 };
 
-const options = {
-  fillColor: "#386FB3",
-  strokeColor: "#386FB3",
-  fillOpacity: .3,
-  strokeOpacity: .8,
-  strokeWeight: 1,
-  clickable: false,
-  draggable: false,
-  editable: false,
-  geodesic: false,
-  zIndex: 1
-}
 
 class MapBase extends Component {
   static Marker = MarkerImport
@@ -98,11 +86,13 @@ class MapBase extends Component {
     return (
       <LoadScript
         googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY}
+        mapIds={this.props.mapId ? [this.props.mapId] : undefined}
       >
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={this.props.center}
           zoom={this.props.zoom || 15}
+          options={{ mapId: this.props.mapId }}
         >
           {this.props.children}         
         </GoogleMap>
