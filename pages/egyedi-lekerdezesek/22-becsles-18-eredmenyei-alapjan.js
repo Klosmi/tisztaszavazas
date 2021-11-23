@@ -5,17 +5,29 @@ import ResponsiveLayout from '../../components/ResponsiveLayout'
 
 const Valasztokeruletek = () => {
   const router = useRouter()
-  const { id, election, embedded, vk_id, hide_table } = router.query
+  const { pathname, query: { id, election, embedded, vk_id, hide_table } } = router
 
   const isEmbedded = embedded === 'true'
 
+  // TODO: kéne valami loading
+
+  if (isEmbedded) return (
+    <OevkResult
+      election="ogy2018"
+      isEmbedded={isEmbedded}
+      initialVkId={vk_id}
+      hideTable={hide_table}
+      pathName={pathname}
+    />    
+  )
+
   return (
-    <ResponsiveLayout menu={false} isEmbedded={isEmbedded}>
+    <ResponsiveLayout menu={false}>
       <OevkResult
         election="ogy2018"
-        isEmbedded={isEmbedded}
         initialVkId={vk_id}
         hideTable={hide_table}
+        pathName={pathname}
       />
     </ResponsiveLayout>
   )}

@@ -82,7 +82,7 @@ const SiderStyled = styled(Sider)`
   `: ''}
 `
 
-const ResponsiveLayout = ({ children, menu = true, isEmbedded }) => {
+const ResponsiveLayout = ({ children, menu = true }) => {
   const [collapsed, setCollapsed] = useState()
   const [hideIfCollapsed, setHideIfCollapsed] = useState()
 
@@ -118,7 +118,7 @@ const ResponsiveLayout = ({ children, menu = true, isEmbedded }) => {
         <meta property="og:image" content="https://app.tisztaszavazas.hu/tisztaszavazas-banner.jpg" />
         <meta property="og:url" content="http://app.tisztaszavazas.hu" />        
       </Head>      
-      {menu && !isEmbedded && (
+      {menu && (
         <SiderStyled
           trigger={null}
           collapsible
@@ -153,21 +153,19 @@ const ResponsiveLayout = ({ children, menu = true, isEmbedded }) => {
         </SiderStyled>
       )}
       <LayoutStyled>
-        {!isEmbedded && (
-          <HeaderStyled breakpoints={breakpoints} dark={!menu}>
-            {menu && (
-              React.createElement(collapsed ? MenuUnfold : MenuFold, {
-                onClick: toggle,
-              })
-            )}
-            {!menu && (
-              <LogoStyled
-                height={45}
-                minimal={collapsed}
-              />            
-            )}
-          </HeaderStyled>
-        )}
+        <HeaderStyled breakpoints={breakpoints} dark={!menu}>
+          {menu && (
+            React.createElement(collapsed ? MenuUnfold : MenuFold, {
+              onClick: toggle,
+            })
+          )}
+          {!menu && (
+            <LogoStyled
+              height={45}
+              minimal={collapsed}
+            />            
+          )}
+        </HeaderStyled>
         <ContentStyled breakpoints={breakpoints}>
           {children}
         </ContentStyled>
