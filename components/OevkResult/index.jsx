@@ -36,12 +36,19 @@ const PageHeaderStyled = styled(PageHeader)`
 
 const OevkResult = ({
   election = "ogy2018",
-  showSearch = true
+  showSearch = true,
+  isEmbedded,
+  initialVkId,
+  hideTable,
 }) => {
   const [selectedVk, setSelectedVk] = useState()
   const [settlements, setSettlements] = useState([])
   const [settlementResult, setSettlementResult] = useState()
   const [szavazatok, setSzavazatok] = useState()
+
+  useEffect(() => {
+    if (initialVkId) setSelectedVk(initialVkId)
+  }, [initialVkId])
 
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -175,6 +182,7 @@ const OevkResult = ({
 
   return (
     <>
+    {!isEmbedded && (
       <PageHeaderStyled
         title="2022-es eredménybecslés a 2018-as választási eredmények alapján"
         breadcrumb={{ routes:   [{
@@ -182,17 +190,21 @@ const OevkResult = ({
           breadcrumbName: electionDescription || '...',
         }]}}
       />
+      )}
       {showSearch && (
         <Item
         >
-          <Select
-            showSearch
-            placeholder="Választókerület keresése"
-            onSelect={setSelectedVk}
-            options={allVks?.map(({ _id: value, leiras: label }) => ({ value, label }))}
-            filterOption={optionFilter}
-            notFoundContent={<div>Betöltés...</div>}
-          />
+          {!initialVkId && (
+            <Select
+              value={selectedVk}
+              showSearch
+              placeholder="Választókerület keresése"
+              onSelect={setSelectedVk}
+              options={allVks?.map(({ _id: value, leiras: label }) => ({ value, label }))}
+              filterOption={optionFilter}
+              notFoundContent={<div>Betöltés...</div>}
+            />
+          )}
         </Item>
       )}
       <Wrap horizontal={lg}>
@@ -226,7 +238,7 @@ const OevkResult = ({
             <Legend stroke="#386FB300" fill="lightblue" text="Ellenzéki (MSZP-PM, JOBBIK, DK, MOMENTUM, LMP) összesített eredmény magasabb" />
           </MapWrap>
         )}
-        {viewData && (
+        {viewData && !hideTable && (
           <div>
             <h4>Egyéni választókerületi eredmények</h4>
             <ReactJson json={viewData} />
