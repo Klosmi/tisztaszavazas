@@ -9,7 +9,7 @@ const {
   Header: AndHeader,
 } = Layout;
 
-const Header = styled(AndHeader)`
+const AndHeaderStyled = styled(AndHeader)`
   position: fixed;
   width: 100%;
   z-index: 3;
@@ -34,11 +34,13 @@ const TokenAlert = styled.span`
   color: red;
 `
 
-export default () => (
-  <Header>
-    <LogoWrap href="/">
-      <Logo width={150} />
-    </LogoWrap>
-    <Version>{packageJson.version}</Version>
-  </Header>
-)
+export default function Header () {
+  return (
+    <AndHeaderStyled>
+      <LogoWrap href="/">
+        <Logo width={150} />
+      </LogoWrap>
+      <Version>{packageJson.version}</Version>
+    </AndHeaderStyled>
+  )
+}

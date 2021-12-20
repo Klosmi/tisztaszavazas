@@ -20,7 +20,7 @@ const { Header, Sider, Content } = Layout
 const { Item } = Menu
 
 const HeaderStyled = styled(Header)`
-  ${({ dark, breakpoints: { xs } }) => dark ? `
+  ${({ $dark, breakpoints: { xs } }) => $dark ? `
     background: #000;
     padding: 0 0 0 ${xs ? 10 : 32}px;
   ` : `
@@ -82,7 +82,7 @@ const SiderStyled = styled(Sider)`
   `: ''}
 `
 
-const ResponsiveLayout = ({ children, menu = true }) => {
+const ResponsiveLayout = ({ children, menu = true, isEmbedded = false }) => {
   const [collapsed, setCollapsed] = useState()
   const [hideIfCollapsed, setHideIfCollapsed] = useState()
 
@@ -106,6 +106,8 @@ const ResponsiveLayout = ({ children, menu = true }) => {
   }
 
   const hideMenu = hideIfCollapsed && collapsed
+
+  if (isEmbedded) return children
 
   return (
     <LayoutStyled>
@@ -152,8 +154,8 @@ const ResponsiveLayout = ({ children, menu = true }) => {
           </Menu>
         </SiderStyled>
       )}
-      <LayoutStyled>
-        <HeaderStyled breakpoints={breakpoints} dark={!menu}>
+      <>
+        <HeaderStyled breakpoints={breakpoints} $dark={!menu}>
           {menu && (
             React.createElement(collapsed ? MenuUnfold : MenuFold, {
               onClick: toggle,
@@ -169,7 +171,7 @@ const ResponsiveLayout = ({ children, menu = true }) => {
         <ContentStyled breakpoints={breakpoints}>
           {children}
         </ContentStyled>
-      </LayoutStyled>
+      </>
     </LayoutStyled>
   )
 }

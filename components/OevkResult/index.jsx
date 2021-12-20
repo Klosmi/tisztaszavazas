@@ -101,7 +101,7 @@ const OevkResult = ({
 
     const query = `[
       { $match: {
-          name: { $in: ${JSON.stringify(s)} }
+        name: { $in: ${JSON.stringify(s)} }
       }}
     ]`
 
@@ -142,7 +142,7 @@ const OevkResult = ({
       query: `[
         { $facet: {
           fidesz: ${getQuery(['FIDESZ'])},
-          ellenzek: ${getQuery(['MSZP', 'JOBBIK', 'DK', 'MOMENTUM', 'LMP'])}
+          ellenzek: ${getQuery(['MSZP', 'JOBBIK', 'DK', 'MOMENTUM', 'LMP', 'EGYUTT'])}
         }},
       ]`
     })
@@ -177,8 +177,32 @@ const OevkResult = ({
   ]
 
   const getFilColor = ({ name }) => {
-    if (!szavazatok?.[name]?.ellenzek || !szavazatok?.[name]?.fidesz) return 'lightgray'
-    return szavazatok?.[name]?.ellenzek > szavazatok?.[name]?.fidesz ? 'lightblue' : 'orange'
+    const threshold = [
+      { from: -100, to: -10, color: '#EC9035' },
+      { from: -10, to: -5, color: '#EDAC58' },
+      { from: -5, to: 0,  color: '#F7C98E' },
+      { from: 0, to: 5,   color: '#84CFE3' },
+      { from: 5, to: 10,  color: '#5D93BE' },
+      { from: 10, to: 100,  color: '#4858AE' },
+    ]
+
+    const { fidesz, ellenzek } = szavazatok?.[name] || {}
+    const ossz = fidesz + ellenzek
+    const kulonbseg = ellenzek - fidesz
+    const kulonbsegSzazalek = ossz / kulonbseg
+
+    for (const { from, to, color } of threshold){
+      if (kulonbsegSzazalek > from && kulonbsegSzazalek <= to) {
+        if (name === 'Öttömös') {
+          console.log(name, from, to, color, kulonbsegSzazalek, szavazatok?.[name])
+        }
+        return color
+      }
+    }
+    
+
+    //if (!szavazatok?.[name]?.ellenzek || !szavazatok?.[name]?.fidesz) return 'lightgray'
+    // return szavazatok?.[name]?.ellenzek > szavazatok?.[name]?.fidesz ? 'lightblue' : 'orange'
   }
 
   return (
@@ -222,7 +246,11 @@ const OevkResult = ({
               {settlementResult?.map?.(settlement => (
                 <>
                   <Polygon
-                    paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+                    paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => {
+                      if (settlement.name === 'Öttömös') {
+                        console.log({ settlement })
+                      }
+                       return ({ lng, lat })})}
                     options={{
                       fillColor: getFilColor(settlement),
                       strokeOpacity: .5,
