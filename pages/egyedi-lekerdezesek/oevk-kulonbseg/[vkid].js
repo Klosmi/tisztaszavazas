@@ -17,9 +17,6 @@ import If from '../../../components/If';
 const Wrap = styled.div`
   display: flex;
   flex-direction: ${({ horizontal }) => horizontal ? 'row' : 'column' };
-  * {
-    margin: 6px 6px 0 0;
-  }
 `
 
 const MapWrap = styled.div`
