@@ -182,10 +182,12 @@ const OevkKulonbseg = ({
                           strokeOpacity: 1,
                           strokeColor: 'black',
                           strokeWeight: 3,
+                          zIndex: 5,
                         }: {
                           strokeOpacity: .5,
                           strokeColor: '#DDD',
                           strokeWeight: 1,
+                          zIndex: 1
                         })
                       }}
                     />
