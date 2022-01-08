@@ -7,6 +7,8 @@ import {
 } from '@react-google-maps/api'
 import styled from 'styled-components';
 
+const geoJsonToPaths = coordinates => coordinates.map(polyArray => polyArray.map(([lng, lat]) => ({ lng, lat })))
+
 export const ControlPosition_LEFT_CENTER = 4
 
 const MapPlaceholder = styled.div`
@@ -71,10 +73,13 @@ MapBase.Marker = MarkerImport
 
 MapBase.SzkPolygon = ({
   options = {},
+  geometry,
+  paths,
   ...rest
-}) => (
-  <PolygonImport
-    options={{
+}) => {
+  let p = paths
+
+  const defaultOptions = {
     fillColor: "#386FB3",
     strokeColor: "#386FB3",
     fillOpacity: .3,
@@ -85,11 +90,39 @@ MapBase.SzkPolygon = ({
     editable: false,
     geodesic: false,
     zIndex: 1,
-    ...options
-    }}
-    {...rest}
-  />
-)
+  }
+  
+  if (geometry){
+    const { coordinates, type } = geometry
+    let isMulti = type === 'MultiPolygon'
+
+    if (isMulti){
+      return coordinates.map(subCoordinates => (
+        <PolygonImport
+          options={{
+          ...defaultOptions,
+          ...options
+          }}
+          paths={geoJsonToPaths(subCoordinates)}
+          {...rest}
+        />
+      ))
+    }
+
+    p = geoJsonToPaths(coordinates)
+  }
+
+  return (
+    <PolygonImport
+      options={{
+      ...defaultOptions,
+      ...options
+      }}
+      paths={p}
+      {...rest}
+    />
+  )
+}
 
 MapBase.ZipPolygon = ({
   options = {},

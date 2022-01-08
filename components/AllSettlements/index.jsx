@@ -156,7 +156,7 @@ const AllSettlements = ({
               {allSettlements.features?.map?.(({ geometry }) => (
                 <>
                   <MapBase.SzkPolygon
-                    paths={geometry.coordinates[0].map(([lng, lat]) => ({ lng, lat }))}
+                    geometry={geometry}
                   />
                 </>
               ))}
