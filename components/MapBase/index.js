@@ -97,8 +97,9 @@ MapBase.SzkPolygon = ({
     let isMulti = type === 'MultiPolygon'
 
     if (isMulti){
-      return coordinates.map(subCoordinates => (
+      return coordinates.map((subCoordinates, i) => (
         <PolygonImport
+          key={i}
           options={{
           ...defaultOptions,
           ...options
