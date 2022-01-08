@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef } from 'react'
 import {
   GoogleMap,
   LoadScript,
@@ -30,13 +30,6 @@ const MapBase = ({
   const mapRef = useRef(null)
   const mapState = useRef({ center, initialCenter: center })
 
-  useEffect(() => {
-    if (mapState.current.initialCenter !== center){
-      mapState.current.initialCenter = center
-      mapState.current.center = center
-    }
-  }, [center])
-
   const handleCenterChange = () => {
     const center = {
       lat: mapRef.current?.state.map.center.lat(),
@@ -54,7 +47,7 @@ const MapBase = ({
         <GoogleMap
           mapContainerStyle={containerStyle}
           ref={mapRef}
-          center={mapState.current.initialCenter !== center ? center : mapState.current?.center}
+          center={mapState.current?.center}
           onCenterChanged={handleCenterChange}
           zoom={zoom || 10}
           options={{
