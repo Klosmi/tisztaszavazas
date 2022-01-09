@@ -31,6 +31,23 @@ const DrawerFooter = styled.div`
   bottom: 10px;
 `
 
+const getFillColorByVoters = valasztokSzama => {
+  const threshold = [
+    { from: 0,      to: 1000,   color: '#F2F8E9' },
+    { from: 1000,   to: 2000,   color: '#def1df' },
+    { from: 2000,   to: 5000,   color: '#A4D3C1' },
+    { from: 5000,   to: 8000,   color: '#5EA0BE' },
+    { from: 8000,   to: 13000,  color: '#3879B0' },
+    { from: 13000,  to: 2000000,  color: '#28457B' },
+  ]
+
+  for (const { from, to, color } of threshold){
+    if (valasztokSzama >= from && valasztokSzama < to){
+      return color
+    }
+  }
+}
+
 const AllSettlements = ({
   election = "ogy2018",
   allSettlements,
@@ -64,12 +81,18 @@ const AllSettlements = ({
             zoom={7.5}
             mapId="85b71dbefa7b82fa"
           >
-            {allSettlements.features?.map?.(({ geometry, settlementType, _id: settlementId }) => (
+            {allSettlements.features?.map?.(({
+              geometry,
+              settlementType,
+              _id: settlementId,
+              valasztokSzama,
+            }) => (
               <MapBase.Polygon
                 key={settlementId}
                 geometry={geometry}
                 onClick={() => handleClickPolygon(settlementId)}
                 options={{
+                  fillColor: getFillColorByVoters(valasztokSzama),
                   ...(settlementId == activeSettlement?._id ? {
                     strokeOpacity: 1,
                     strokeColor: 'black',
@@ -104,7 +127,10 @@ const AllSettlements = ({
                   <p>{activeSettlement.name}</p>
                 } layout="vertical">
                   <Descriptions.Item label="Választók száma">
-                    {activeSettlement.valasztokSzama}
+                    <strong>{activeSettlement.valasztokSzama}</strong>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Megye">
+                    <strong>{activeSettlement.megyeNeve}</strong>
                   </Descriptions.Item>
                 </Descriptions>
               )}
