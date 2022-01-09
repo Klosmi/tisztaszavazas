@@ -32,7 +32,7 @@ const getStaticPropsforTelepules = async () => {
     }
   }) => ({
     ...acc,
-    [kozigEgysegNeve]: {
+    [kozigEgysegNeve?.replace('.ker', '. kerület')]: {
       szavazokorokSzama: szk,
       valasztokSzama,
       // kozigEgysegNeve,
@@ -61,7 +61,7 @@ const getStaticPropsforTelepules = async () => {
 
 module.exports = getStaticPropsforTelepules
 
-;(async () => {
-  const props = await getStaticPropsforTelepules()
-  console.log(props.props.allSettlements.features.slice(0,5))
-})()
+// ;(async () => {
+//   const props = await getStaticPropsforTelepules()
+//   console.log(props.props.allSettlements.features.slice(0,5))
+// })()
