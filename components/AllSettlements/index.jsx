@@ -65,7 +65,7 @@ const AllSettlements = ({
             mapId="85b71dbefa7b82fa"
           >
             {allSettlements.features?.map?.(({ geometry, settlementType, _id: settlementId }) => (
-              <MapBase.SzkPolygon
+              <MapBase.Polygon
                 key={settlementId}
                 geometry={geometry}
                 onClick={() => handleClickPolygon(settlementId)}

@@ -11,6 +11,40 @@ const geoJsonToPaths = coordinates => coordinates.map(polyArray => polyArray.map
 
 export const ControlPosition_LEFT_CENTER = 4
 
+export const defaultPolygonOptions = {
+  clickable: false,
+  draggable: false,
+  editable: false,
+  geodesic: false,
+  zIndex: 1,
+}
+
+export const szkPolygonOptions = {
+  ...defaultPolygonOptions,
+  fillColor: "#386FB3",
+  strokeColor: "#386FB3",
+  fillOpacity: .3,
+  strokeOpacity: .8,
+  strokeWeight: 1,
+  clickable: true,
+}
+
+export const zipPolygonOptions = {
+  ...defaultPolygonOptions,
+  fillColor: "#326B40",
+  strokeColor: "#326B40",
+  fillOpacity: .2,
+  strokeOpacity: .8,
+  strokeWeight: 2,
+}
+
+export const evkPolygonOptions = {
+  fillColor: "#FF4444",
+  strokeColor: "#FF5555",
+  strokeOpacity: .8,
+  strokeWeight: 2,
+}
+
 const MapPlaceholder = styled.div`
   height: 600px;
   width: 100%;
@@ -71,7 +105,7 @@ const MapBase = ({
 
 MapBase.Marker = MarkerImport
 
-MapBase.SzkPolygon = ({
+const Polygon = ({
   options = {},
   geometry,
   paths,
@@ -125,23 +159,29 @@ MapBase.SzkPolygon = ({
   )
 }
 
+MapBase.Polygon = Polygon
+
+MapBase.SzkPolygon = ({
+  options = {},
+  ...rest
+}) => (
+  <Polygon
+    options={{
+      ...szkPolygonOptions,
+      ...options
+    }}
+    {...rest}
+  />
+)
+
 MapBase.ZipPolygon = ({
   options = {},
   ...rest
 }) => (
-  <PolygonImport
+  <Polygon
     options={{
-      fillColor: "#326B40",
-      strokeColor: "#326B40",
-      fillOpacity: .2,
-      strokeOpacity: .8,
-      strokeWeight: 2,
-      clickable: false,
-      draggable: false,
-      editable: false,
-      geodesic: false,
-      zIndex: 1,
-    ...options
+      ...zipPolygonOptions,
+      ...options
     }}
     {...rest}
   />
@@ -152,19 +192,11 @@ MapBase.EvkPolygon = ({
   unfilled,
   ...rest
 }) => (
-  <PolygonImport
+  <Polygon
     options={{
-      fillColor: "#FF4444",
-      strokeColor: "#FF5555",
+      ...evkPolygonOptions,
+      ...options,
       fillOpacity: unfilled ? 0 : .3,
-      strokeOpacity: .8,
-      strokeWeight: 2,
-      clickable: false,
-      draggable: false,
-      editable: false,
-      geodesic: false,
-      zIndex: 1,
-    ...options
     }}
     {...rest}
   />
