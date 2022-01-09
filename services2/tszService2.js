@@ -1,5 +1,5 @@
-import axios from 'axios'
-import paramSerializer from '../services/paramSerializer'
+const axios =require( 'axios' )
+const paramSerializer =require( '../services/paramSerializer' )
 
 const tszService2 = async ({
   election,
@@ -25,4 +25,4 @@ const tszService2 = async ({
 }
 
 
-export default tszService2
+module.exports = tszService2

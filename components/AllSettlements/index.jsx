@@ -1,5 +1,4 @@
-import React, { useState, /* useEffect */ } from 'react'
-// import ReactJson from 'react-json-viewer'
+import React, { useState } from 'react'
 import {
   Drawer,
   PageHeader,
@@ -10,10 +9,7 @@ import styled from 'styled-components'
 import Legend from '../Legend'
 import useValasztas from '../../hooks/useValasztas';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
-import allSettlements from './settlementsSimplified.json'
 import TisztaszavazasLogo from '../TisztaszavazasLogo';
-
-
 
 const Wrap = styled.div`
   display: flex;
@@ -37,7 +33,10 @@ const DrawerFooter = styled.div`
 
 const AllSettlements = ({
   election = "ogy2018",
+  allSettlements,
 }) => {
+  if (!allSettlements?.features) return null
+
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
   const { lg } = useBreakpoint()
@@ -102,10 +101,11 @@ const AllSettlements = ({
             >
               {activeSettlement && (
                 <Descriptions column={1} title={
-                  <>
-                    <p>{activeSettlement.name}</p>
-                  </>
+                  <p>{activeSettlement.name}</p>
                 } layout="vertical">
+                  <Descriptions.Item label="Választók száma">
+                    {activeSettlement.valasztokSzama}
+                  </Descriptions.Item>
                 </Descriptions>
               )}
               <DrawerFooter>

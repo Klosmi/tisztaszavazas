@@ -13,4 +13,4 @@ const paramSerializer = (query = {}) => {
   }, params.length ? '?' : '') 
 }
 
-export default paramSerializer
+module.exports = paramSerializer
