@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useReducer } from 'react'
 import {
   Drawer,
   PageHeader,
@@ -10,6 +10,7 @@ import Legend from '../Legend'
 import useValasztas from '../../hooks/useValasztas';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import TisztaszavazasLogo from '../TisztaszavazasLogo';
+import reducer, { initialState } from './reducer';
 
 const Wrap = styled.div`
   display: flex;
@@ -31,25 +32,33 @@ const DrawerFooter = styled.div`
   bottom: 10px;
 `
 
-const getFillColorByVoters = valasztokSzama => {
+const getFillColor = ({
+  numberOfVoters,
+  isCountrySelected
+}) => {
+  const baseColor = isCountrySelected ? `#FF0000` : `#28457B`
+
   const threshold = [
-    { from: 0,      to: 1000,   color: '#F2F8E9' },
-    { from: 1000,   to: 2000,   color: '#def1df' },
-    { from: 2000,   to: 5000,   color: '#A4D3C1' },
-    { from: 5000,   to: 8000,   color: '#5EA0BE' },
-    { from: 8000,   to: 13000,  color: '#3879B0' },
-    { from: 13000,  to: 2000000,  color: '#28457B' },
+    { from: 0,      to: 1000,   color: `${baseColor}40` },
+    { from: 1000,   to: 2000,   color: `${baseColor}60` },
+    { from: 2000,   to: 5000,   color: `${baseColor}80` },
+    { from: 5000,   to: 8000,   color: `${baseColor}AA` },
+    { from: 8000,   to: 13000,  color: `${baseColor}CC` },
+    { from: 13000,  to: 500000, color: `${baseColor}FF` },
   ]
 
   for (const { from, to, color } of threshold){
-    if (valasztokSzama >= from && valasztokSzama < to){
+    if (numberOfVoters >= from && numberOfVoters < to){
       return color
     }
   }
+  return 'red'
 }
 
 const AllSettlements = ({
   election = "ogy2018",
+  aggregatedElectionResultsObject,
+  votersNumberDataObject,
   allSettlements,
 }) => {
   if (!allSettlements?.features) return null
@@ -59,11 +68,17 @@ const AllSettlements = ({
   const { lg } = useBreakpoint()
 
   const [activeSettlement, setActiveSettlement] = useState(null)
+  const [state, dispatch] = useReducer(reducer, initialState)
+
 
   const handleClickPolygon = (settlementId) => {
     const settlement = allSettlements.features.find(({ _id }) => _id === settlementId)  
     setActiveSettlement(settlement)
   }
+
+  const votersNumberData = votersNumberDataObject?.[activeSettlement?.name] || {}
+
+  console.log(state)
 
   return (
     <>
@@ -82,17 +97,20 @@ const AllSettlements = ({
             mapId="85b71dbefa7b82fa"
           >
             {allSettlements.features?.map?.(({
+              name,
               geometry,
               settlementType,
               _id: settlementId,
-              valasztokSzama,
             }) => (
               <MapBase.Polygon
                 key={settlementId}
                 geometry={geometry}
                 onClick={() => handleClickPolygon(settlementId)}
                 options={{
-                  fillColor: getFillColorByVoters(valasztokSzama),
+                  fillColor: getFillColor({
+                    numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
+                    isCountrySelected: votersNumberData?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
+                  }),
                   ...(settlementId == activeSettlement?._id ? {
                     strokeOpacity: 1,
                     strokeColor: 'black',
@@ -127,10 +145,13 @@ const AllSettlements = ({
                   <p>{activeSettlement.name}</p>
                 } layout="vertical">
                   <Descriptions.Item label="Választók száma">
-                    <strong>{activeSettlement.valasztokSzama}</strong>
+                    <strong>{votersNumberData?.valasztokSzama}</strong>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Szavazókörök száma">
+                    <strong>{votersNumberData?.szavazokorokSzama}</strong>
                   </Descriptions.Item>
                   <Descriptions.Item label="Megye">
-                    <strong>{activeSettlement.megyeNeve}</strong>
+                    <strong>{votersNumberData?.megyeNeve}</strong>
                   </Descriptions.Item>
                 </Descriptions>
               )}

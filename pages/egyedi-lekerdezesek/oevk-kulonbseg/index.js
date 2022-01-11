@@ -43,7 +43,7 @@ const OevkKulonbseg = ({
   )
 }
 
-export async function getStaticProps() {
+export async function X_getStaticProps() {
   let vkList
   let pageError = null
 

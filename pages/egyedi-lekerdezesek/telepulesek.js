@@ -5,10 +5,16 @@ import getStaticPropsforTelepules from '../../serverSideScripts/getStaticPropsfo
 
 const TelepulesekPage = ({
   allSettlements,
+  aggregatedElectionResultsObject,
+  votersNumberDataObject,
 }) => {
   return (
     <ResponsiveLayout menu={false}>
-      <AllSettlements allSettlements={allSettlements} />
+      <AllSettlements
+        allSettlements={allSettlements}
+        aggregatedElectionResultsObject={aggregatedElectionResultsObject}
+        votersNumberDataObject={votersNumberDataObject}      
+      />
     </ResponsiveLayout>
   )
 }
