@@ -29,8 +29,14 @@ const HeaderStyled = styled(Header)`
   ` }; 
 `
 
-const LogoStyled = styled(Logo)`
+const LogoStyled = styled(Logo).attrs({
+  $horizontal: true,
+  height: 40,
+  })`
   margin: 12px 0 0 6px;
+  #text path, #pupil {
+    fill: white;
+  }
 `
 
 const menuStyle = `
@@ -127,7 +133,6 @@ const ResponsiveLayout = ({ children, menu = true, isEmbedded = false }) => {
           zerowidth={hideMenu}
           collapsed={collapsed}>
           <LogoStyled
-            height={45}
             minimal={collapsed}
           />
           <Menu
