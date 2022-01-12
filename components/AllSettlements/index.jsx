@@ -10,7 +10,13 @@ import Legend from '../Legend'
 import useValasztas from '../../hooks/useValasztas';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import TisztaszavazasLogo from '../TisztaszavazasLogo';
-import reducer, { initialState } from './reducer';
+import reducer, {
+  initialState,
+  mapStateToValues,
+  ADD_TO_OEVK,
+  TOGGLE_ACTIVE_SETTLEMENT
+} from './reducer';
+import { useMemo } from 'react';
 
 const Wrap = styled.div`
   display: flex;
@@ -30,6 +36,11 @@ const TisztaszavazasLogoStyled = styled(TisztaszavazasLogo).attrs({ width: 140 }
 const DrawerFooter = styled.div`
   position: absolute;
   bottom: 10px;
+`
+
+const OevkSetter = styled.ul`
+  list-style: none;
+  padding-left: 0;
 `
 
 const getFillColor = ({
@@ -59,26 +70,39 @@ const AllSettlements = ({
   election = "ogy2018",
   aggregatedElectionResultsObject,
   votersNumberDataObject,
-  allSettlements,
+  allSettlements: initialAllSettlements,
 }) => {
-  if (!allSettlements?.features) return null
-
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
   const { lg } = useBreakpoint()
 
-  const [activeSettlement, setActiveSettlement] = useState(null)
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    allSettlements: initialAllSettlements
+  })
 
+  const {
+    activeSettlement,
+    allSettlements
+  } = useMemo(() => mapStateToValues(state), [state])
+
+  if (!allSettlements?.features) return null  
 
   const handleClickPolygon = (settlementId) => {
-    const settlement = allSettlements.features.find(({ _id }) => _id === settlementId)  
-    setActiveSettlement(settlement)
+    dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
   }
 
   const votersNumberData = votersNumberDataObject?.[activeSettlement?.name] || {}
 
   console.log(state)
+
+  const handleAddToOevk = (oevkNum) => {
+    dispatch({ type: ADD_TO_OEVK, payload: ({
+      settlementName: activeSettlement.name,
+      // countyShort: activeSettlement.country,
+      oevkNum
+    }) })
+  }
 
   return (
     <>
@@ -96,7 +120,7 @@ const AllSettlements = ({
             zoom={7.5}
             mapId="85b71dbefa7b82fa"
           >
-            {allSettlements.features?.map?.(({
+            {state.allSettlements.features?.map?.(({
               name,
               geometry,
               settlementType,
@@ -155,6 +179,16 @@ const AllSettlements = ({
                   </Descriptions.Item>
                 </Descriptions>
               )}
+              <OevkSetter>
+                <li>
+                  <button
+                    onClick={() => handleAddToOevk(1)}
+                    >
+                    1
+                  </button>
+                </li>
+              </OevkSetter>
+              
               <DrawerFooter>
                 <TisztaszavazasLogoStyled />
               </DrawerFooter>
