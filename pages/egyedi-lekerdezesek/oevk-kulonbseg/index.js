@@ -43,7 +43,7 @@ const OevkKulonbseg = ({
   )
 }
 
-export async function X_getStaticProps() {
+export async function getStaticProps() {
   let vkList
   let pageError = null
 
@@ -62,7 +62,7 @@ export async function X_getStaticProps() {
   return {
     props: {
       pageError,
-      vkList,
+      vkList: vkList.slice(0,3),
     }
   }
 }

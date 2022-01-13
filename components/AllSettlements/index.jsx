@@ -13,7 +13,7 @@ import TisztaszavazasLogo from '../TisztaszavazasLogo';
 import reducer, {
   initialState,
   mapStateToValues,
-  ADD_TO_OEVK,
+  TOGGLE_SETTLEMENT_TO_OEVK,
   TOGGLE_ACTIVE_SETTLEMENT
 } from './reducer';
 import { useMemo } from 'react';
@@ -38,9 +38,14 @@ const DrawerFooter = styled.div`
   bottom: 10px;
 `
 
-const OevkSetter = styled.ul`
-  list-style: none;
-  padding-left: 0;
+const OevkSetter = styled.table`
+  td, th {
+    padding: 4px;
+  }
+`
+
+const OevkButton = styled.button`
+  cursor: pointer;
 `
 
 const getFillColor = ({
@@ -70,7 +75,8 @@ const AllSettlements = ({
   election = "ogy2018",
   aggregatedElectionResultsObject,
   votersNumberDataObject,
-  allSettlements: initialAllSettlements,
+  allSettlements,
+  countiesAndOevks,
 }) => {
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -78,12 +84,15 @@ const AllSettlements = ({
 
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    allSettlements: initialAllSettlements
+    allSettlements,
+    votersNumberDataObject,
+    countiesAndOevks,
   })
 
   const {
     activeSettlement,
-    allSettlements
+    oevkAggregatedFidesz,
+    activeSettlementVotersNumer,
   } = useMemo(() => mapStateToValues(state), [state])
 
   if (!allSettlements?.features) return null  
@@ -91,17 +100,15 @@ const AllSettlements = ({
   const handleClickPolygon = (settlementId) => {
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
   }
-
-  const votersNumberData = votersNumberDataObject?.[activeSettlement?.name] || {}
+  
+  const handleClickDrawerClose = () => {
+    dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: {} })
+  }
 
   console.log(state)
 
-  const handleAddToOevk = (oevkNum) => {
-    dispatch({ type: ADD_TO_OEVK, payload: ({
-      settlementName: activeSettlement.name,
-      // countyShort: activeSettlement.country,
-      oevkNum
-    }) })
+  const handleAddToOevk = oevkNum => {
+    dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkNum } })
   }
 
   return (
@@ -120,7 +127,7 @@ const AllSettlements = ({
             zoom={7.5}
             mapId="85b71dbefa7b82fa"
           >
-            {state.allSettlements.features?.map?.(({
+            {allSettlements.features?.map?.(({
               name,
               geometry,
               settlementType,
@@ -133,7 +140,7 @@ const AllSettlements = ({
                 options={{
                   fillColor: getFillColor({
                     numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
-                    isCountrySelected: votersNumberData?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
+                    isCountrySelected: activeSettlementVotersNumer?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
                   }),
                   ...(settlementId == activeSettlement?._id ? {
                     strokeOpacity: 1,
@@ -160,7 +167,7 @@ const AllSettlements = ({
         </MapWrap>
         <Drawer
             visible={!!activeSettlement}
-            onClose={() => setActiveSettlement(null)}
+            onClose={handleClickDrawerClose}
             maskClosable={false}
             mask={false}
             >
@@ -169,24 +176,38 @@ const AllSettlements = ({
                   <p>{activeSettlement.name}</p>
                 } layout="vertical">
                   <Descriptions.Item label="Választók száma">
-                    <strong>{votersNumberData?.valasztokSzama}</strong>
+                    <strong>{activeSettlementVotersNumer?.valasztokSzama}</strong>
                   </Descriptions.Item>
                   <Descriptions.Item label="Szavazókörök száma">
-                    <strong>{votersNumberData?.szavazokorokSzama}</strong>
+                    <strong>{activeSettlementVotersNumer?.szavazokorokSzama}</strong>
                   </Descriptions.Item>
                   <Descriptions.Item label="Megye">
-                    <strong>{votersNumberData?.megyeNeve}</strong>
+                    <strong>{activeSettlementVotersNumer?.megyeNeve}</strong>
                   </Descriptions.Item>
                 </Descriptions>
               )}
               <OevkSetter>
-                <li>
-                  <button
-                    onClick={() => handleAddToOevk(1)}
-                    >
-                    1
-                  </button>
-                </li>
+                <thead>
+                  <tr>
+                    <th />
+                    <th>Fidesz</th>
+                    <th>Ellenzék</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <OevkButton
+                        onClick={() => handleAddToOevk(1)}
+                        >
+                        1
+                      </OevkButton>
+                    </td>
+                    <td>
+                      {oevkAggregatedFidesz}
+                    </td>
+                  </tr>
+                </tbody>
               </OevkSetter>
               
               <DrawerFooter>

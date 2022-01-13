@@ -2,6 +2,7 @@ import React from 'react'
 import ResponsiveLayout from '../../components/ResponsiveLayout';
 import AllSettlements from '../../components/AllSettlements';
 import getStaticPropsforTelepules from '../../serverSideScripts/getStaticPropsforTelepules'
+import countiesAndOevks from '../../data/countiesAndOevks.json'
 
 const TelepulesekPage = ({
   allSettlements,
@@ -13,7 +14,8 @@ const TelepulesekPage = ({
       <AllSettlements
         allSettlements={allSettlements}
         aggregatedElectionResultsObject={aggregatedElectionResultsObject}
-        votersNumberDataObject={votersNumberDataObject}      
+        votersNumberDataObject={votersNumberDataObject}
+        countiesAndOevks={countiesAndOevks}
       />
     </ResponsiveLayout>
   )

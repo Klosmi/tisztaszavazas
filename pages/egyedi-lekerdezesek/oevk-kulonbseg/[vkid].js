@@ -258,7 +258,7 @@ const OevkKulonbseg = ({
   )
 }
 
-export async function X_getStaticProps({ params: { vkid } }) {
+export async function getStaticProps({ params: { vkid } }) {
   let vkList
   let pageError = null
   let settlements
@@ -402,7 +402,7 @@ export async function X_getStaticProps({ params: { vkid } }) {
 }
 
 
-export async function X_getStaticPaths() {
+export async function getStaticPaths() {
   let vkList
 
   ;({ data: vkList } = await tszService2({
@@ -414,7 +414,7 @@ export async function X_getStaticPaths() {
   // vkList = vkList.slice(0, 3)
 
   return {
-    paths: vkList.map(({ _id }) => ({ params: { vkid: _id } }) ),
+    paths: vkList.slice(0,3).map(({ _id }) => ({ params: { vkid: _id } }) ),
     fallback: false,
   }
 }
