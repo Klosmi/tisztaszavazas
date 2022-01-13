@@ -73,7 +73,7 @@ const getFillColor = ({
 
 const AllSettlements = ({
   election = "ogy2018",
-  aggregatedElectionResultsObject,
+  szavazatokTelepulesenkent,
   votersNumberDataObject,
   allSettlements,
   countiesAndOevks,
@@ -87,12 +87,14 @@ const AllSettlements = ({
     allSettlements,
     votersNumberDataObject,
     countiesAndOevks,
+    szavazatokTelepulesenkent,
   })
 
   const {
     activeSettlement,
     oevkAggregatedFidesz,
     activeSettlementVotersNumer,
+    oevkAggregations,
   } = useMemo(() => mapStateToValues(state), [state])
 
   if (!allSettlements?.features) return null  
@@ -106,6 +108,7 @@ const AllSettlements = ({
   }
 
   console.log(state)
+  console.log(oevkAggregations)
 
   const handleAddToOevk = oevkNum => {
     dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkNum } })

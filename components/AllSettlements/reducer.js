@@ -5,11 +5,44 @@ export const initialState = {
   activeSettlement: null,
   allSettlements: [],
   countiesAndOevks: [],
+  szavazatokTelepulesenkent: {},
   settlementOevkGroupping: {
-    'Hejő': [5, 1],
-    'Keszi': [5, 1],
+    'Bajót': [5, 1],
+    'Bak': [5, 1],
   },
 
+}
+
+const getOevkAggregations = ({
+  settlementOevkGroupping,
+  szavazatokTelepulesenkent,
+  countiesAndOevks,
+  votersNumberDataObject,
+}) => {
+  const oevkAggregations = {}
+
+  for (const [settlementName, [countyCode, oevkNum]] of Object.entries(settlementOevkGroupping)) {
+    const {
+      ellenzek = 0,
+      fidesz = 0,
+      osszes = 0
+    } = szavazatokTelepulesenkent[settlementName] || {}
+
+    const {
+      valasztokSzama
+    } = votersNumberDataObject[settlementName]
+
+    const oevkId = `${countyCode}|${oevkNum}`
+
+    oevkAggregations[oevkId] = {
+      ellenzek: (oevkAggregations[oevkId]?.ellenzek || 0) + ellenzek,
+      fidesz: (oevkAggregations[oevkId]?.fidesz || 0) + fidesz,
+      osszes: (oevkAggregations[oevkId]?.osszes || 0) + osszes,
+      valasztokSzama: (oevkAggregations[oevkId]?.valasztokSzama || 0) + valasztokSzama,
+    }
+  }
+
+  return oevkAggregations
 }
 
 export const mapStateToValues = state => {
@@ -19,33 +52,33 @@ export const mapStateToValues = state => {
     [state.activeSettlement?.name]
   ) || {}
 
+  const oevkAggregations = getOevkAggregations({
+    settlementOevkGroupping: state.settlementOevkGroupping,
+    szavazatokTelepulesenkent: state.szavazatokTelepulesenkent,
+    countiesAndOevks: state.countiesAndOevks,
+    votersNumberDataObject: state.votersNumberDataObject,
+  })
 
-  // const oevkAggregations = {}
-
-  // for (const [countryCode, oevkNum] of Object.values(settlementOevkGroupping)) {
-  //   countiesAndOevks.find(({ megyeKod }) => megyeKod === countryCode)
+  // const oevkAggregations = {
+  //   'Borsod-Abaúj-Zemplén|1': { fidesz: 556, ellenzek: 334 },
   // }
-
-  const oevkAggregations = {
-    'Borsod-Abaúj-Zemplén|1': { fidesz: 556, ellenzek: 334 },
-  }
 
   return {
     activeSettlement: state.activeSettlement,
     allSettlements: state.allSettlements,
     activeSettlementVotersNumer,
-    oevkAggregations,
+    oevkAggregations
   }
 }
 
 const getGroupping = (state, payload) => {
   const settlementName = state.activeSettlement.name
-  const countryCode = state.votersNumberDataObject[settlementName].megyeKod
+  const countyCode = state.votersNumberDataObject[settlementName].megyeKod
   const oevkNum = payload.oevkNum
 
   return ({
     ...state.settlementOevkGroupping,
-    [settlementName]: [countryCode, oevkNum]
+    [settlementName]: [countyCode, oevkNum]
   })
 }
 

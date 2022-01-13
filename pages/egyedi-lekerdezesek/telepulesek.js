@@ -6,16 +6,16 @@ import countiesAndOevks from '../../data/countiesAndOevks.json'
 
 const TelepulesekPage = ({
   allSettlements,
-  aggregatedElectionResultsObject,
   votersNumberDataObject,
+  szavazatokTelepulesenkent,
 }) => {
   return (
     <ResponsiveLayout menu={false}>
       <AllSettlements
         allSettlements={allSettlements}
-        aggregatedElectionResultsObject={aggregatedElectionResultsObject}
         votersNumberDataObject={votersNumberDataObject}
         countiesAndOevks={countiesAndOevks}
+        szavazatokTelepulesenkent={szavazatokTelepulesenkent}
       />
     </ResponsiveLayout>
   )
