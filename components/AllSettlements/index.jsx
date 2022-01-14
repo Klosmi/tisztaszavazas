@@ -76,7 +76,7 @@ const AllSettlements = ({
   szavazatokTelepulesenkent,
   votersNumberDataObject,
   allSettlements,
-  countiesAndOevks,
+  countiesAndOevksObject,
 }) => {
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -86,16 +86,22 @@ const AllSettlements = ({
     ...initialState,
     allSettlements,
     votersNumberDataObject,
-    countiesAndOevks,
+    countiesAndOevksObject,
     szavazatokTelepulesenkent,
   })
 
   const {
     activeSettlement,
-    oevkAggregatedFidesz,
     activeSettlementVotersNumer,
     oevkAggregations,
+    nrOfOevksInActiveCounty,
   } = useMemo(() => mapStateToValues(state), [state])
+
+  console.log({
+    activeSettlement,
+    activeSettlementVotersNumer,
+    nrOfOevksInActiveCounty,
+  })
 
   if (!allSettlements?.features) return null  
 
@@ -108,7 +114,6 @@ const AllSettlements = ({
   }
 
   console.log(state)
-  console.log(oevkAggregations)
 
   const handleAddToOevk = oevkNum => {
     dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkNum } })
@@ -193,8 +198,7 @@ const AllSettlements = ({
                 <thead>
                   <tr>
                     <th />
-                    <th>Fidesz</th>
-                    <th>Ellenzék</th>
+                    <th>Szavazók száma</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -207,7 +211,7 @@ const AllSettlements = ({
                       </OevkButton>
                     </td>
                     <td>
-                      {oevkAggregatedFidesz}
+
                     </td>
                   </tr>
                 </tbody>

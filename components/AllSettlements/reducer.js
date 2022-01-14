@@ -16,7 +16,6 @@ export const initialState = {
 const getOevkAggregations = ({
   settlementOevkGroupping,
   szavazatokTelepulesenkent,
-  countiesAndOevks,
   votersNumberDataObject,
 }) => {
   const oevkAggregations = {}
@@ -45,6 +44,14 @@ const getOevkAggregations = ({
   return oevkAggregations
 }
 
+const getNrOfOevksInActiveCounty = ({
+  activeSettlementVotersNumer,
+  countiesAndOevksObject
+}) => {
+  const nrOfOevksInActiveCounty = countiesAndOevksObject[activeSettlementVotersNumer?.megyeKod]?.nrOfOevks
+  return nrOfOevksInActiveCounty
+}
+
 export const mapStateToValues = state => {
   const activeSettlementVotersNumer = (
     state.
@@ -55,8 +62,13 @@ export const mapStateToValues = state => {
   const oevkAggregations = getOevkAggregations({
     settlementOevkGroupping: state.settlementOevkGroupping,
     szavazatokTelepulesenkent: state.szavazatokTelepulesenkent,
-    countiesAndOevks: state.countiesAndOevks,
     votersNumberDataObject: state.votersNumberDataObject,
+    // selectedOevkId: state.
+  })
+
+  const nrOfOevksInActiveCounty = getNrOfOevksInActiveCounty({
+    activeSettlementVotersNumer,
+    countiesAndOevksObject: state.countiesAndOevksObject,
   })
 
   // const oevkAggregations = {
@@ -67,7 +79,8 @@ export const mapStateToValues = state => {
     activeSettlement: state.activeSettlement,
     allSettlements: state.allSettlements,
     activeSettlementVotersNumer,
-    oevkAggregations
+    oevkAggregations,
+    nrOfOevksInActiveCounty
   }
 }
 
