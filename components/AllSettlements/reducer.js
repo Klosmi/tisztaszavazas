@@ -110,6 +110,7 @@ export const mapStateToValues = state => {
     oevkAggregations,
     activeCountyOevkData,
     winnedOevks,
+    settlementOevkGroupping: state.settlementOevkGroupping,
   }
 }
 

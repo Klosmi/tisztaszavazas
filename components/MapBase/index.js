@@ -23,7 +23,7 @@ export const szkPolygonOptions = {
   ...defaultPolygonOptions,
   fillColor: "#386FB3",
   strokeColor: "#386FB3",
-  fillOpacity: .3,
+  fillOpacity: .6,
   strokeOpacity: .8,
   strokeWeight: 1,
   clickable: true,
@@ -115,8 +115,8 @@ const Polygon = ({
 
   const defaultOptions = {
     fillColor: "#386FB3",
-    strokeColor: "#386FB3",
-    fillOpacity: .3,
+    strokeColor: "#AAAAAA",
+    fillOpacity: .8,
     strokeOpacity: .8,
     strokeWeight: 1,
     clickable: true,

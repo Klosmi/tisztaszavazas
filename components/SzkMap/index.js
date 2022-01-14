@@ -12,7 +12,7 @@ const containerStyle = {
 const options = {
   fillColor: "#386FB3",
   strokeColor: "#386FB3",
-  fillOpacity: .3,
+  fillOpacity: .6,
   strokeOpacity: .8,
   strokeWeight: 1,
   clickable: false,

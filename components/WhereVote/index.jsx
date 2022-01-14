@@ -374,8 +374,6 @@ const WhereVote = ({ onSzavazokorClick, election }) => {
     </RowWrap>
   )
 
-console.log({state})
-
   return (
     <>
       <PageHeaderStyled

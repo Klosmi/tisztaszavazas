@@ -60,28 +60,31 @@ const WinnedWrap = styled.div`
   }
 `
 
+const VoterNumTd = styled.td`
+  text-align: right;
+`
 
 const getFillColor = ({
   numberOfVoters,
-  isCountrySelected
+  isCountrySelected,
+  isInSelectedOevk,
 }) => {
-  const baseColor = isCountrySelected ? `#FF0000` : `#28457B`
 
-  const threshold = [
-    { from: 0,      to: 1000,   color: `${baseColor}40` },
-    { from: 1000,   to: 2000,   color: `${baseColor}60` },
-    { from: 2000,   to: 5000,   color: `${baseColor}80` },
-    { from: 5000,   to: 8000,   color: `${baseColor}AA` },
-    { from: 8000,   to: 13000,  color: `${baseColor}CC` },
-    { from: 13000,  to: 500000, color: `${baseColor}FF` },
-  ]
+  if (isInSelectedOevk) console.log('isInSelectedOevk', isInSelectedOevk)
 
-  for (const { from, to, color } of threshold){
-    if (numberOfVoters >= from && numberOfVoters < to){
-      return color
-    }
-  }
-  return 'red'
+  const baseColor =
+    isInSelectedOevk  ? `#8b2801` :
+    isCountrySelected ? `#28457B` : 
+                        `#bdbd4b`
+
+  return  (
+    numberOfVoters > 13000 ? `${baseColor}B4` :
+    numberOfVoters > 8000  ? `${baseColor}A1` :
+    numberOfVoters > 5000  ? `${baseColor}80` :
+    numberOfVoters > 2000  ? `${baseColor}60` :
+    numberOfVoters > 1000  ? `${baseColor}40` :
+                             `${baseColor}20` 
+  )
 }
 
 const AllSettlements = ({
@@ -110,6 +113,7 @@ const AllSettlements = ({
     activeCountyOevkData,
     activeSettlementOevkId,
     winnedOevks,
+    settlementOevkGroupping,
   } = useMemo(() => mapStateToValues(state), [state])
 
   console.log({
@@ -131,7 +135,7 @@ const AllSettlements = ({
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: {} })
   }
 
-  console.log(state)
+  // console.log(state)
 
   const handleAddToOevk = oevkId => {
     dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkId } })
@@ -167,6 +171,7 @@ const AllSettlements = ({
                   fillColor: getFillColor({
                     numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
                     isCountrySelected: activeSettlementVotersNumer?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
+                    isInSelectedOevk: activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId,
                   }),
                   ...(settlementId == activeSettlement?._id ? {
                     strokeOpacity: 1,
@@ -175,7 +180,7 @@ const AllSettlements = ({
                     zIndex: 5,
                   }: {
                     strokeOpacity: .5,
-                    strokeColor: "#386FB3",
+                    strokeColor: "#999999",
                     strokeWeight: 1,
                     zIndex: 1
                   }),
@@ -224,26 +229,31 @@ const AllSettlements = ({
                   <Descriptions.Item label="Megye">
                     <strong>{activeSettlementVotersNumer?.megyeNeve}</strong>
                   </Descriptions.Item>
-                <Descriptions.Item label="Település elhelyezése">
+                <Descriptions.Item label="Melyik OEVK-ba kerüljön a település?">
                 <OevkSetter>
                   <thead>
                     <tr>
-                      <th colspan="2">Szavazók száma</th>
+                      <th>OEVK</th>
+                      <th>Szavazó</th>
+                      <th />
                     </tr>
                   </thead>
                   <tbody>
                     {activeCountyOevkData?.oevkIds.map(oevkId => (
                       <tr key={oevkId}>
                         <td>
-                          <OevkButton
+                          {oevkId.split('|')[1]}
+                        </td>
+                        <VoterNumTd>
+                          {oevkAggregations[oevkId]?.valasztokSzama || 0}
+                        </VoterNumTd>
+                        <td>
+                        <OevkButton
                             $highlighted={oevkId === activeSettlementOevkId}
                             onClick={() => handleAddToOevk(oevkId)}
                             >
-                            {oevkId.split('|')[1]}
+                            Ebbe
                           </OevkButton>
-                        </td>
-                        <td>
-                          {oevkAggregations[oevkId]?.valasztokSzama || 0}
                         </td>
                       </tr>
                     ))}
