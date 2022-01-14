@@ -32,5 +32,5 @@ module.exports = getStaticPropsforTelepules
 //   console.log(objFirstElems(props.props.aggregatedElectionResultsObject, 5))
 //   console.log(objFirstElems(props.props.votersNumberDataObject, 5))
 //   console.log(props.props.allSettlements.features.slice(0,5))
-  console.log(props.props.countiesAndOevksObject)
+  // console.log(props.props.countiesAndOevksObject)
 })()

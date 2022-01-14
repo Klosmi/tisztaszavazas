@@ -79,7 +79,6 @@ const getCityList = async ({ citySubstr, election }) => {
 }
 
 const getCityIdByName = async ({ cityName, election }) => {
-  console.log({cityName})
   let { data } = await tszGet({
     path: '/kozigegysegek',
     query: { kozigEgysegNeve: cityName },

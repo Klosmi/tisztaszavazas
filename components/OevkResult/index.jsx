@@ -244,10 +244,8 @@ const OevkResult = ({
                 <>
                   <Polygon
                     paths={settlement?.boundaries?.coordinates[0].map(([lng, lat]) => {
-                      if (settlement.name === 'Öttömös') {
-                        console.log({ settlement })
-                      }
-                       return ({ lng, lat })})}
+                      return ({ lng, lat })})
+                    }
                     options={{
                       fillColor: getFilColor(settlement),
                       strokeOpacity: .5,
