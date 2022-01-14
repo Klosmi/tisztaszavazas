@@ -44,12 +44,23 @@ const getOevkAggregations = ({
   return oevkAggregations
 }
 
-const getNrOfOevksInActiveCounty = ({
+const getActiveCountyOevkData = ({
   activeSettlementVotersNumer,
   countiesAndOevksObject
 }) => {
-  const nrOfOevksInActiveCounty = countiesAndOevksObject[activeSettlementVotersNumer?.megyeKod]?.nrOfOevks
-  return nrOfOevksInActiveCounty
+  const activeCountyOevkData = countiesAndOevksObject[activeSettlementVotersNumer?.megyeKod]
+  return activeCountyOevkData
+}
+
+const getActiveSettlementOevkId = ({
+  settlementOevkGroupping,
+  activeSettlement,
+}) => {
+  const activeSettlementOevkId = (
+    settlementOevkGroupping[activeSettlement?.name]?.
+    join('|')
+  )
+  return activeSettlementOevkId
 }
 
 export const mapStateToValues = state => {
@@ -66,11 +77,16 @@ export const mapStateToValues = state => {
     // selectedOevkId: state.
   })
 
-  const nrOfOevksInActiveCounty = getNrOfOevksInActiveCounty({
+  const activeCountyOevkData = getActiveCountyOevkData({
     activeSettlementVotersNumer,
     countiesAndOevksObject: state.countiesAndOevksObject,
   })
 
+
+  const activeSettlementOevkId = getActiveSettlementOevkId({
+    settlementOevkGroupping: state.settlementOevkGroupping,
+    activeSettlement: state.activeSettlement,
+  })
   // const oevkAggregations = {
   //   'Borsod-Abaúj-Zemplén|1': { fidesz: 556, ellenzek: 334 },
   // }
@@ -79,23 +95,23 @@ export const mapStateToValues = state => {
     activeSettlement: state.activeSettlement,
     allSettlements: state.allSettlements,
     activeSettlementVotersNumer,
+    activeSettlementOevkId,
     oevkAggregations,
-    nrOfOevksInActiveCounty
+    activeCountyOevkData,
   }
 }
 
-const getGroupping = (state, payload) => {
+const getGroupping = (state, { oevkId }) => {
   const settlementName = state.activeSettlement.name
-  const countyCode = state.votersNumberDataObject[settlementName].megyeKod
-  const oevkNum = payload.oevkNum
 
   return ({
     ...state.settlementOevkGroupping,
-    [settlementName]: [countyCode, oevkNum]
+    [settlementName]: oevkId.split('|').map(n => parseInt(n))
   })
 }
 
 const reducer = (state, { type, payload }) => {
+  console.log(payload)
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
       ...state,

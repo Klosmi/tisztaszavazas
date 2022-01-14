@@ -33,6 +33,7 @@ const PageHeaderStyled = styled(PageHeader)`
 
 const TisztaszavazasLogoStyled = styled(TisztaszavazasLogo).attrs({ width: 140 })``
 
+
 const DrawerFooter = styled.div`
   position: absolute;
   bottom: 10px;
@@ -42,10 +43,14 @@ const OevkSetter = styled.table`
   td, th {
     padding: 4px;
   }
+  margin-bottom: 40px;
 `
 
 const OevkButton = styled.button`
   cursor: pointer;
+  ${({ $highlighted }) => $highlighted ? `
+    background: #888;
+  ` : ``}
 `
 
 const getFillColor = ({
@@ -94,13 +99,16 @@ const AllSettlements = ({
     activeSettlement,
     activeSettlementVotersNumer,
     oevkAggregations,
-    nrOfOevksInActiveCounty,
+    activeCountyOevkData,
+    activeSettlementOevkId,
   } = useMemo(() => mapStateToValues(state), [state])
 
   console.log({
     activeSettlement,
     activeSettlementVotersNumer,
-    nrOfOevksInActiveCounty,
+    activeCountyOevkData,
+    oevkAggregations,
+    activeSettlementOevkId,
   })
 
   if (!allSettlements?.features) return null  
@@ -115,8 +123,8 @@ const AllSettlements = ({
 
   console.log(state)
 
-  const handleAddToOevk = oevkNum => {
-    dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkNum } })
+  const handleAddToOevk = oevkId => {
+    dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkId } })
   }
 
   return (
@@ -192,30 +200,34 @@ const AllSettlements = ({
                   <Descriptions.Item label="Megye">
                     <strong>{activeSettlementVotersNumer?.megyeNeve}</strong>
                   </Descriptions.Item>
-                </Descriptions>
+                <Descriptions.Item label="Település elhelyezése">
+                <OevkSetter>
+                  <thead>
+                    <tr>
+                      <th colspan="2">Szavazók száma</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeCountyOevkData?.oevkIds.map(oevkId => (
+                      <tr key={oevkId}>
+                        <td>
+                          <OevkButton
+                            $highlighted={oevkId === activeSettlementOevkId}
+                            onClick={() => handleAddToOevk(oevkId)}
+                            >
+                            {oevkId.split('|')[1]}
+                          </OevkButton>
+                        </td>
+                        <td>
+                          {oevkAggregations[oevkId]?.valasztokSzama || 0}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </OevkSetter>
+                </Descriptions.Item>
+                </Descriptions>                
               )}
-              <OevkSetter>
-                <thead>
-                  <tr>
-                    <th />
-                    <th>Szavazók száma</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <OevkButton
-                        onClick={() => handleAddToOevk(1)}
-                        >
-                        1
-                      </OevkButton>
-                    </td>
-                    <td>
-
-                    </td>
-                  </tr>
-                </tbody>
-              </OevkSetter>
               
               <DrawerFooter>
                 <TisztaszavazasLogoStyled />
