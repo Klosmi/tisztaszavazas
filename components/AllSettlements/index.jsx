@@ -53,6 +53,14 @@ const OevkButton = styled.button`
   ` : ``}
 `
 
+const WinnedWrap = styled.div`
+  display: flex;
+  > * {
+    margin-right: 30px;
+  }
+`
+
+
 const getFillColor = ({
   numberOfVoters,
   isCountrySelected
@@ -101,6 +109,7 @@ const AllSettlements = ({
     oevkAggregations,
     activeCountyOevkData,
     activeSettlementOevkId,
+    winnedOevks,
   } = useMemo(() => mapStateToValues(state), [state])
 
   console.log({
@@ -109,6 +118,7 @@ const AllSettlements = ({
     activeCountyOevkData,
     oevkAggregations,
     activeSettlementOevkId,
+    winnedOevks,
   })
 
   if (!allSettlements?.features) return null  
@@ -182,6 +192,20 @@ const AllSettlements = ({
           <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
         </MapWrap>
         <Drawer
+          visible
+          placement='bottom'
+          maskClosable={false}
+          mask={false}
+          closable={false}
+          height={100}
+          >
+            <h3>Elnyert egyéni mandátumok</h3>
+            <WinnedWrap>
+              <div>Ellenzék: {winnedOevks.ellenzek}</div>
+              <div>Fidesz: {winnedOevks.fidesz}</div>
+            </WinnedWrap>
+        </Drawer>        
+        <Drawer
             visible={!!activeSettlement}
             onClose={handleClickDrawerClose}
             maskClosable={false}
@@ -232,7 +256,9 @@ const AllSettlements = ({
               <DrawerFooter>
                 <TisztaszavazasLogoStyled />
               </DrawerFooter>
-          </Drawer>         
+          </Drawer>
+          
+              
       </Wrap>
     </>
   )

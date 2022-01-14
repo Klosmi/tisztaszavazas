@@ -6,11 +6,7 @@ export const initialState = {
   allSettlements: [],
   countiesAndOevks: [],
   szavazatokTelepulesenkent: {},
-  settlementOevkGroupping: {
-    'Bajót': [5, 1],
-    'Bak': [5, 1],
-  },
-
+  settlementOevkGroupping: {},
 }
 
 const getOevkAggregations = ({
@@ -63,6 +59,19 @@ const getActiveSettlementOevkId = ({
   return activeSettlementOevkId
 }
 
+const getWinnedOevks = ({
+  oevkAggregations
+}) => {
+  return Object.values(oevkAggregations).reduce((acc, { ellenzek, fidesz }) => {
+    if (ellenzek > fidesz){
+      acc.ellenzek++
+    } else {
+      acc.fidesz++
+    }
+    return acc
+  }, { ellenzek: 0, fidesz: 0 })
+}
+
 export const mapStateToValues = state => {
   const activeSettlementVotersNumer = (
     state.
@@ -87,9 +96,11 @@ export const mapStateToValues = state => {
     settlementOevkGroupping: state.settlementOevkGroupping,
     activeSettlement: state.activeSettlement,
   })
-  // const oevkAggregations = {
-  //   'Borsod-Abaúj-Zemplén|1': { fidesz: 556, ellenzek: 334 },
-  // }
+
+
+  const winnedOevks = getWinnedOevks({
+    oevkAggregations
+  })
 
   return {
     activeSettlement: state.activeSettlement,
@@ -98,6 +109,7 @@ export const mapStateToValues = state => {
     activeSettlementOevkId,
     oevkAggregations,
     activeCountyOevkData,
+    winnedOevks,
   }
 }
 
