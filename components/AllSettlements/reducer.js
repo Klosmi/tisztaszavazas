@@ -3,7 +3,6 @@ export const TOGGLE_ACTIVE_SETTLEMENT = 'TOGGLE_ACTIVE_SETTLEMENT'
 
 export const initialState = {
   activeSettlement: null,
-  lastActiveOevkId: '8|1',
   allSettlements: [],
   countiesAndOevks: [],
   szavazatokTelepulesenkent: {},
@@ -112,46 +111,16 @@ export const mapStateToValues = state => {
     activeCountyOevkData,
     winnedOevks,
     settlementOevkGroupping: state.settlementOevkGroupping,
-    lastActiveOevkId: state.lastActiveOevkId
   }
 }
 
 const getGroupping = (state, { oevkId }) => {
   const settlementName = state.activeSettlement.name
 
-  const oevkIdArr = oevkId.split('|').map(n => parseInt(n))
-  console.log({oevkId})
-
-  return {
-    ...(oevkId ? { lastActiveOevkId: oevkId } : {}),
-    settlementOevkGroupping: {
-      ...state.settlementOevkGroupping,
-      [settlementName]: oevkIdArr
-    }
-  }
-}
-
-const setActiveSettlement = (state, payload) => {
-  const activeSettlement = state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
-  // if (!activeSettlement) return null
-
-  const l = {}
-
-  if (activeSettlement){
-    const oevkId = state.settlementOevkGroupping[activeSettlement.name]
-    const isInTheSameCountry = activeSettlement.megyeKod && activeSettlement.megyeKod === state.lastActiveOevkId.split('|')[0]
-    if (oevkId || !isInTheSameCountry) {
-      l = {lastActiveOevkId: null}
-    }
-  }
-
-  return {
-    activeSettlement,
-    ...l
-  }
-
-
-  // const activeSettlement.name
+  return ({
+    ...state.settlementOevkGroupping,
+    [settlementName]: oevkId.split('|').map(n => parseInt(n))
+  })
 }
 
 const reducer = (state, { type, payload }) => {
@@ -159,13 +128,11 @@ const reducer = (state, { type, payload }) => {
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
       ...state,
-      ...getGroupping(state, payload)
+      settlementOevkGroupping: getGroupping(state, payload)
     }
     case TOGGLE_ACTIVE_SETTLEMENT: return {
       ...state,
-      ...setActiveSettlement(state, payload),
-      // lastActiveOevkId: getLastActiveOevkId(state, payload),
-      
+      activeSettlement: state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
     }
     default: return state
   }
