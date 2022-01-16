@@ -67,13 +67,13 @@ const VoterNumTd = styled.td`
 const getFillColor = ({
   numberOfVoters,
   isCountrySelected,
-  isInSelectedOevk,
+  highlightOevk,
 }) => {
 
-  if (isInSelectedOevk) console.log('isInSelectedOevk', isInSelectedOevk)
+  if (highlightOevk) console.log('highlightOevk', highlightOevk)
 
   const baseColor =
-    isInSelectedOevk  ? `#8b2801` :
+    highlightOevk  ? `#8b2801` :
     isCountrySelected ? `#28457B` : 
                         `#bdbd4b`
 
@@ -114,16 +114,17 @@ const AllSettlements = ({
     activeSettlementOevkId,
     winnedOevks,
     settlementOevkGroupping,
+    lastActiveOevkId,
   } = useMemo(() => mapStateToValues(state), [state])
 
-  console.log({
-    activeSettlement,
-    activeSettlementVotersNumer,
-    activeCountyOevkData,
-    oevkAggregations,
-    activeSettlementOevkId,
-    winnedOevks,
-  })
+    console.log({
+      activeSettlement,
+      activeSettlementVotersNumer,
+      activeCountyOevkData,
+      oevkAggregations,
+      activeSettlementOevkId,
+      winnedOevks,
+    })
 
   if (!allSettlements?.features) return null  
 
@@ -135,7 +136,7 @@ const AllSettlements = ({
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: {} })
   }
 
-  // console.log(state)
+  console.log(state)
 
   const handleAddToOevk = oevkId => {
     dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkId } })
@@ -162,36 +163,40 @@ const AllSettlements = ({
               geometry,
               settlementType,
               _id: settlementId,
-            }) => (
-              <MapBase.Polygon
-                key={settlementId}
-                geometry={geometry}
-                onClick={() => handleClickPolygon(settlementId)}
-                options={{
-                  fillColor: getFillColor({
-                    numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
-                    isCountrySelected: activeSettlementVotersNumer?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
-                    isInSelectedOevk: activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId,
-                  }),
-                  ...(settlementId == activeSettlement?._id ? {
-                    strokeOpacity: 1,
-                    strokeColor: 'black',
-                    strokeWeight: 3,
-                    zIndex: 5,
-                  }: {
-                    strokeOpacity: .5,
-                    strokeColor: "#999999",
-                    strokeWeight: 1,
-                    zIndex: 1
-                  }),
-                  ...(settlementType === 'capital' ? {
-                    fillColor: "transparent",
-                    strokeWeight: 3,
-                    clickable: true,                
-                    }: {}),                  
-                }}
-              />
-            ))}
+            }) => {
+              const wasJustSelectedWithinTheSameCouty = (lastActiveOevkId && lastActiveOevkId === settlementOevkGroupping[name]?.join('|'))
+              const isInSelectedSettlementOevk = (activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId)
+              return (
+                <MapBase.Polygon
+                  key={settlementId}
+                  geometry={geometry}
+                  onClick={() => handleClickPolygon(settlementId)}
+                  options={{
+                    fillColor: getFillColor({
+                      numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
+                      isCountrySelected: activeSettlementVotersNumer?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
+                      highlightOevk: wasJustSelectedWithinTheSameCouty || isInSelectedSettlementOevk
+                    }),
+                    ...(settlementId == activeSettlement?._id ? {
+                      strokeOpacity: 1,
+                      strokeColor: 'black',
+                      strokeWeight: 3,
+                      zIndex: 5,
+                    }: {
+                      strokeOpacity: .5,
+                      strokeColor: "#999999",
+                      strokeWeight: 1,
+                      zIndex: 1
+                    }),
+                    ...(settlementType === 'capital' ? {
+                      fillColor: "transparent",
+                      strokeWeight: 3,
+                      clickable: true,                
+                      }: {}),                  
+                  }}
+                />
+              )
+            })}
           </MapBase>
           {/* <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" /> */}
           <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
