@@ -1,5 +1,7 @@
 export const TOGGLE_SETTLEMENT_TO_OEVK = 'TOGGLE_SETTLEMENT_TO_OEVK'
 export const TOGGLE_ACTIVE_SETTLEMENT = 'TOGGLE_ACTIVE_SETTLEMENT'
+export const TOGGLE_ACTIVE_CITY_SZK = 'TOGGLE_ACTIVE_CITY_SZK'
+export const TOGGLE_CITY_SZK_TO_OEVK = 'TOGGLE_CITY_SZK_TO_OEVK'
 
 export const initialState = {
   activeSettlement: null,
@@ -7,44 +9,114 @@ export const initialState = {
   countiesAndOevks: [],
   szavazatokTelepulesenkent: {},
   settlementOevkGroupping: {},
+  citySzkOevkGroupping: {},
+  cityVotersNumberObject: {},
+  szavazatokVarosiSzavazokorben: {},
+  activeSzk: null,
 }
 
 const getOevkAggregations = ({
   settlementOevkGroupping,
   szavazatokTelepulesenkent,
   votersNumberDataObject,
+  citySzkOevkGroupping,
+  cityVotersNumberObject,
+  szavazatokVarosiSzavazokorben,
 }) => {
-  const oevkAggregations = {}
+  const getTelepulesAggregation = () => {
+    const telepulesAggregation = {}
 
-  for (const [settlementName, [countyCode, oevkNum]] of Object.entries(settlementOevkGroupping)) {
-    const {
-      ellenzek = 0,
-      fidesz = 0,
-      osszes = 0
-    } = szavazatokTelepulesenkent[settlementName] || {}
+    for (const [settlementName, [countyCode, oevkNum]] of Object.entries(settlementOevkGroupping)) {
+      const {
+        ellenzek = 0,
+        fidesz = 0,
+        osszes = 0
+      } = szavazatokTelepulesenkent[settlementName] || {}
 
-    const {
-      valasztokSzama
-    } = votersNumberDataObject[settlementName]
+      const {
+        valasztokSzama
+      } = votersNumberDataObject[settlementName]
 
-    const oevkId = `${countyCode}|${oevkNum}`
+      const oevkId = `${countyCode}|${oevkNum}`
 
-    oevkAggregations[oevkId] = {
-      ellenzek: (oevkAggregations[oevkId]?.ellenzek || 0) + ellenzek,
-      fidesz: (oevkAggregations[oevkId]?.fidesz || 0) + fidesz,
-      osszes: (oevkAggregations[oevkId]?.osszes || 0) + osszes,
-      valasztokSzama: (oevkAggregations[oevkId]?.valasztokSzama || 0) + valasztokSzama,
+      telepulesAggregation[oevkId] = {
+        ellenzek: (telepulesAggregation[oevkId]?.ellenzek || 0) + ellenzek,
+        fidesz: (telepulesAggregation[oevkId]?.fidesz || 0) + fidesz,
+        osszes: (telepulesAggregation[oevkId]?.osszes || 0) + osszes,
+        valasztokSzama: (telepulesAggregation[oevkId]?.valasztokSzama || 0) + valasztokSzama,
+      }
     }
+
+    return telepulesAggregation
   }
+
+  const getCitySzkAggregation = () => {
+    const citySzkAggregation = {}
+
+    for (const [citySzkId, [countyCode, oevkNum]] of Object.entries(citySzkOevkGroupping)) {
+      const {
+        ellenzek = 0,
+        fidesz = 0,
+        osszes = 0
+      } = szavazatokVarosiSzavazokorben[citySzkId] || {}
+
+      const {
+        valasztokSzama
+      } = cityVotersNumberObject[citySzkId]
+
+      const oevkId = `${countyCode}|${oevkNum}`
+      
+      citySzkAggregation[oevkId] = {
+        ellenzek: (citySzkAggregation[oevkId]?.ellenzek || 0) + ellenzek,
+        fidesz: (citySzkAggregation[oevkId]?.fidesz || 0) + fidesz,
+        osszes: (citySzkAggregation[oevkId]?.osszes || 0) + osszes,
+        valasztokSzama: (citySzkAggregation[oevkId]?.valasztokSzama || 0) + valasztokSzama,
+      }      
+    }
+
+    return citySzkAggregation
+  }
+  
+   const oevkAggregations = (
+     Object.entries(getCitySzkAggregation())
+     .reduce((acc, [oevkId, {
+      ellenzek,
+      fidesz,
+      osszes,
+      valasztokSzama,
+     }]) => {
+       if (acc[oevkId]){
+        acc[oevkId].ellenzek += ellenzek
+        acc[oevkId].fidesz += fidesz
+        acc[oevkId].osszes += osszes
+        acc[oevkId].valasztokSzama += valasztokSzama
+       } else {
+         acc[oevkId] = {
+          ellenzek,
+          fidesz,
+          osszes,
+          valasztokSzama,
+         }
+       }
+
+       return acc
+     }, getTelepulesAggregation())
+   )
 
   return oevkAggregations
 }
 
 const getActiveCountyOevkData = ({
   activeSettlementVotersNumer,
-  countiesAndOevksObject
+  countiesAndOevksObject,
+  activeSzk
 }) => {
-  const activeCountyOevkData = countiesAndOevksObject[activeSettlementVotersNumer?.megyeKod]
+
+  const activeCountyOevkData = (
+    activeSzk ? 
+    countiesAndOevksObject[activeSzk.megyeKod] : 
+    countiesAndOevksObject[activeSettlementVotersNumer?.megyeKod]
+  )
   return activeCountyOevkData
 }
 
@@ -83,10 +155,13 @@ export const mapStateToValues = state => {
     settlementOevkGroupping: state.settlementOevkGroupping,
     szavazatokTelepulesenkent: state.szavazatokTelepulesenkent,
     votersNumberDataObject: state.votersNumberDataObject,
-    // selectedOevkId: state.
+    citySzkOevkGroupping: state.citySzkOevkGroupping,
+    cityVotersNumberObject: state.cityVotersNumberObject,
+    szavazatokVarosiSzavazokorben: state.szavazatokVarosiSzavazokorben,
   })
 
   const activeCountyOevkData = getActiveCountyOevkData({
+    activeSzk: state.activeSzk,
     activeSettlementVotersNumer,
     countiesAndOevksObject: state.countiesAndOevksObject,
   })
@@ -102,20 +177,30 @@ export const mapStateToValues = state => {
     oevkAggregations
   })
 
+  const activeSzk = state.activeSzk
+
+  const activeCountyName = activeSettlementVotersNumer?.megyeNeve || activeSzk?.megyeNeve
+
+  const activeSettlement = state.activeSettlement
+
   return {
-    activeSettlement: state.activeSettlement,
+    activeSettlement,
     allSettlements: state.allSettlements,
     activeSettlementVotersNumer,
+    activeCountyName,
     activeSettlementOevkId,
     oevkAggregations,
     activeCountyOevkData,
     winnedOevks,
     settlementOevkGroupping: state.settlementOevkGroupping,
+    cityVotersNumberObject: state.cityVotersNumberObject,
+    activeSzk,
+    activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId
   }
 }
 
 const getGroupping = (state, { oevkId }) => {
-  const settlementName = state.activeSettlement.name
+  const settlementName = state.activeSettlement?.name || state.activeSzk?.citySzkId
 
   return ({
     ...state.settlementOevkGroupping,
@@ -123,16 +208,34 @@ const getGroupping = (state, { oevkId }) => {
   })
 }
 
+const getSzkGroupping = (state, { oevkId }) => {
+  const { citySzkId } = state.activeSzk
+  return {
+    ...state.citySzkOevkGroupping,
+    [citySzkId]: oevkId.split('|').map(n => parseInt(n))
+  }
+}
+
 const reducer = (state, { type, payload }) => {
-  // console.log(payload)
+  console.log(payload)
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
       ...state,
       settlementOevkGroupping: getGroupping(state, payload)
     }
+    case TOGGLE_CITY_SZK_TO_OEVK: return {
+      ...state,
+      citySzkOevkGroupping: getSzkGroupping(state, payload)
+    }
     case TOGGLE_ACTIVE_SETTLEMENT: return {
       ...state,
+      activeSzk: null,
       activeSettlement: state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
+    }
+    case TOGGLE_ACTIVE_CITY_SZK: return {
+      ...state,
+      activeSettlement: null,
+      activeSzk: state.cityVotersNumberObject[payload.citySzkId] || null,
     }
     default: return state
   }

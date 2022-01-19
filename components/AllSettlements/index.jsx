@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react'
+import React, { useReducer } from 'react'
 import {
   Drawer,
   PageHeader,
@@ -14,7 +14,9 @@ import reducer, {
   initialState,
   mapStateToValues,
   TOGGLE_SETTLEMENT_TO_OEVK,
-  TOGGLE_ACTIVE_SETTLEMENT
+  TOGGLE_ACTIVE_SETTLEMENT,
+  TOGGLE_ACTIVE_CITY_SZK,
+  TOGGLE_CITY_SZK_TO_OEVK,
 } from './reducer';
 import { useMemo } from 'react';
 
@@ -89,10 +91,12 @@ const getFillColor = ({
 
 const AllSettlements = ({
   election = "ogy2018",
-  szavazatokTelepulesenkent,
-  votersNumberDataObject,
   allSettlements,
+  votersNumberDataObject,
+  szavazatokTelepulesenkent,
   countiesAndOevksObject,
+  cityVotersNumberObject,
+  szavazatokVarosiSzavazokorben,
 }) => {
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -102,8 +106,10 @@ const AllSettlements = ({
     ...initialState,
     allSettlements,
     votersNumberDataObject,
-    countiesAndOevksObject,
     szavazatokTelepulesenkent,
+    countiesAndOevksObject,
+    cityVotersNumberObject,
+    szavazatokVarosiSzavazokorben,
   })
 
   const {
@@ -114,15 +120,20 @@ const AllSettlements = ({
     activeSettlementOevkId,
     winnedOevks,
     settlementOevkGroupping,
+    activeSzk,
+    activeCountyName,
+    activeAdminUnitName,
   } = useMemo(() => mapStateToValues(state), [state])
 
   console.log({
     activeSettlement,
+    activeCountyName,
     activeSettlementVotersNumer,
     activeCountyOevkData,
     oevkAggregations,
     activeSettlementOevkId,
     winnedOevks,
+    cityVotersNumberObject,
   })
 
   if (!allSettlements?.features) return null  
@@ -130,15 +141,23 @@ const AllSettlements = ({
   const handleClickPolygon = (settlementId) => {
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
   }
+
+  const handleClickSzkPin = (citySzkId) => {
+    dispatch({ type: TOGGLE_ACTIVE_CITY_SZK, payload: { citySzkId } })
+  }
   
   const handleClickDrawerClose = () => {
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: {} })
   }
 
-  // console.log(state)
+  console.log(state)
 
   const handleAddToOevk = oevkId => {
-    dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkId } })
+    if (activeSzk){
+      dispatch({ type: TOGGLE_CITY_SZK_TO_OEVK, payload: { oevkId } })
+    } else {
+      dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkId } })
+    }
   }
 
   return (
@@ -160,9 +179,9 @@ const AllSettlements = ({
             {allSettlements.features?.map?.(({
               name,
               geometry,
-              settlementType,
+              szavazokoriBontas,
               _id: settlementId,
-            }) => (
+              }) => (
               <MapBase.Polygon
                 key={settlementId}
                 geometry={geometry}
@@ -170,7 +189,7 @@ const AllSettlements = ({
                 options={{
                   fillColor: getFillColor({
                     numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
-                    isCountrySelected: activeSettlementVotersNumer?.megyeNeve === votersNumberDataObject?.[name]?.megyeNeve,
+                    isCountrySelected: activeCountyName === votersNumberDataObject?.[name]?.megyeNeve,
                     isInSelectedOevk: activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId,
                   }),
                   ...(settlementId == activeSettlement?._id ? {
@@ -184,12 +203,44 @@ const AllSettlements = ({
                     strokeWeight: 1,
                     zIndex: 1
                   }),
-                  ...(settlementType === 'capital' ? {
+                  ...(szavazokoriBontas ? {
                     fillColor: "transparent",
+                    strokeColor: '#333333',
                     strokeWeight: 3,
-                    clickable: true,                
+                    clickable: false,                
                     }: {}),                  
                 }}
+              />
+            ))}
+            {Object.values(cityVotersNumberObject).map(({
+              citySzkId,
+              korzethatar,
+              szavazohelyisegHelye,
+              valasztokSzama,
+              megyeNeve,
+            }) => (
+              <MapBase.Polygon
+                key={citySzkId}
+                geometry={korzethatar}
+                onClick={() => handleClickSzkPin(citySzkId)}
+                options={{
+                  fillColor: getFillColor({
+                    numberOfVoters: valasztokSzama,
+                    isCountrySelected: activeCountyName === megyeNeve,
+                    isInSelectedOevk: false // activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId,
+                  }),
+                  ...(activeSzk?.citySzkId === citySzkId ? {
+                    strokeOpacity: 1,
+                    strokeColor: 'black',
+                    strokeWeight: 3,
+                    zIndex: 5,
+                  }: {
+                    strokeOpacity: .5,
+                    strokeColor: "#999999",
+                    strokeWeight: 1,
+                    zIndex: 1
+                  })
+                }}                  
               />
             ))}
           </MapBase>
@@ -211,25 +262,35 @@ const AllSettlements = ({
             </WinnedWrap>
         </Drawer>        
         <Drawer
-            visible={!!activeSettlement}
+            visible={!!activeSettlement || !!activeSzk}
             onClose={handleClickDrawerClose}
             maskClosable={false}
             mask={false}
             >
-              {activeSettlement && (
+              {(activeSettlement || activeSzk) && (
                 <Descriptions column={1} title={
-                  <p>{activeSettlement.name}</p>
+                  <p>{activeAdminUnitName}</p>
                 } layout="vertical">
                   <Descriptions.Item label="Választók száma">
-                    <strong>{activeSettlementVotersNumer?.valasztokSzama}</strong>
+                    <strong>
+                      {
+                        activeSettlementVotersNumer?.valasztokSzama ||
+                        activeSzk?.valasztokSzama
+                      }
+                    </strong>
                   </Descriptions.Item>
                   <Descriptions.Item label="Szavazókörök száma">
-                    <strong>{activeSettlementVotersNumer?.szavazokorokSzama}</strong>
+                    <strong>{activeSettlementVotersNumer?.szavazokorokSzama || 1}</strong>
                   </Descriptions.Item>
                   <Descriptions.Item label="Megye">
-                    <strong>{activeSettlementVotersNumer?.megyeNeve}</strong>
+                    <strong>{
+                      activeSettlementVotersNumer?.megyeNeve ||
+                      activeSzk?.megyeNeve
+                    }</strong>
                   </Descriptions.Item>
-                <Descriptions.Item label="Melyik OEVK-ba kerüljön a település?">
+                <Descriptions.Item
+                  label={`Melyik OEVK-ba kerüljön a ${activeSettlement ? 'település' : 'szavazókör'}?`}
+                >
                 <OevkSetter>
                   <thead>
                     <tr>

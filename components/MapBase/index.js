@@ -3,7 +3,7 @@ import {
   GoogleMap,
   LoadScript,
   Marker as MarkerImport,
-  Polygon as PolygonImport
+  Polygon as PolygonImport,
 } from '@react-google-maps/api'
 import styled from 'styled-components';
 

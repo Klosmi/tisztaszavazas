@@ -8,6 +8,8 @@ const TelepulesekPage = ({
   votersNumberDataObject,
   szavazatokTelepulesenkent,
   countiesAndOevksObject,
+  cityVotersNumberObject,
+  szavazatokVarosiSzavazokorben,
 }) => {
   return (
     <ResponsiveLayout menu={false}>
@@ -16,6 +18,8 @@ const TelepulesekPage = ({
         votersNumberDataObject={votersNumberDataObject}
         countiesAndOevksObject={countiesAndOevksObject}
         szavazatokTelepulesenkent={szavazatokTelepulesenkent}
+        cityVotersNumberObject={cityVotersNumberObject}
+        szavazatokVarosiSzavazokorben={szavazatokVarosiSzavazokorben}
       />
     </ResponsiveLayout>
   )
