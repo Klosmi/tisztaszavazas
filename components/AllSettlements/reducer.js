@@ -131,6 +131,19 @@ const getActiveSettlementOevkId = ({
   return activeSettlementOevkId
 }
 
+
+const getActiveSzkOevkId = ({
+  citySzkOevkGroupping,
+  activeSzkId,
+}) => {
+  const activeSzkOevkId = (
+    citySzkOevkGroupping[activeSzkId]
+    ?.join('|')
+  )
+
+  return activeSzkOevkId
+}
+
 const getWinnedOevks = ({
   oevkAggregations
 }) => {
@@ -151,11 +164,17 @@ export const mapStateToValues = state => {
     [state.activeSettlement?.name]
   ) || {}
 
+  const citySzkOevkGroupping = state.citySzkOevkGroupping
+
+  const activeSzk = state.activeSzk
+
+  const activeSzkId = activeSzk?.citySzkId
+
   const oevkAggregations = getOevkAggregations({
     settlementOevkGroupping: state.settlementOevkGroupping,
     szavazatokTelepulesenkent: state.szavazatokTelepulesenkent,
     votersNumberDataObject: state.votersNumberDataObject,
-    citySzkOevkGroupping: state.citySzkOevkGroupping,
+    citySzkOevkGroupping,
     cityVotersNumberObject: state.cityVotersNumberObject,
     szavazatokVarosiSzavazokorben: state.szavazatokVarosiSzavazokorben,
   })
@@ -173,11 +192,15 @@ export const mapStateToValues = state => {
   })
 
 
+  const activeSzkOevkId = getActiveSzkOevkId({
+    citySzkOevkGroupping,
+    activeSzkId,
+  })
+
   const winnedOevks = getWinnedOevks({
     oevkAggregations
   })
 
-  const activeSzk = state.activeSzk
 
   const activeCountyName = activeSettlementVotersNumer?.megyeNeve || activeSzk?.megyeNeve
 
@@ -188,14 +211,16 @@ export const mapStateToValues = state => {
     allSettlements: state.allSettlements,
     activeSettlementVotersNumer,
     activeCountyName,
-    activeSettlementOevkId,
     oevkAggregations,
     activeCountyOevkData,
     winnedOevks,
     settlementOevkGroupping: state.settlementOevkGroupping,
     cityVotersNumberObject: state.cityVotersNumberObject,
+    citySzkOevkGroupping,
     activeSzk,
-    activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId
+    activeSzkId,
+    activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId,
+    activeOevkId: activeSettlementOevkId || activeSzkOevkId
   }
 }
 

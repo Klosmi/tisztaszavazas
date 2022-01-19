@@ -72,8 +72,6 @@ const getFillColor = ({
   isInSelectedOevk,
 }) => {
 
-  if (isInSelectedOevk) console.log('isInSelectedOevk', isInSelectedOevk)
-
   const baseColor =
     isInSelectedOevk  ? `#8b2801` :
     isCountrySelected ? `#28457B` : 
@@ -117,12 +115,14 @@ const AllSettlements = ({
     activeSettlementVotersNumer,
     oevkAggregations,
     activeCountyOevkData,
-    activeSettlementOevkId,
     winnedOevks,
     settlementOevkGroupping,
     activeSzk,
     activeCountyName,
     activeAdminUnitName,
+    citySzkOevkGroupping,
+    activeSzkId,
+    activeOevkId
   } = useMemo(() => mapStateToValues(state), [state])
 
   console.log({
@@ -131,9 +131,11 @@ const AllSettlements = ({
     activeSettlementVotersNumer,
     activeCountyOevkData,
     oevkAggregations,
-    activeSettlementOevkId,
     winnedOevks,
     cityVotersNumberObject,
+    citySzkOevkGroupping,
+    activeSzkId,
+    activeOevkId,
   })
 
   if (!allSettlements?.features) return null  
@@ -190,7 +192,7 @@ const AllSettlements = ({
                   fillColor: getFillColor({
                     numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
                     isCountrySelected: activeCountyName === votersNumberDataObject?.[name]?.megyeNeve,
-                    isInSelectedOevk: activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId,
+                    isInSelectedOevk: activeOevkId && settlementOevkGroupping[name]?.join('|') === activeOevkId,
                   }),
                   ...(settlementId == activeSettlement?._id ? {
                     strokeOpacity: 1,
@@ -227,7 +229,7 @@ const AllSettlements = ({
                   fillColor: getFillColor({
                     numberOfVoters: valasztokSzama,
                     isCountrySelected: activeCountyName === megyeNeve,
-                    isInSelectedOevk: false // activeSettlementOevkId && settlementOevkGroupping[name]?.join('|') === activeSettlementOevkId,
+                    isInSelectedOevk: activeOevkId && citySzkOevkGroupping[citySzkId]?.join('|') === activeOevkId,
                   }),
                   ...(activeSzk?.citySzkId === citySzkId ? {
                     strokeOpacity: 1,
@@ -310,7 +312,7 @@ const AllSettlements = ({
                         </VoterNumTd>
                         <td>
                         <OevkButton
-                            $highlighted={oevkId === activeSettlementOevkId}
+                            $highlighted={oevkId === activeOevkId}
                             onClick={() => handleAddToOevk(oevkId)}
                             >
                             Ebbe
