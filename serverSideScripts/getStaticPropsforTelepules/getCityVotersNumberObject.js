@@ -7,14 +7,14 @@ const getCityVotersNumberObject = async () => {
   const citiesSzkQuery = `[
     {$match: {
         $or: [
-            { "kozigEgyseg.kozigEgysegNeve": {
-                $in: [
-                  ${szkLevelSettlements}
-                ]
-            }},
-${/*              { "kozigEgyseg.kozigEgysegNeve": { // TODO: add Budapest */''}
-${/*                  $regex: "Budapest"  */''}
-${/*              }}              */''}
+          { "kozigEgyseg.kozigEgysegNeve": {
+              $in: [
+                ${szkLevelSettlements}
+              ]
+          }},
+          { "kozigEgyseg.kozigEgysegNeve": {
+            $regex: "Budapest"
+          }}
         ]
         
     }},
@@ -46,7 +46,7 @@ ${/*              }}              */''}
     } = {}
   }) => {
     if (!kozigEgysegNeve) return acc
-    kozigEgysegNeve = kozigEgysegNeve && kozigEgysegNeve.replace('.ker', '. kerület')
+    kozigEgysegNeve = kozigEgysegNeve.replace('Budapest ', 'BP ').replace('.ker', '')
 
     return {
     ...acc,

@@ -27,7 +27,7 @@ const getVotersNumberObject = async () => {
     } = {}
   }) => {
     if (!kozigEgysegNeve) return acc
-    kozigEgysegNeve = kozigEgysegNeve && kozigEgysegNeve.replace('.ker', '. kerület')
+    kozigEgysegNeve = kozigEgysegNeve && kozigEgysegNeve.replace('Budapest ', 'BP ').replace('.ker', '')
 
     return {
     ...acc,

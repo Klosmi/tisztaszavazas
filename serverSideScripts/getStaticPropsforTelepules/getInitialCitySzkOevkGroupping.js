@@ -7,14 +7,18 @@ const getInitialCitySzkOevkGroupping = async () => {
 
   const query = `
     [
-      {$match: 
+      {$match: {
+        $or: [
           { "kozigEgyseg.kozigEgysegNeve": {
               $in: [
                 ${szkLevelSettlements}
               ]
-          }}          
-          
-      },
+          }},
+          { "kozigEgyseg.kozigEgysegNeve": {
+            $regex: "Budapest"
+          }}
+        ]
+      }},
       { $project: {
         szavazokorSzama: 1,
         varosNeve: "$kozigEgyseg.kozigEgysegNeve",
@@ -40,6 +44,8 @@ const getInitialCitySzkOevkGroupping = async () => {
       valasztokeruletSzama,
     }) => {
       if (!varosNeve || !szavazokorSzama) return acc
+
+      varosNeve = varosNeve.replace('Budapest ', 'BP ').replace('.ker', '')
 
       return {
         ...acc,

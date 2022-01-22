@@ -71,7 +71,7 @@ const getOevkAggregations = ({
         fidesz: (citySzkAggregation[oevkId]?.fidesz || 0) + fidesz,
         osszes: (citySzkAggregation[oevkId]?.osszes || 0) + osszes,
         valasztokSzama: (citySzkAggregation[oevkId]?.valasztokSzama || 0) + valasztokSzama,
-      }      
+      }
     }
 
     return citySzkAggregation

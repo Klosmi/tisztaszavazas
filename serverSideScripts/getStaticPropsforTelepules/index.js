@@ -44,5 +44,6 @@ module.exports = getStaticPropsforTelepules
         // console.log(props.props.cityVotersNumberObject)
         // console.log(props.props.szavazatokVarosiSzavazokorben)
         // console.log(props.props.initialSettlementOevkGroupping)
+        // console.log(props.props.initialCitySzkOevkGroupping)
 
 // })()
