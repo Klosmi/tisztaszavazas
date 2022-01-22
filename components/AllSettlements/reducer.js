@@ -35,7 +35,7 @@ const getOevkAggregations = ({
 
       const {
         valasztokSzama
-      } = votersNumberDataObject[settlementName]
+      } = votersNumberDataObject[settlementName] || {}
 
       const oevkId = `${countyCode}|${oevkNum}`
 
@@ -62,7 +62,7 @@ const getOevkAggregations = ({
 
       const {
         valasztokSzama
-      } = cityVotersNumberObject[citySzkId]
+      } = cityVotersNumberObject[citySzkId] || {}
 
       const oevkId = `${countyCode}|${oevkNum}`
       

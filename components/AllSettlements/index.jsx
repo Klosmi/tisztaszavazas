@@ -95,6 +95,8 @@ const AllSettlements = ({
   countiesAndOevksObject,
   cityVotersNumberObject,
   szavazatokVarosiSzavazokorben,
+  initialSettlementOevkGroupping,
+  initialCitySzkOevkGroupping,
 }) => {
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -108,6 +110,8 @@ const AllSettlements = ({
     countiesAndOevksObject,
     cityVotersNumberObject,
     szavazatokVarosiSzavazokorben,
+    settlementOevkGroupping: initialSettlementOevkGroupping,
+    citySzkOevkGroupping: initialCitySzkOevkGroupping,
   })
 
   const {
@@ -136,6 +140,7 @@ const AllSettlements = ({
     citySzkOevkGroupping,
     activeSzkId,
     activeOevkId,
+    initialSettlementOevkGroupping,
   })
 
   if (!allSettlements?.features) return null  

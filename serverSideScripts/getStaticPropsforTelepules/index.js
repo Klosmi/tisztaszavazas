@@ -4,7 +4,8 @@ const getCountiesAndOevksObject = require('./getCountiesAndOevksObject')
 const getCityVotersNumberObject = require('./getCityVotersNumberObject')
 const getAllSettlements = require('./getAllSettlements')
 const getSzavazatokVarosiSzavazokorben = require('./getSzavazatokVarosiSzavazokorben')
-
+const getInitialSettlementOevkGroupping = require('./getInitialSettlementOevkGroupping')
+const getInitialCitySzkOevkGroupping = require('./getInitialCitySzkOevkGroupping')
 
 
 const getStaticPropsforTelepules = async () => {
@@ -16,6 +17,8 @@ const getStaticPropsforTelepules = async () => {
       countiesAndOevksObject: await getCountiesAndOevksObject(),
       cityVotersNumberObject: await getCityVotersNumberObject(),
       szavazatokVarosiSzavazokorben: await getSzavazatokVarosiSzavazokorben(),
+      initialSettlementOevkGroupping: await getInitialSettlementOevkGroupping(),
+      initialCitySzkOevkGroupping: await getInitialCitySzkOevkGroupping(),
     }
   }
 }
@@ -40,5 +43,6 @@ module.exports = getStaticPropsforTelepules
         // console.log(props.props.countiesAndOevksObject)
         // console.log(props.props.cityVotersNumberObject)
         // console.log(props.props.szavazatokVarosiSzavazokorben)
+        // console.log(props.props.initialSettlementOevkGroupping)
 
 // })()

@@ -1,15 +1,8 @@
 const tszService2 = require("../../services2/tszService2")
-const getAllSettlements = require("./getAllSettlements")
+const getSzkLevelSettlements = require("./getSzkLevelSettlements")
 
 const getCityVotersNumberObject = async () => {
-  const szkLevelSettlements = (
-    getAllSettlements()
-    .features
-    .filter(({ szavazokoriBontas }) => szavazokoriBontas)
-    .reduce((acc, {name}, i) => {
-      return `${acc}${i ? ', ' : ''}"${name}"`
-    }, '')
-  )
+  const szkLevelSettlements = getSzkLevelSettlements()
 
   const citiesSzkQuery = `[
     {$match: {

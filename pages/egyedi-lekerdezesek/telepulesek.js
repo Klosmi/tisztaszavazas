@@ -10,6 +10,8 @@ const TelepulesekPage = ({
   countiesAndOevksObject,
   cityVotersNumberObject,
   szavazatokVarosiSzavazokorben,
+  initialSettlementOevkGroupping,
+  initialCitySzkOevkGroupping,
 }) => {
   return (
     <ResponsiveLayout menu={false}>
@@ -20,6 +22,8 @@ const TelepulesekPage = ({
         szavazatokTelepulesenkent={szavazatokTelepulesenkent}
         cityVotersNumberObject={cityVotersNumberObject}
         szavazatokVarosiSzavazokorben={szavazatokVarosiSzavazokorben}
+        initialSettlementOevkGroupping={initialSettlementOevkGroupping}
+        initialCitySzkOevkGroupping={initialCitySzkOevkGroupping}
       />
     </ResponsiveLayout>
   )

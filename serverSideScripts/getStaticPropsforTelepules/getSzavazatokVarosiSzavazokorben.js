@@ -10,7 +10,6 @@ const getSzavazatokVarosiSzavazokorben = async () => {
     { $match: {
       ${partok ? `'jeloles.jelolo.szervezet.rovidNev': { $in: ${JSON.stringify(partok)} },` : ''}
       'jeloles.pozicio': "Egyéni választókerületi képviselő",
-      'szavazokor.kozigEgyseg.kozigEgysegNeve': "Kecskemét" ${/** //TODO: remove */''}
     } },
     { $group: {
       _id: ["$szavazokor.kozigEgyseg.kozigEgysegNeve", "$szavazokor.szavazokorSzama"],
