@@ -38,7 +38,11 @@ const TisztaszavazasLogoStyled = styled(TisztaszavazasLogo).attrs({ width: 140 }
 
 const DrawerFooter = styled.div`
   position: absolute;
-  bottom: 10px;
+  bottom: 0;
+  background: white;
+  width: 100%;
+  padding: 10px;
+  left: 0;
 `
 
 const OevkSetter = styled.table`
