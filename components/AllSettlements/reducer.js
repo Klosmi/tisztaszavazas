@@ -4,6 +4,7 @@ export const TOGGLE_SETTLEMENT_TO_OEVK = 'TOGGLE_SETTLEMENT_TO_OEVK'
 export const TOGGLE_ACTIVE_SETTLEMENT = 'TOGGLE_ACTIVE_SETTLEMENT'
 export const TOGGLE_ACTIVE_CITY_SZK = 'TOGGLE_ACTIVE_CITY_SZK'
 export const TOGGLE_CITY_SZK_TO_OEVK = 'TOGGLE_CITY_SZK_TO_OEVK'
+export const LOAD_GROUPPING = 'LOAD_GROUPPING'
 
 export const initialState = {
   activeSettlement: null,
@@ -244,7 +245,7 @@ const getSzkGroupping = (state, { oevkId }) => {
 }
 
 const reducer = (state, { type, payload }) => {
-  // console.log(payload)
+  // console.log(type, payload)
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
       ...state,
@@ -263,6 +264,11 @@ const reducer = (state, { type, payload }) => {
       ...state,
       activeSettlement: null,
       activeSzk: state.cityVotersNumberObject[payload.citySzkId] || null,
+    }
+    case LOAD_GROUPPING: return {
+      ...state,
+      citySzkOevkGroupping: payload.citySzkOevkGroupping,
+      settlementOevkGroupping: payload.settlementOevkGroupping,
     }
     default: return state
   }
