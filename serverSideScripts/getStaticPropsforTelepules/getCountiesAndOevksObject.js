@@ -1,3 +1,4 @@
+const { OEVK_ID_JOINER } = require("../../constants")
 const readJsonFile = require("../readJsonFile")
 
 const getCountiesAndOevksObject = async () => {
@@ -12,7 +13,7 @@ const getCountiesAndOevksObject = async () => {
         nrOfOevks: ((acc[megyeKod] || {}).nrOfOevks || 0) + 1,
         oevkIds: [
           ...((acc[megyeKod] || {}).oevkIds || []),
-          `${megyeKod}|${szam}`
+          `${megyeKod}${OEVK_ID_JOINER}${szam}`
         ],
         megyeNeve
       }

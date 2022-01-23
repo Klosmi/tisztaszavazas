@@ -6,7 +6,7 @@ const getSzkLevelSettlements = () => {
     .features
     .filter(({ szavazokoriBontas }) => szavazokoriBontas)
     .reduce((acc, {name}, i) => {
-      return `${acc}${i ? ', ' : ''}"${name}"`
+      return `${acc}${i ? ', ' : ''}"${name.replace('. kerület', '.ker')}"`
     }, '')
   )
 

@@ -1,4 +1,5 @@
 const tszService2 = require("../../services2/tszService2")
+const abbrevDistrictName = require("./abbrevDistrictName")
 
 const getVotersNumberObject = async () => {
   const settlementsQuery = `[
@@ -27,7 +28,7 @@ const getVotersNumberObject = async () => {
     } = {}
   }) => {
     if (!kozigEgysegNeve) return acc
-    kozigEgysegNeve = kozigEgysegNeve && kozigEgysegNeve.replace('Budapest ', 'BP ').replace('.ker', '')
+    kozigEgysegNeve = kozigEgysegNeve && abbrevDistrictName(kozigEgysegNeve)
 
     return {
     ...acc,

@@ -1,4 +1,6 @@
+const { CITY_SZK_ID_JOINER } = require("../../constants")
 const tszService2 = require("../../services2/tszService2")
+const abbrevDistrictName = require("./abbrevDistrictName")
 const getSzkLevelSettlements = require("./getSzkLevelSettlements")
 
 const getCityVotersNumberObject = async () => {
@@ -16,7 +18,6 @@ const getCityVotersNumberObject = async () => {
             $regex: "Budapest"
           }}
         ]
-        
     }},
     {$project: {
         "valasztokSzama": 1,
@@ -46,12 +47,12 @@ const getCityVotersNumberObject = async () => {
     } = {}
   }) => {
     if (!kozigEgysegNeve) return acc
-    kozigEgysegNeve = kozigEgysegNeve.replace('Budapest ', 'BP ').replace('.ker', '')
+    kozigEgysegNeve = abbrevDistrictName(kozigEgysegNeve)
 
     return {
     ...acc,
-    [`${kozigEgysegNeve} | ${szavazokorSzama}`]: {
-      citySzkId: `${kozigEgysegNeve} | ${szavazokorSzama}`,
+    [`${kozigEgysegNeve}${CITY_SZK_ID_JOINER}${szavazokorSzama}`]: {
+      citySzkId: `${kozigEgysegNeve}${CITY_SZK_ID_JOINER}${szavazokorSzama}`,
       kozigEgysegNeve,
       szavazokorokSzama: 1,
       valasztokSzama,

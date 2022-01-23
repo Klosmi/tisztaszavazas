@@ -19,6 +19,7 @@ import reducer, {
   TOGGLE_CITY_SZK_TO_OEVK,
 } from './reducer';
 import { useMemo } from 'react';
+import { OEVK_ID_JOINER } from '../../constants';
 
 const Wrap = styled.div`
   display: flex;
@@ -201,7 +202,7 @@ const AllSettlements = ({
                   fillColor: getFillColor({
                     numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
                     isCountrySelected: activeCountyName === votersNumberDataObject?.[name]?.megyeNeve,
-                    isInSelectedOevk: activeOevkId && settlementOevkGroupping[name]?.join('|') === activeOevkId,
+                    isInSelectedOevk: activeOevkId && settlementOevkGroupping[name]?.join(OEVK_ID_JOINER) === activeOevkId,
                   }),
                   ...(settlementId == activeSettlement?._id ? {
                     strokeOpacity: 1,
@@ -238,7 +239,7 @@ const AllSettlements = ({
                   fillColor: getFillColor({
                     numberOfVoters: valasztokSzama,
                     isCountrySelected: activeCountyName === megyeNeve,
-                    isInSelectedOevk: activeOevkId && citySzkOevkGroupping[citySzkId]?.join('|') === activeOevkId,
+                    isInSelectedOevk: activeOevkId && citySzkOevkGroupping[citySzkId]?.join(OEVK_ID_JOINER) === activeOevkId,
                   }),
                   ...(activeSzk?.citySzkId === citySzkId ? {
                     strokeOpacity: 1,
@@ -314,10 +315,10 @@ const AllSettlements = ({
                     {activeCountyOevkData?.oevkIds.map(oevkId => (
                       <tr key={oevkId}>
                         <td>
-                          {oevkId.split('|')[1]}
+                          {oevkId.split(OEVK_ID_JOINER)[1]}
                         </td>
                         <VoterNumTd>
-                          {oevkAggregations[oevkId]?.valasztokSzama || 0}
+                          {oevkAggregations[oevkId]?.valasztokSzama || '-'}
                         </VoterNumTd>
                         <td>
                         <OevkButton

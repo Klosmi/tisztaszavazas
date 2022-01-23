@@ -1,3 +1,4 @@
+const { CITY_SZK_ID_JOINER } = require("../../constants")
 const tszService2 = require("../../services2/tszService2")
 const getSzkLevelSettlements = require("./getSzkLevelSettlements")
 
@@ -49,7 +50,7 @@ const getInitialCitySzkOevkGroupping = async () => {
 
       return {
         ...acc,
-        [`${varosNeve} | ${szavazokorSzama}`]: [megyeKod, valasztokeruletSzama]
+        [`${varosNeve}${CITY_SZK_ID_JOINER}${szavazokorSzama}`]: [megyeKod, valasztokeruletSzama]
       }
     }, {})
   )

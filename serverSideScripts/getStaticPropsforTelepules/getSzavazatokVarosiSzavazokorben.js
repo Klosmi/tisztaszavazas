@@ -1,15 +1,29 @@
 const tszService2 = require("../../services2/tszService2")
 const reduceSzavazatok = require( "./reduceSzavazatok" )
+const getSzkLevelSettlements = require("./getSzkLevelSettlements")
+const abbrevDistrictName = require("./abbrevDistrictName")
+const { CITY_SZK_ID_JOINER } = require("../../constants")
 
 const getSzavazatokVarosiSzavazokorben = async () => {
   let partyAggregation
   let szavazatokVarosiSzavazokorben
 
+  const szkLevelSettlements = getSzkLevelSettlements()
+
   const queryFactory = partok => `[
-    ${/** /''} { $limit: 500 },${/ **/''}
     { $match: {
+      $or: [
+        { "szavazokor.kozigEgyseg.kozigEgysegNeve": {
+            $in: [
+              ${szkLevelSettlements}
+            ]
+        }},
+        { "szavazokor.kozigEgyseg.kozigEgysegNeve": {
+          $regex: "Budapest"
+        }}
+      ],
       ${partok ? `'jeloles.jelolo.szervezet.rovidNev': { $in: ${JSON.stringify(partok)} },` : ''}
-      'jeloles.pozicio': "Egyéni választókerületi képviselő",
+      'jeloles.pozicio': "Egyéni választókerületi képviselő",      
     } },
     { $group: {
       _id: ["$szavazokor.kozigEgyseg.kozigEgysegNeve", "$szavazokor.szavazokorSzama"],
@@ -35,10 +49,14 @@ const getSzavazatokVarosiSzavazokorben = async () => {
 
   szavazatokVarosiSzavazokorben = (
     Object.entries(szavazatokVarosiSzavazokorben)
-    .reduce((acc, [id, value]) => ({
-      ...acc,
-      [id.split(',').join(' | ')]: value
-    }), {})
+    .reduce((acc, [id, value]) => {
+      let [cityName, szkNr] = id.split(',')
+      const citySzkId = `${abbrevDistrictName(cityName)}${CITY_SZK_ID_JOINER}${szkNr}`
+
+      return {
+        ...acc,
+        [citySzkId]: value
+    }}, {})
   )
 
   return szavazatokVarosiSzavazokorben

@@ -1,3 +1,5 @@
+import { CITY_SZK_ID_JOINER, OEVK_ID_JOINER } from "../../constants"
+
 export const TOGGLE_SETTLEMENT_TO_OEVK = 'TOGGLE_SETTLEMENT_TO_OEVK'
 export const TOGGLE_ACTIVE_SETTLEMENT = 'TOGGLE_ACTIVE_SETTLEMENT'
 export const TOGGLE_ACTIVE_CITY_SZK = 'TOGGLE_ACTIVE_CITY_SZK'
@@ -37,7 +39,7 @@ const getOevkAggregations = ({
         valasztokSzama
       } = votersNumberDataObject[settlementName] || {}
 
-      const oevkId = `${countyCode}|${oevkNum}`
+      const oevkId = `${countyCode}${OEVK_ID_JOINER}${oevkNum}`
 
       telepulesAggregation[oevkId] = {
         ellenzek: (telepulesAggregation[oevkId]?.ellenzek || 0) + ellenzek,
@@ -64,7 +66,7 @@ const getOevkAggregations = ({
         valasztokSzama
       } = cityVotersNumberObject[citySzkId] || {}
 
-      const oevkId = `${countyCode}|${oevkNum}`
+      const oevkId = `${countyCode}${OEVK_ID_JOINER}${oevkNum}`
       
       citySzkAggregation[oevkId] = {
         ellenzek: (citySzkAggregation[oevkId]?.ellenzek || 0) + ellenzek,
@@ -126,7 +128,7 @@ const getActiveSettlementOevkId = ({
 }) => {
   const activeSettlementOevkId = (
     settlementOevkGroupping[activeSettlement?.name]?.
-    join('|')
+    join(OEVK_ID_JOINER)
   )
   return activeSettlementOevkId
 }
@@ -138,7 +140,7 @@ const getActiveSzkOevkId = ({
 }) => {
   const activeSzkOevkId = (
     citySzkOevkGroupping[activeSzkId]
-    ?.join('|')
+    ?.join(OEVK_ID_JOINER)
   )
 
   return activeSzkOevkId
@@ -229,7 +231,7 @@ const getGroupping = (state, { oevkId }) => {
 
   return ({
     ...state.settlementOevkGroupping,
-    [settlementName]: oevkId.split('|').map(n => parseInt(n))
+    [settlementName]: oevkId.split(OEVK_ID_JOINER).map(n => parseInt(n))
   })
 }
 
@@ -237,7 +239,7 @@ const getSzkGroupping = (state, { oevkId }) => {
   const { citySzkId } = state.activeSzk
   return {
     ...state.citySzkOevkGroupping,
-    [citySzkId]: oevkId.split('|').map(n => parseInt(n))
+    [citySzkId]: oevkId.split(CITY_SZK_ID_JOINER).map(n => parseInt(n))
   }
 }
 
