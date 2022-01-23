@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useMemo, useState } from 'react'
+import React, { useCallback, useReducer, useMemo, useState, useEffect } from 'react'
 import {
   Drawer,
   PageHeader,
@@ -211,6 +211,10 @@ const AllSettlements = ({
       setSaveError(error.message)
     }
   })
+
+  useEffect(() => {
+    handleSave('2018-as OEVK határok')
+  }, [])
 
   const handleLoadOpen = () => {
     try {
