@@ -244,7 +244,7 @@ const getSzkGroupping = (state, { oevkId }) => {
 }
 
 const reducer = (state, { type, payload }) => {
-  console.log(payload)
+  // console.log(payload)
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
       ...state,

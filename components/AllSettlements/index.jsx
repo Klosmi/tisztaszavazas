@@ -55,8 +55,13 @@ const OevkSetter = styled.table`
 
 const OevkButton = styled.button`
   cursor: pointer;
+`
+
+const OevkTr = styled.tr`
   ${({ $highlighted }) => $highlighted ? `
-    background: #888;
+    td {
+      background: #BC9A8D;
+    }
   ` : ``}
 `
 
@@ -134,19 +139,19 @@ const AllSettlements = ({
     activeOevkId
   } = useMemo(() => mapStateToValues(state), [state])
 
-  console.log({
-    activeSettlement,
-    activeCountyName,
-    activeSettlementVotersNumer,
-    activeCountyOevkData,
-    oevkAggregations,
-    winnedOevks,
-    cityVotersNumberObject,
-    citySzkOevkGroupping,
-    activeSzkId,
-    activeOevkId,
-    initialSettlementOevkGroupping,
-  })
+  // console.log({
+  //   activeSettlement,
+  //   activeCountyName,
+  //   activeSettlementVotersNumer,
+  //   activeCountyOevkData,
+  //   oevkAggregations,
+  //   winnedOevks,
+  //   cityVotersNumberObject,
+  //   citySzkOevkGroupping,
+  //   activeSzkId,
+  //   activeOevkId,
+  //   initialSettlementOevkGroupping,
+  // })
 
   if (!allSettlements?.features) return null  
 
@@ -162,7 +167,7 @@ const AllSettlements = ({
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: {} })
   }
 
-  console.log(state)
+  // console.log(state)
 
   const handleAddToOevk = oevkId => {
     if (activeSzk){
@@ -313,7 +318,9 @@ const AllSettlements = ({
                   </thead>
                   <tbody>
                     {activeCountyOevkData?.oevkIds.map(oevkId => (
-                      <tr key={oevkId}>
+                      <OevkTr
+                        $highlighted={oevkId === activeOevkId}
+                        key={oevkId}>
                         <td>
                           {oevkId.split(OEVK_ID_JOINER)[1]}
                         </td>
@@ -322,13 +329,13 @@ const AllSettlements = ({
                         </VoterNumTd>
                         <td>
                         <OevkButton
-                            $highlighted={oevkId === activeOevkId}
-                            onClick={() => handleAddToOevk(oevkId)}
-                            >
-                            Ebbe
-                          </OevkButton>
+                          onClick={() => handleAddToOevk(oevkId)}
+                          disabled={oevkId === activeOevkId}
+                          >
+                          Ebbe
+                        </OevkButton>
                         </td>
-                      </tr>
+                      </OevkTr>
                     ))}
                   </tbody>
                 </OevkSetter>
