@@ -12,6 +12,7 @@ const TelepulesekPage = ({
   szavazatokVarosiSzavazokorben,
   initialSettlementOevkGroupping,
   initialCitySzkOevkGroupping,
+  countyBorders,
 }) => {
   return (
     <ResponsiveLayout menu={false}>
@@ -24,6 +25,7 @@ const TelepulesekPage = ({
         szavazatokVarosiSzavazokorben={szavazatokVarosiSzavazokorben}
         initialSettlementOevkGroupping={initialSettlementOevkGroupping}
         initialCitySzkOevkGroupping={initialCitySzkOevkGroupping}
+        countyBorders={countyBorders}
       />
     </ResponsiveLayout>
   )

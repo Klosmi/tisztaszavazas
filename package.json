@@ -13,6 +13,7 @@
     "@turf/centroid": "^6.5.0",
     "@turf/helpers": "^6.2.0",
     "@turf/transform-scale": "^6.2.0",
+    "@turf/union": "^6.5.0",
     "antd": "^4.6.6",
     "axios": "^0.20.0",
     "free-table": "^0.1.14",

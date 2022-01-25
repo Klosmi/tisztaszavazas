@@ -116,6 +116,7 @@ const AllSettlements = ({
   szavazatokVarosiSzavazokorben,
   initialSettlementOevkGroupping,
   initialCitySzkOevkGroupping,
+  countyBorders,
 }) => {
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -321,6 +322,19 @@ const AllSettlements = ({
                     zIndex: 1
                   })
                 }}                  
+              />
+            ))}
+            {countyBorders.features.map(({ geometry }) => (
+              <MapBase.Polygon
+                geometry={geometry}
+                options={{
+                  strokeOpacity: .5,
+                  strokeColor: "#666",
+                  strokeWeight: 3,
+                  zIndex: 4,
+                  fillOpacity: 0,
+                  clickable: false
+                }}
               />
             ))}
           </MapBase>
