@@ -5,6 +5,7 @@ export const TOGGLE_ACTIVE_SETTLEMENT = 'TOGGLE_ACTIVE_SETTLEMENT'
 export const TOGGLE_ACTIVE_CITY_SZK = 'TOGGLE_ACTIVE_CITY_SZK'
 export const TOGGLE_CITY_SZK_TO_OEVK = 'TOGGLE_CITY_SZK_TO_OEVK'
 export const LOAD_GROUPPING = 'LOAD_GROUPPING'
+export const ADD_POLYLINE_POINT = 'ADD_POLYLINE_POINT'
 
 export const initialState = {
   activeSettlement: null,
@@ -16,6 +17,7 @@ export const initialState = {
   cityVotersNumberObject: {},
   szavazatokVarosiSzavazokorben: {},
   activeSzk: null,
+  polylinePoints: []
 }
 
 const getOevkAggregations = ({
@@ -223,7 +225,8 @@ export const mapStateToValues = state => {
     activeSzk,
     activeSzkId,
     activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId,
-    activeOevkId: activeSettlementOevkId || activeSzkOevkId
+    activeOevkId: activeSettlementOevkId || activeSzkOevkId,
+    polylinePoints: state.polylinePoints,
   }
 }
 
@@ -269,6 +272,13 @@ const reducer = (state, { type, payload }) => {
       ...state,
       citySzkOevkGroupping: payload.citySzkOevkGroupping,
       settlementOevkGroupping: payload.settlementOevkGroupping,
+    }
+    case ADD_POLYLINE_POINT: return {
+      ...state,
+      polylinePoints: [
+        ...state.polylinePoints,
+        payload
+      ]
     }
     default: return state
   }

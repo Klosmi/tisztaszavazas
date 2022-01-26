@@ -18,6 +18,7 @@ import reducer, {
   TOGGLE_ACTIVE_CITY_SZK,
   TOGGLE_CITY_SZK_TO_OEVK,
   LOAD_GROUPPING,
+  ADD_POLYLINE_POINT,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -61,7 +62,7 @@ const OevkButton = styled.button`
 const OevkTr = styled.tr`
   ${({ $highlighted }) => $highlighted ? `
     td {
-      background: #BC9A8D;
+      background: #838DA2;
     }
   ` : ``}
 `
@@ -87,14 +88,12 @@ const VoterNumTd = styled.td`
 
 const getFillColor = ({
   numberOfVoters,
-  isCountrySelected,
   isInSelectedOevk,
 }) => {
 
   const baseColor =
-    isInSelectedOevk  ? `#8b2801` :
-    isCountrySelected ? `#28457B` : 
-                        `#bdbd4b`
+    isInSelectedOevk ? `#28457B` : 
+                        `#aaaaaa`
 
   return  (
     numberOfVoters > 13000 ? `${baseColor}B4` :
@@ -145,7 +144,8 @@ const AllSettlements = ({
     activeCountyName,
     activeAdminUnitName,
     citySzkOevkGroupping,
-    activeOevkId
+    activeOevkId,
+    polylinePoints,
   } = useMemo(() => mapStateToValues(state), [state])
 
 
@@ -171,7 +171,13 @@ const AllSettlements = ({
 
   if (!allSettlements?.features) return null  
 
-  const handleClickPolygon = (settlementId) => {
+  const handleRightClick = ({ latLng }) => {
+    const lng = latLng.lng()
+    const lat = latLng.lat()
+    dispatch({ type: ADD_POLYLINE_POINT, payload: { lng, lat } })
+  }
+
+  const handleClickPolygon = (settlementId, e) => {
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
   }
 
@@ -257,6 +263,7 @@ const AllSettlements = ({
             center={{ lat: 47, lng: 19 }}
             zoom={7.5}
             mapId="85b71dbefa7b82fa"
+            onRightClick={handleRightClick}
           >
             {allSettlements.features?.map?.(({
               name,
@@ -268,10 +275,10 @@ const AllSettlements = ({
                 key={settlementId}
                 geometry={geometry}
                 onClick={() => handleClickPolygon(settlementId)}
+                onRightClick={handleRightClick}
                 options={{
                   fillColor: getFillColor({
                     numberOfVoters: votersNumberDataObject?.[name]?.valasztokSzama,
-                    isCountrySelected: activeCountyName === votersNumberDataObject?.[name]?.megyeNeve,
                     isInSelectedOevk: activeOevkId && settlementOevkGroupping[name]?.join(OEVK_ID_JOINER) === activeOevkId,
                   }),
                   ...(settlementId == activeSettlement?._id ? {
@@ -304,10 +311,10 @@ const AllSettlements = ({
                 key={citySzkId}
                 geometry={korzethatar}
                 onClick={() => handleClickSzkPin(citySzkId)}
+                onRightClick={handleRightClick}
                 options={{
                   fillColor: getFillColor({
                     numberOfVoters: valasztokSzama,
-                    isCountrySelected: activeCountyName === megyeNeve,
                     isInSelectedOevk: activeOevkId && citySzkOevkGroupping[citySzkId]?.join(OEVK_ID_JOINER) === activeOevkId,
                   }),
                   ...(activeSzk?.citySzkId === citySzkId ? {
@@ -337,6 +344,9 @@ const AllSettlements = ({
                 }}
               />
             ))}
+            <MapBase.Polyline
+              path={polylinePoints}
+            />
           </MapBase>
           {/* <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" /> */}
           <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
@@ -370,6 +380,10 @@ const AllSettlements = ({
                   onCancelLoad={() => setLoadPopoverOpen(false)}
                   onConfirmLoad={handleLoadGroupping}
                 />
+                <textarea value={
+                  JSON.stringify(polylinePoints, null, 2)}
+                />
+
               </article>
             </BottomInner>
         </Drawer>        

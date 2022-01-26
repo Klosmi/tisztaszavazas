@@ -4,6 +4,7 @@ import {
   LoadScript,
   Marker as MarkerImport,
   Polygon as PolygonImport,
+  Polyline
 } from '@react-google-maps/api'
 import styled from 'styled-components';
 
@@ -62,6 +63,7 @@ const MapBase = ({
   center,
   zoom,
   children,
+  ...rest
 }) => {
   const mapRef = useRef(null)
   const mapState = useRef({ center, initialCenter: center })
@@ -95,6 +97,7 @@ const MapBase = ({
               position: ControlPosition_LEFT_CENTER
             }
           }}
+          {...rest}
         >
           {children}         
         </GoogleMap>
@@ -201,6 +204,8 @@ MapBase.EvkPolygon = ({
     {...rest}
   />
 )
+
+MapBase.Polyline = Polyline
 
 
 export default MapBase
