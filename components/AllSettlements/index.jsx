@@ -19,6 +19,7 @@ import reducer, {
   TOGGLE_CITY_SZK_TO_OEVK,
   LOAD_GROUPPING,
   ADD_POLYLINE_POINT,
+  START_NEW_POLYLINE,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -145,7 +146,7 @@ const AllSettlements = ({
     activeAdminUnitName,
     citySzkOevkGroupping,
     activeOevkId,
-    polylinePoints,
+    polylineObject,
   } = useMemo(() => mapStateToValues(state), [state])
 
 
@@ -171,14 +172,19 @@ const AllSettlements = ({
 
   if (!allSettlements?.features) return null  
 
+  const handleClickPolygon = (settlementId, e) => {
+    dispatch({ type: START_NEW_POLYLINE })
+    dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
+  }
+  
+  const handleClickMap = () => {
+    dispatch({ type: START_NEW_POLYLINE })
+  }
+
   const handleRightClick = ({ latLng }) => {
     const lng = latLng.lng()
     const lat = latLng.lat()
     dispatch({ type: ADD_POLYLINE_POINT, payload: { lng, lat } })
-  }
-
-  const handleClickPolygon = (settlementId, e) => {
-    dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
   }
 
   const handleClickSzkPin = (citySzkId) => {
@@ -264,6 +270,7 @@ const AllSettlements = ({
             zoom={7.5}
             mapId="85b71dbefa7b82fa"
             onRightClick={handleRightClick}
+            onClick={handleClickMap}
           >
             {allSettlements.features?.map?.(({
               name,
@@ -344,9 +351,12 @@ const AllSettlements = ({
                 }}
               />
             ))}
-            <MapBase.Polyline
-              path={polylinePoints}
-            />
+            {Object.entries(polylineObject.geometries).map(([id, geometry]) => (
+              <MapBase.Polyline
+                key={id}
+                path={geometry}
+              />
+            ))}
           </MapBase>
           {/* <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" /> */}
           <Legend stroke="#386FB3CC" fill="#386FB355" text="Település-határok" />
@@ -381,7 +391,7 @@ const AllSettlements = ({
                   onConfirmLoad={handleLoadGroupping}
                 />
                 <textarea value={
-                  JSON.stringify(polylinePoints, null, 2)}
+                  JSON.stringify(polylineObject.geometries, null, 2)}
                 />
 
               </article>

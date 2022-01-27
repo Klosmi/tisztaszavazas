@@ -6,6 +6,7 @@ export const TOGGLE_ACTIVE_CITY_SZK = 'TOGGLE_ACTIVE_CITY_SZK'
 export const TOGGLE_CITY_SZK_TO_OEVK = 'TOGGLE_CITY_SZK_TO_OEVK'
 export const LOAD_GROUPPING = 'LOAD_GROUPPING'
 export const ADD_POLYLINE_POINT = 'ADD_POLYLINE_POINT'
+export const START_NEW_POLYLINE = 'START_NEW_POLYLINE'
 
 export const initialState = {
   activeSettlement: null,
@@ -17,7 +18,10 @@ export const initialState = {
   cityVotersNumberObject: {},
   szavazatokVarosiSzavazokorben: {},
   activeSzk: null,
-  polylinePoints: []
+  polylineObject: {
+    activeIndex: 0,
+    geometries: {0: []}
+  }
 }
 
 const getOevkAggregations = ({
@@ -226,7 +230,7 @@ export const mapStateToValues = state => {
     activeSzkId,
     activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId,
     activeOevkId: activeSettlementOevkId || activeSzkOevkId,
-    polylinePoints: state.polylinePoints,
+    polylineObject: state.polylineObject,
   }
 }
 
@@ -273,12 +277,35 @@ const reducer = (state, { type, payload }) => {
       citySzkOevkGroupping: payload.citySzkOevkGroupping,
       settlementOevkGroupping: payload.settlementOevkGroupping,
     }
-    case ADD_POLYLINE_POINT: return {
+    case ADD_POLYLINE_POINT: 
+
+    return {
       ...state,
-      polylinePoints: [
-        ...state.polylinePoints,
-        payload
-      ]
+      polylineObject: {
+        ...state.polylineObject,
+        geometries: {
+          ...state.polylineObject.geometries,
+          [state.polylineObject.activeIndex]: [
+            ...state.polylineObject.geometries[state.polylineObject.activeIndex],
+            payload
+          ]
+        }
+      }
+    }
+    case START_NEW_POLYLINE: 
+    if (!state.polylineObject.geometries[state.polylineObject.activeIndex].length) {
+      return state
+    }
+    return {
+      ...state,
+      polylineObject: {
+        ...state.polylineObject,
+        activeIndex: state.polylineObject.activeIndex + 1,
+        geometries: {
+          ...state.polylineObject.geometries,
+          [state.polylineObject.activeIndex + 1]: []
+        }
+      }
     }
     default: return state
   }
