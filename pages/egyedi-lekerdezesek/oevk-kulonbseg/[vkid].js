@@ -23,7 +23,7 @@ const MapWrap = styled.div`
   width: 100%;
 `
 
-const Subtitle = styled(Typography.Text).attrs({ type: 'secondary'})`
+const Subtitle = styled(Typography.Text).attrs({ type: 'secondary' })`
   font-weight: normal;
   font-size: 14px;
 `
@@ -155,7 +155,7 @@ const OevkKulonbseg = ({
           <MapWrap>
             <MapInner>
               <MapBase
-                mapId="85b71dbefa7b82fa"
+                mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
                 center={{ lat, lng }}
                 zoom={+zoom}
               >

@@ -268,7 +268,7 @@ const AllSettlements = ({
           <MapBase
             center={{ lat: 47, lng: 19 }}
             zoom={7.5}
-            mapId="85b71dbefa7b82fa"
+            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             onRightClick={handleRightClick}
             onClick={handleClickMap}
           >
