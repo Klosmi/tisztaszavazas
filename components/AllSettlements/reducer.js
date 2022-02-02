@@ -10,6 +10,8 @@ export const START_NEW_POLYLINE = 'START_NEW_POLYLINE'
 export const SELECT_POLYLINE = 'SELECT_POLYLINE'
 export const TOGGLE_DRAWING = 'TOGGLE_DRAWING'
 export const REMOVE_SELECTED_POLYLINE = 'REMOVE_SELECTED_POLYLINE'
+export const RESET_POLYLINES = 'RESET_POLYLINES'
+export const ADD_POLYLINES_JSON = 'ADD_POLYLINES_JSON'
 
 export const initialState = {
   activeSettlement: null,
@@ -333,6 +335,21 @@ const reducer = (state, { type, payload }) => {
     case TOGGLE_DRAWING: return {
       ...state,
       isDrawing: !state.isDrawing
+    }
+
+    case RESET_POLYLINES: return {
+      ...state,
+      polyLines: initialState.polyLines
+    }
+
+    case ADD_POLYLINES_JSON: 
+    try {
+      return {
+        ...state,
+        polyLines: JSON.parse(payload)
+      }
+    } catch(e){
+      return state
     }
 
     default: return state

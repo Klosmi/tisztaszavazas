@@ -26,6 +26,8 @@ import reducer, {
   SELECT_POLYLINE,
   TOGGLE_DRAWING,
   REMOVE_SELECTED_POLYLINE,
+  RESET_POLYLINES,
+  ADD_POLYLINES_JSON,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -203,8 +205,16 @@ const AllSettlements = ({
     dispatch({ type: TOGGLE_DRAWING })
   }
 
+  const handleResetPoligons = () => {
+    dispatch({ type: RESET_POLYLINES })
+  }
+
   const handleClickRemovePolyline = () => {
     dispatch({ type: REMOVE_SELECTED_POLYLINE })
+  }
+
+  const handleAddPolylinesJson = ({ target: { value }}) => {
+    dispatch({ type: ADD_POLYLINES_JSON, payload: value })
   }
 
   const handleClickSzkPin = (citySzkId) => {
@@ -516,14 +526,22 @@ const AllSettlements = ({
           maskStyle={{ pointerEvents: 'none' }}
           >
           <Space>
-            <textarea value={
-              JSON.stringify(polyLines, null, 2)
-            }/>
-            <Button
-              onClick={handleClickRemovePolyline}
-              >
-              Kijelölt görbe törlése
-            </Button>
+            <textarea
+              value={JSON.stringify(polyLines, null, 2)}
+              onChange={handleAddPolylinesJson}
+            />
+            <Space direction='vertical'>
+              <Button
+                onClick={handleClickRemovePolyline}
+                >
+                Kijelölt görbe törlése
+              </Button>
+              <Button
+                onClick={handleResetPoligons}
+                >
+                Alaphelyzetbe állítás
+              </Button>
+            </Space>
           </Space>
         </Modal>          
               
