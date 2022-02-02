@@ -18,6 +18,10 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+
+  .ant-modal-wrap {
+    pointer-events: none;
+  }
 `;
 
 export default GlobalStyle

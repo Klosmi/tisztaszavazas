@@ -4,7 +4,8 @@ import {
   LoadScript,
   Marker as MarkerImport,
   Polygon as PolygonImport,
-  Polyline
+  Polyline,
+  Circle
 } from '@react-google-maps/api'
 import styled from 'styled-components';
 
@@ -206,6 +207,8 @@ MapBase.EvkPolygon = ({
 )
 
 MapBase.Polyline = Polyline
+
+MapBase.Circle = Circle
 
 
 export default MapBase

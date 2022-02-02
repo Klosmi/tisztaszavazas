@@ -3,6 +3,9 @@ import {
   Drawer,
   PageHeader,
   Descriptions,
+  Modal,
+  Button,
+  Space,
 } from 'antd';
 import MapBase from '../MapBase'
 import styled from 'styled-components'
@@ -20,6 +23,9 @@ import reducer, {
   LOAD_GROUPPING,
   ADD_POLYLINE_POINT,
   START_NEW_POLYLINE,
+  SELECT_POLYLINE,
+  TOGGLE_DRAWING,
+  REMOVE_SELECTED_POLYLINE,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -146,7 +152,8 @@ const AllSettlements = ({
     activeAdminUnitName,
     citySzkOevkGroupping,
     activeOevkId,
-    polylineObject,
+    polyLines,
+    isDrawing,
   } = useMemo(() => mapStateToValues(state), [state])
 
 
@@ -156,6 +163,7 @@ const AllSettlements = ({
   const [savedSets, setSavedSets] = useState({})
 
   console.log({
+    // polyLines
   //   activeSettlement,
   //   activeCountyName,
   //   activeSettlementVotersNumer,
@@ -185,6 +193,18 @@ const AllSettlements = ({
     const lng = latLng.lng()
     const lat = latLng.lat()
     dispatch({ type: ADD_POLYLINE_POINT, payload: { lng, lat } })
+  }
+
+  const handlePolylineClick = lineId => {
+    dispatch({ type: SELECT_POLYLINE, payload: lineId })
+  }
+  
+  const toggleDrawing = () => {
+    dispatch({ type: TOGGLE_DRAWING })
+  }
+
+  const handleClickRemovePolyline = () => {
+    dispatch({ type: REMOVE_SELECTED_POLYLINE })
   }
 
   const handleClickSzkPin = (citySzkId) => {
@@ -351,11 +371,27 @@ const AllSettlements = ({
                 }}
               />
             ))}
-            {Object.entries(polylineObject.geometries).map(([id, geometry]) => (
-              <MapBase.Polyline
-                key={id}
-                path={geometry}
-              />
+            {polyLines.map(({ id, isActive, points }) => (
+              <>
+                <MapBase.Polyline
+                  key={id}
+                  path={points}
+                  onClick={() => handlePolylineClick(id)}
+                  options={{
+                    strokeColor: isActive ? 'red' : 'black'
+                  }}
+                />
+                {points.map((point, i) => (
+                  <MapBase.Circle
+                    options={{
+                      strokeColor: isActive && i === (points.length - 1) ? 'red' : 'black'
+                    }}
+                    key={i}
+                    center={point}
+                    radius={120}
+                  />
+                ))}
+              </>
             ))}
           </MapBase>
           {/* <Legend stroke="#FF3333AA" fill="#386FB300" text="OEVK határ" /> */}
@@ -378,22 +414,26 @@ const AllSettlements = ({
                 </WinnedWrap>
               </article>
               <article>
-                <SettlementSaveLoad
-                  onConfirmSave={handleSave}
-                  isPopoverOpen={isSavePopoverOpen}
-                  onClickSave={() => setSavePopoverOpen(true)}
-                  saveError={saveError}
-                  onCancel={() => setSavePopoverOpen(false)}
-                  onClickLoad={handleLoadOpen}
-                  isLoadOpen={isLoadPopoverOpen}
-                  loadOptions={Object.keys(savedSets).map(name => ({ id: name, name }))}
-                  onCancelLoad={() => setLoadPopoverOpen(false)}
-                  onConfirmLoad={handleLoadGroupping}
-                />
-                <textarea value={
-                  JSON.stringify(polylineObject.geometries, null, 2)}
-                />
-
+                <Space>
+                  <SettlementSaveLoad
+                    onConfirmSave={handleSave}
+                    isPopoverOpen={isSavePopoverOpen}
+                    onClickSave={() => setSavePopoverOpen(true)}
+                    saveError={saveError}
+                    onCancel={() => setSavePopoverOpen(false)}
+                    onClickLoad={handleLoadOpen}
+                    isLoadOpen={isLoadPopoverOpen}
+                    loadOptions={Object.keys(savedSets).map(name => ({ id: name, name }))}
+                    onCancelLoad={() => setLoadPopoverOpen(false)}
+                    onConfirmLoad={handleLoadGroupping}
+                  />
+                  
+                  <Button
+                    onClick={toggleDrawing}
+                  >
+                    {isDrawing ? 'Rajzolás befejezése' : 'Vonal rajzolása'}
+                  </Button>
+                </Space>
               </article>
             </BottomInner>
         </Drawer>        
@@ -465,7 +505,27 @@ const AllSettlements = ({
               <TisztaszavazasLogoStyled />
             </DrawerFooter>
         </Drawer>
-          
+        <Modal title="Vonal rajzolása"
+          visible={isDrawing}
+          onCancel={toggleDrawing}
+          cancelText="Bezár"
+          footer={null}
+          maskClosable={false}
+          mask={false}
+          style={{ marginLeft: 40 }}
+          maskStyle={{ pointerEvents: 'none' }}
+          >
+          <Space>
+            <textarea value={
+              JSON.stringify(polyLines, null, 2)
+            }/>
+            <Button
+              onClick={handleClickRemovePolyline}
+              >
+              Kijelölt görbe törlése
+            </Button>
+          </Space>
+        </Modal>          
               
       </Wrap>
     </>

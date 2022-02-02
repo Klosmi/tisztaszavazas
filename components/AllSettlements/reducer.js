@@ -7,6 +7,9 @@ export const TOGGLE_CITY_SZK_TO_OEVK = 'TOGGLE_CITY_SZK_TO_OEVK'
 export const LOAD_GROUPPING = 'LOAD_GROUPPING'
 export const ADD_POLYLINE_POINT = 'ADD_POLYLINE_POINT'
 export const START_NEW_POLYLINE = 'START_NEW_POLYLINE'
+export const SELECT_POLYLINE = 'SELECT_POLYLINE'
+export const TOGGLE_DRAWING = 'TOGGLE_DRAWING'
+export const REMOVE_SELECTED_POLYLINE = 'REMOVE_SELECTED_POLYLINE'
 
 export const initialState = {
   activeSettlement: null,
@@ -18,10 +21,12 @@ export const initialState = {
   cityVotersNumberObject: {},
   szavazatokVarosiSzavazokorben: {},
   activeSzk: null,
-  polylineObject: {
-    activeIndex: 0,
-    geometries: {0: []}
-  }
+  polyLines: [{
+    id: 'initial',
+    isActive: true,
+    points: []
+  }],
+  isDrawing: false
 }
 
 const getOevkAggregations = ({
@@ -230,7 +235,8 @@ export const mapStateToValues = state => {
     activeSzkId,
     activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId,
     activeOevkId: activeSettlementOevkId || activeSzkOevkId,
-    polylineObject: state.polylineObject,
+    polyLines: state.polyLines,
+    isDrawing: state.isDrawing
   }
 }
 
@@ -253,60 +259,82 @@ const getSzkGroupping = (state, { oevkId }) => {
 
 const reducer = (state, { type, payload }) => {
   // console.log(type, payload)
+
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
       ...state,
       settlementOevkGroupping: getGroupping(state, payload)
     }
+
     case TOGGLE_CITY_SZK_TO_OEVK: return {
       ...state,
       citySzkOevkGroupping: getSzkGroupping(state, payload)
     }
+
     case TOGGLE_ACTIVE_SETTLEMENT: return {
       ...state,
       activeSzk: null,
       activeSettlement: state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
     }
+
     case TOGGLE_ACTIVE_CITY_SZK: return {
       ...state,
       activeSettlement: null,
       activeSzk: state.cityVotersNumberObject[payload.citySzkId] || null,
     }
+
     case LOAD_GROUPPING: return {
       ...state,
       citySzkOevkGroupping: payload.citySzkOevkGroupping,
       settlementOevkGroupping: payload.settlementOevkGroupping,
     }
-    case ADD_POLYLINE_POINT: 
+
+    case ADD_POLYLINE_POINT: return {
+      ...state,
+      polyLines: state.polyLines.map(p => {
+        if (p.isActive){
+          return {
+            ...p,
+            points: [
+              ...p.points,
+              payload
+            ]
+          }
+        }
+        return p
+      })
+    }
+
+    case START_NEW_POLYLINE: 
+    if (!state.polyLines.at(-1).points.length) return state
 
     return {
       ...state,
-      polylineObject: {
-        ...state.polylineObject,
-        geometries: {
-          ...state.polylineObject.geometries,
-          [state.polylineObject.activeIndex]: [
-            ...state.polylineObject.geometries[state.polylineObject.activeIndex],
-            payload
-          ]
-        }
-      }
+      polyLines: [
+        ...state.polyLines.map(p => ({ ...p, isActive: false })),
+        { id: +new Date(), isActive: true, points: [] }
+      ]
     }
-    case START_NEW_POLYLINE: 
-    if (!state.polylineObject.geometries[state.polylineObject.activeIndex].length) {
-      return state
-    }
-    return {
+
+
+    case SELECT_POLYLINE: return {
       ...state,
-      polylineObject: {
-        ...state.polylineObject,
-        activeIndex: state.polylineObject.activeIndex + 1,
-        geometries: {
-          ...state.polylineObject.geometries,
-          [state.polylineObject.activeIndex + 1]: []
-        }
-      }
+      polyLines: state.polyLines.map(p => ({
+        ...p,
+        isActive: p.id === payload
+      }))
     }
+
+    case REMOVE_SELECTED_POLYLINE: return {
+      ...state,
+      polyLines: state.polyLines.filter(({ isActive }) => !isActive)
+    }
+
+    case TOGGLE_DRAWING: return {
+      ...state,
+      isDrawing: !state.isDrawing
+    }
+
     default: return state
   }
 }
