@@ -6,12 +6,14 @@ export const TOGGLE_ACTIVE_CITY_SZK = 'TOGGLE_ACTIVE_CITY_SZK'
 export const TOGGLE_CITY_SZK_TO_OEVK = 'TOGGLE_CITY_SZK_TO_OEVK'
 export const LOAD_GROUPPING = 'LOAD_GROUPPING'
 export const ADD_POLYLINE_POINT = 'ADD_POLYLINE_POINT'
-export const START_NEW_POLYLINE = 'START_NEW_POLYLINE'
+export const DESELECT_POLYLINES = 'DESELECT_POLYLINES'
 export const SELECT_POLYLINE = 'SELECT_POLYLINE'
 export const TOGGLE_DRAWING = 'TOGGLE_DRAWING'
 export const REMOVE_SELECTED_POLYLINE = 'REMOVE_SELECTED_POLYLINE'
 export const RESET_POLYLINES = 'RESET_POLYLINES'
 export const ADD_POLYLINES_JSON = 'ADD_POLYLINES_JSON'
+export const SELECT_POINT = 'SELECT_POINT'
+export const MOVE_ACTIVE_POINT = 'MOVE_ACTIVE_POINT'
 
 export const initialState = {
   activeSettlement: null,
@@ -23,11 +25,7 @@ export const initialState = {
   cityVotersNumberObject: {},
   szavazatokVarosiSzavazokorben: {},
   activeSzk: null,
-  polyLines: [{
-    id: 'initial',
-    isActive: true,
-    points: []
-  }],
+  polyLines: [],
   isDrawing: false
 }
 
@@ -259,8 +257,32 @@ const getSzkGroupping = (state, { oevkId }) => {
   }
 }
 
+const getNextLatLng = ({ lng, lat }, direction) => {
+  console.log({ lng, lat, direction })
+  let nextLng = lng
+  let nextLat = lat
+
+  if (direction === 'up'){
+    nextLat = ((Math.ceil(lat * 1000)) + 1)/1000
+  }
+  if (direction === 'down'){
+    nextLat = ((Math.ceil(lat * 1000)) - 1)/1000
+  }
+  if (direction === 'right'){
+    nextLng = ((Math.ceil(lng * 1000)) + 1)/1000
+  }  
+  if (direction === 'left'){
+    nextLng = ((Math.ceil(lng * 1000)) - 1)/1000
+  }  
+  return {
+    lng: nextLng,
+    lat: nextLat,
+  }
+}
+
 const reducer = (state, { type, payload }) => {
   // console.log(type, payload)
+  let hasActiveLine = false
 
   switch(type){
     case TOGGLE_SETTLEMENT_TO_OEVK: return {
@@ -293,31 +315,72 @@ const reducer = (state, { type, payload }) => {
 
     case ADD_POLYLINE_POINT: return {
       ...state,
-      polyLines: state.polyLines.map(p => {
-        if (p.isActive){
+      polyLines: [...state.polyLines.map(pl => {
+        if (pl.isActive){
+          hasActiveLine = true
           return {
-            ...p,
+            ...pl,
             points: [
-              ...p.points,
-              payload
+              ...pl.points.map(pt => ({
+                ...pt,
+                isSelected: false
+              })),
+              {
+                id: + new Date(),
+                isSelected: true,
+                ...payload
+              }
             ]
           }
         }
-        return p
+        return pl
+      }),
+      ...(hasActiveLine ? [] : [{
+        id: + new Date(),
+        isActive: true,
+        points: [{
+          id: + new Date(),
+          isSelected: true,
+          ...payload
+        }]
+      }])]
+    }
+
+    case SELECT_POINT: return {
+      ...state,
+      polyLines: state.polyLines.map(pl => {
+        if (pl.id === payload.lineId){
+          return {
+            ...pl,
+            isActive: true,
+            points: pl.points.map(pt => {
+              if (pt.id === payload.pointId){
+                return {
+                  ...pt,
+                  isSelected: true
+                }
+              }
+              return {
+                ...pt,
+                isSelected: false
+              }
+            })
+          }
+        }
+        return {
+          ...pl,
+          isActive: false
+        }
       })
     }
 
-    case START_NEW_POLYLINE: 
-    if (!state.polyLines.at(-1).points.length) return state
-
-    return {
+    case DESELECT_POLYLINES: return {
       ...state,
-      polyLines: [
-        ...state.polyLines.map(p => ({ ...p, isActive: false })),
-        { id: +new Date(), isActive: true, points: [] }
-      ]
+      polyLines: state.polyLines.map(pl => ({
+        ...pl,
+        isActive: false
+      }))
     }
-
 
     case SELECT_POLYLINE: return {
       ...state,
@@ -343,13 +406,34 @@ const reducer = (state, { type, payload }) => {
     }
 
     case ADD_POLYLINES_JSON: 
-    try {
-      return {
-        ...state,
-        polyLines: JSON.parse(payload)
+      try {
+        return {
+          ...state,
+          polyLines: JSON.parse(payload)
+        }
+      } catch(e){
+        return state
       }
-    } catch(e){
-      return state
+
+    case MOVE_ACTIVE_POINT: return {
+      ...state,
+      polyLines: state.polyLines.map(pl => {
+        if (pl.isActive) {
+          return {
+            ...pl,
+            points: pl.points.map(pt => {
+              if (pt.isSelected === true) {
+                return {
+                  ...pt,
+                  ...getNextLatLng(pt, payload)
+                }
+              }
+              return pt
+            })
+          }
+        }
+        return pl
+      })      
     }
 
     default: return state

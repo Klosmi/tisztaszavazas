@@ -22,12 +22,14 @@ import reducer, {
   TOGGLE_CITY_SZK_TO_OEVK,
   LOAD_GROUPPING,
   ADD_POLYLINE_POINT,
-  START_NEW_POLYLINE,
+  DESELECT_POLYLINES,
   SELECT_POLYLINE,
   TOGGLE_DRAWING,
   REMOVE_SELECTED_POLYLINE,
   RESET_POLYLINES,
   ADD_POLYLINES_JSON,
+  SELECT_POINT,
+  MOVE_ACTIVE_POINT,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -183,12 +185,12 @@ const AllSettlements = ({
   if (!allSettlements?.features) return null  
 
   const handleClickPolygon = (settlementId, e) => {
-    dispatch({ type: START_NEW_POLYLINE })
+    dispatch({ type: DESELECT_POLYLINES })
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
   }
   
   const handleClickMap = () => {
-    dispatch({ type: START_NEW_POLYLINE })
+    dispatch({ type: DESELECT_POLYLINES })
   }
 
   const handleRightClick = ({ latLng }) => {
@@ -213,12 +215,22 @@ const AllSettlements = ({
     dispatch({ type: REMOVE_SELECTED_POLYLINE })
   }
 
+
+  const handlePointClick = (lineId, pointId) => {
+    dispatch({ type: SELECT_POINT, payload: { lineId, pointId } })
+  }
+
   const handleAddPolylinesJson = ({ target: { value }}) => {
     dispatch({ type: ADD_POLYLINES_JSON, payload: value })
   }
 
-  const handleClickSzkPin = (citySzkId) => {
+  const handleClickSzkPolygon = (citySzkId) => {
     dispatch({ type: TOGGLE_ACTIVE_CITY_SZK, payload: { citySzkId } })
+    dispatch({ type: DESELECT_POLYLINES })
+  }
+
+  const movePoint = direction => {
+    dispatch({ type: MOVE_ACTIVE_POINT, payload: direction })
   }
   
   const handleClickDrawerClose = () => {
@@ -347,7 +359,7 @@ const AllSettlements = ({
               <MapBase.Polygon
                 key={citySzkId}
                 geometry={korzethatar}
-                onClick={() => handleClickSzkPin(citySzkId)}
+                onClick={() => handleClickSzkPolygon(citySzkId)}
                 onRightClick={handleRightClick}
                 options={{
                   fillColor: getFillColor({
@@ -381,22 +393,25 @@ const AllSettlements = ({
                 }}
               />
             ))}
-            {polyLines.map(({ id, isActive, points }) => (
+            {polyLines.map(({ id: lineId, isActive, points }) => (
               <>
                 <MapBase.Polyline
-                  key={id}
+                  key={lineId}
                   path={points}
-                  onClick={() => handlePolylineClick(id)}
+                  onClick={() => handlePolylineClick(lineId)}
                   options={{
-                    strokeColor: isActive ? 'red' : 'black'
+                    strokeColor: isActive ? 'red' : 'black',
+                    zIndex: 6
                   }}
                 />
-                {points.map((point, i) => (
+                {points.map((point) => (
                   <MapBase.Circle
+                    onClick={() => handlePointClick(lineId, point.id)}
                     options={{
-                      strokeColor: isActive && i === (points.length - 1) ? 'red' : 'black'
+                      strokeColor: isActive && point.isSelected ? 'red' : 'black',
+                      zIndex: 7
                     }}
-                    key={i}
+                    key={point.id}
                     center={point}
                     radius={120}
                   />
@@ -541,6 +556,15 @@ const AllSettlements = ({
                 >
                 Alaphelyzetbe állítás
               </Button>
+            </Space>
+            <Space direction='vertical'>
+              <h5 style={{ textAlign: 'center' }}>Pont mozgatása</h5>
+              <Button onClick={() => movePoint('up')} style={{ marginLeft: 30 }}>Fel</Button>
+              <Space>
+                <Button onClick={() => movePoint('left')}>Bal</Button>
+                <Button onClick={() => movePoint('right')}>Jobb</Button>
+              </Space>
+              <Button onClick={() => movePoint('down')} style={{ marginLeft: 30 }}>Le</Button>
             </Space>
           </Space>
         </Modal>          
