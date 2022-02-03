@@ -14,6 +14,7 @@ export const RESET_POLYLINES = 'RESET_POLYLINES'
 export const ADD_POLYLINES_JSON = 'ADD_POLYLINES_JSON'
 export const SELECT_POINT = 'SELECT_POINT'
 export const MOVE_ACTIVE_POINT = 'MOVE_ACTIVE_POINT'
+export const DELETE_ACTIVE_POINT = 'DELETE_ACTIVE_POINT'
 
 export const initialState = {
   activeSettlement: null,
@@ -434,6 +435,19 @@ const reducer = (state, { type, payload }) => {
         }
         return pl
       })      
+    }
+
+    case DELETE_ACTIVE_POINT: return {
+      ...state,
+      polyLines: state.polyLines.map(pl => {
+        if (pl.isActive) {
+          return {
+            ...pl,
+            points: pl.points.filter(({ isSelected }) => !isSelected)
+          }
+        }
+        return pl
+      })        
     }
 
     default: return state

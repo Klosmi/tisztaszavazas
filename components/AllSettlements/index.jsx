@@ -30,6 +30,7 @@ import reducer, {
   ADD_POLYLINES_JSON,
   SELECT_POINT,
   MOVE_ACTIVE_POINT,
+  DELETE_ACTIVE_POINT,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -213,6 +214,10 @@ const AllSettlements = ({
 
   const handleClickRemovePolyline = () => {
     dispatch({ type: REMOVE_SELECTED_POLYLINE })
+  }
+
+  const handleDeletePoint = () => {
+    dispatch({ type: DELETE_ACTIVE_POINT })
   }
 
 
@@ -550,6 +555,11 @@ const AllSettlements = ({
                 onClick={handleClickRemovePolyline}
                 >
                 Kijelölt görbe törlése
+              </Button>
+              <Button
+                onClick={handleDeletePoint}
+                >
+                Kijelölt pont törlése
               </Button>
               <Button
                 onClick={handleResetPoligons}
