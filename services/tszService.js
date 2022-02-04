@@ -40,11 +40,11 @@ const getAllSzk = async ({ skip = 0, limit = 25, query = {}, election = 'ogy2018
 
 const getSzkByAddress = async ({ city, address, houseNr }, election) => {
   const steetSide = houseNr%2 ? 'Páratlan házszámok' : 'Páros házszámok'
-  
+
   return await tszGet({
     path: `/szavazokorok`,
     query: {
-      'kozigEgyseg.kozigEgysegNeve': `${city}`,
+      'kozigEgyseg.kozigEgysegNeve': `/${city}|${city.replace('.ker', '. kerület')}/`,
       'kozteruletek.kozteruletNev': address,
       'kozteruletek.kezdoHazszam': houseNr && `{ $lte: ${houseNr} }`,
       'kozteruletek.vegsoHazszam': houseNr && `{ $gte: ${houseNr} }`,
@@ -82,7 +82,7 @@ const getCityIdByName = async ({ cityName, election }) => {
   console.log({cityName})
   let { data } = await tszGet({
     path: '/kozigegysegek',
-    query: { kozigEgysegNeve: cityName },
+    query: { kozigEgysegNeve: `/${cityName.replace('.ker', '. kerület')}|${cityName}/` },
     election
   })
   return data[0]._id
