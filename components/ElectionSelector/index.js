@@ -35,6 +35,7 @@ const ElectionSelector = () => {
         <Option value="ogy2018">2018 országgyűlési</Option>
         <Option value="onk2019">2019 önkormányzati</Option>
         <Option value="idbo620">2020 időközi országgyűlési - Borsod 6</Option>
+        <Option value="ogy2022">2022 országgyűlési</Option>
       </Select>
     </>
   )

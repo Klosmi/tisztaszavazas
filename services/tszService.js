@@ -33,7 +33,7 @@ const getById = async ({ path = '/szavazokorok' , id, election }) => {
   return await tszGet({ path: `${path}/${id}`, election })
 }
 
-const getAllSzk = async ({ skip = 0, limit = 25, query = {}, election = 'ogy2018' }) => {
+const getAllSzk = async ({ skip = 0, limit = 25, query = {}, election = process.env.NEXT_PUBLIC_DEFAULT_ELECTION }) => {
   query = { ...query, skip, limit }
   return await tszGet({ path: `/szavazokorok${paramSerializer(query)}`, election })
 }

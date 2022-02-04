@@ -32,7 +32,7 @@ const PageHeaderStyled = styled(PageHeader)`
 
 
 const OevkCities = ({
-  election = "ogy2018",
+  election = process.env.NEXT_PUBLIC_DEFAULT_ELECTION,
   showSearch = true
 }) => {
   const [selectedVk, setSelectedVk] = useState()
