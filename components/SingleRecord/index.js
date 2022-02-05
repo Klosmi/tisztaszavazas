@@ -126,7 +126,7 @@ const SingleRecord = ({ election, id }) => {
     lat: +korzethatarCoordinates[0][1]
   }
 
-  const polygonPath = korzethatarCoordinates.map(([lng, lat]) => ({ lng: +lng, lat: +lat }))
+  const polygonPath = korzethatarCoordinates.map(([lng, lat]) => ({ lng, lat }))
 
   return (
     <>
