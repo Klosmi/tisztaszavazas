@@ -39,9 +39,9 @@ const SzkMap = ({ center, polygonPath }) => {
           center={center}
           zoom={15}
         >
-{/*           <Marker
+          <Marker
             position={center}
-          /> */}
+          />
           <Polygon
             paths={polygonPath}
             options={options}
