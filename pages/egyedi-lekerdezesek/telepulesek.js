@@ -13,6 +13,7 @@ const TelepulesekPage = ({
   initialSettlementOevkGroupping,
   initialCitySzkOevkGroupping,
   countyBorders,
+  cityAreas,
 }) => {
   return (
     <ResponsiveLayout menu={false}>
@@ -26,6 +27,7 @@ const TelepulesekPage = ({
         initialSettlementOevkGroupping={initialSettlementOevkGroupping}
         initialCitySzkOevkGroupping={initialCitySzkOevkGroupping}
         countyBorders={countyBorders}
+        cityAreas={cityAreas}
       />
     </ResponsiveLayout>
   )

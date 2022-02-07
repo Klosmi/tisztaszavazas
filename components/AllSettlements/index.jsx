@@ -1,18 +1,15 @@
 import React, { useCallback, useReducer, useMemo, useState, useEffect } from 'react'
 import {
   Drawer,
-  PageHeader,
   Descriptions,
   Modal,
   Button,
   Space,
 } from 'antd';
 import MapBase from '../MapBase'
-import styled from 'styled-components'
 import Legend from '../Legend'
 import useValasztas from '../../hooks/useValasztas';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
-import TisztaszavazasLogo from '../TisztaszavazasLogo';
 import reducer, {
   initialState,
   mapStateToValues,
@@ -34,69 +31,20 @@ import reducer, {
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
+import {
+  Wrap,
+  MapWrap,
+  PageHeaderStyled,
+  TisztaszavazasLogoStyled,
+  DrawerFooter,
+  OevkSetter,
+  OevkButton,
+  OevkTr,
+  BottomInner,
+  WinnedWrap,
+  VoterNumTd,
+} from './styles'
 
-const Wrap = styled.div`
-  display: flex;
-  flex-direction: ${({ horizontal }) => horizontal ? 'row' : 'column' };
-`
-
-const MapWrap = styled.div`
-  width: 100%;
-`
-
-const PageHeaderStyled = styled(PageHeader)`
-  padding: 16px 4px;
-`
-
-const TisztaszavazasLogoStyled = styled(TisztaszavazasLogo).attrs({ width: 140 })``
-
-
-const DrawerFooter = styled.div`
-  position: absolute;
-  bottom: 0;
-  background: white;
-  width: 100%;
-  padding: 10px;
-  left: 0;
-`
-
-const OevkSetter = styled.table`
-  td, th {
-    padding: 4px;
-  }
-  margin-bottom: 40px;
-`
-
-const OevkButton = styled.button`
-  cursor: pointer;
-`
-
-const OevkTr = styled.tr`
-  ${({ $highlighted }) => $highlighted ? `
-    td {
-      background: #838DA2;
-    }
-  ` : ``}
-`
-
-const BottomInner = styled.div`
-  display: flex;
-  article {
-    flex-direction: column;
-    margin-right: 12px;
-  }
-`
-
-const WinnedWrap = styled.div`
-  display: flex;
-  > * {
-    margin-right: 30px;
-  }
-`
-
-const VoterNumTd = styled.td`
-  text-align: right;
-`
 
 const getFillColor = ({
   numberOfVoters,
@@ -128,6 +76,7 @@ const AllSettlements = ({
   initialSettlementOevkGroupping,
   initialCitySzkOevkGroupping,
   countyBorders,
+  cityAreas,
 }) => {
   const { leiras: electionDescription } = useValasztas({ election }) || {}
 
@@ -159,6 +108,7 @@ const AllSettlements = ({
     activeOevkId,
     polyLines,
     isDrawing,
+    activePointCoordinates,
   } = useMemo(() => mapStateToValues(state), [state])
 
 
@@ -319,6 +269,20 @@ const AllSettlements = ({
             onRightClick={handleRightClick}
             onClick={handleClickMap}
           >
+            {cityAreas.features.map(({ features }) => (
+              features.map(({ id, geometry }) => (
+                <MapBase.Polygon
+                  key={id}
+                  geometry={geometry}
+                  options={{
+                    strokeColor: "#7a59126c",
+                    fillColor: "#d8c34f86",
+                    strokeWeight: 3,
+                    zIndex: 1
+                  }}
+                />
+              ))
+            ))}
             {allSettlements.features?.map?.(({
               name,
               geometry,
@@ -546,10 +510,15 @@ const AllSettlements = ({
           maskStyle={{ pointerEvents: 'none' }}
           >
           <Space>
-            <textarea
-              value={JSON.stringify(polyLines, null, 2)}
-              onChange={handleAddPolylinesJson}
-            />
+            <Space direction='vertical'>
+              <textarea
+                value={JSON.stringify(polyLines, null, 2)}
+                onChange={handleAddPolylinesJson}
+              />
+              <textarea
+                value={JSON.stringify(activePointCoordinates, null, 2)}
+              />
+            </Space>
             <Space direction='vertical'>
               <Button
                 onClick={handleClickRemovePolyline}

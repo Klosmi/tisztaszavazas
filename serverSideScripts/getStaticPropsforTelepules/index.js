@@ -3,6 +3,7 @@ const getVotersNumberObject = require('./getVotersNumberObject')
 const getCountiesAndOevksObject = require('./getCountiesAndOevksObject')
 const getCityVotersNumberObject = require('./getCityVotersNumberObject')
 const getAllSettlements = require('./getAllSettlements')
+const getCityAreas = require('./getCityAreas')
 const getSzavazatokVarosiSzavazokorben = require('./getSzavazatokVarosiSzavazokorben')
 const getInitialSettlementOevkGroupping = require('./getInitialSettlementOevkGroupping')
 const getInitialCitySzkOevkGroupping = require('./getInitialCitySzkOevkGroupping')
@@ -12,6 +13,7 @@ const getCountyBorders = require('./getCountyBorders')
 const getStaticPropsforTelepules = async () => {
   const votersNumberDataObject = await getVotersNumberObject()
   const allSettlements = getAllSettlements()
+  const cityAreas = getCityAreas()
 
 
   return {
@@ -19,6 +21,7 @@ const getStaticPropsforTelepules = async () => {
       szavazatokTelepulesenkent: await getSzavazatokTelepulesenkent(),
       votersNumberDataObject,
       allSettlements,
+      cityAreas,
       countiesAndOevksObject: await getCountiesAndOevksObject(),
       cityVotersNumberObject: await getCityVotersNumberObject(),
       szavazatokVarosiSzavazokorben: await getSzavazatokVarosiSzavazokorben(),
@@ -32,14 +35,14 @@ const getStaticPropsforTelepules = async () => {
 module.exports = getStaticPropsforTelepules
 
 // ;(async () => {
-//         const objFirstElems = (obj, max) => {
-//           return Object.entries(obj).reduce((acc, [key, value], i) => {
-//             return i <= max ? {
-//               ...acc,
-//               [key]: value
-//             } : acc
-//           }, {})
-//         }
+//         // const objFirstElems = (obj, max) => {
+//         //   return Object.entries(obj).reduce((acc, [key, value], i) => {
+//         //     return i <= max ? {
+//         //       ...acc,
+//         //       [key]: value
+//         //     } : acc
+//         //   }, {})
+//         // }
 
 //   const props = await getStaticPropsforTelepules()
 
@@ -52,6 +55,7 @@ module.exports = getStaticPropsforTelepules
 //         // console.log(props.props.szavazatokVarosiSzavazokorben)
 //         // console.log(props.props.initialSettlementOevkGroupping)
 //         // console.log(props.props.initialCitySzkOevkGroupping)
-//         console.log(props.props.countyBorders)
+//         // console.log(props.props.countyBorders)
+//         console.log(props.props.cityAreas)
 
 // })()

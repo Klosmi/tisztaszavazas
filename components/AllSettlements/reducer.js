@@ -172,6 +172,11 @@ const getWinnedOevks = ({
   }, { ellenzek: 0, fidesz: 0 })
 }
 
+const getActivePointCoordinates = ({ polyLines }) => {
+  const { lng, lat } = polyLines.find(({ isActive }) => isActive)?.points?.find(({ isSelected }) => isSelected) || {}
+  return [lng, lat]
+}
+
 export const mapStateToValues = state => {
   const activeSettlementVotersNumer = (
     state.
@@ -221,6 +226,10 @@ export const mapStateToValues = state => {
 
   const activeSettlement = state.activeSettlement
 
+  const activePointCoordinates = getActivePointCoordinates({
+    polyLines: state.polyLines
+  })
+
   return {
     activeSettlement,
     allSettlements: state.allSettlements,
@@ -237,7 +246,8 @@ export const mapStateToValues = state => {
     activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId,
     activeOevkId: activeSettlementOevkId || activeSzkOevkId,
     polyLines: state.polyLines,
-    isDrawing: state.isDrawing
+    isDrawing: state.isDrawing,
+    activePointCoordinates,
   }
 }
 

@@ -276,7 +276,7 @@ export async function getStaticProps({ params: { vkid } }) {
       election: 'ogy2018'
     }))
 
-    // vkList = vkList.slice(0, 3)
+    vkList = vkList.slice(0, 3)
 
     if (vkid){
       oevk = vkList.find(({ _id }) => _id === vkid)
@@ -411,7 +411,7 @@ export async function getStaticPaths() {
     election: 'ogy2018'
   }))
 
-  // vkList = vkList.slice(0, 3)
+  vkList = vkList.slice(0, 3)
 
   return {
     paths: vkList.slice(0,3).map(({ _id }) => ({ params: { vkid: _id } }) ),
