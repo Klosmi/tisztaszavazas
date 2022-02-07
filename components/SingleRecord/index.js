@@ -109,12 +109,7 @@ const SingleRecord = ({ election, id }) => {
     valasztasHuOldal,
     valasztokSzama,
     akadalymentes,
-    szavazohelyisegHelye: {
-      coordinates: {
-        0: lng,
-        1: lat
-      }
-    },
+    szavazohelyisegHelye,
     korzethatar: {
       coordinates: { 0: korzethatarCoordinates }
     },
@@ -122,6 +117,16 @@ const SingleRecord = ({ election, id }) => {
       leiras: valasztasLeirasa
     }
   } = singleSzkResult
+
+  const center = szavazohelyisegHelye ? {
+    lng: szavazohelyisegHelye?.coordinates[0],
+    lat: szavazohelyisegHelye?.coordinates[1]
+  } : {
+    lng: +korzethatarCoordinates[0][0],
+    lat: +korzethatarCoordinates[0][1]
+  }
+
+  const polygonPath = korzethatarCoordinates.map(([lng, lat]) => ({ lng, lat }))
 
   return (
     <>
@@ -156,8 +161,8 @@ const SingleRecord = ({ election, id }) => {
             <Text type="secondary">A pontos adatok a táblázatban szerepelnek, a térképi megjelenés kizárólag tájékoztató jellegű!</Text>      
           </Space>    
           <SzkMap
-            center={{ lat, lng }}
-            polygonPath={korzethatarCoordinates.map(([lng, lat]) => ({ lng, lat }))}
+            center={center}            
+            polygonPath={polygonPath}
           />
         </TabPane>
         <TabPane tab="Közterületek" key="2">

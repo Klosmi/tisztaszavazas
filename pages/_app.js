@@ -4,7 +4,7 @@ import { createContext, useState } from 'react';
 export const AppContext = createContext()
 
 function MyApp({ Component, pageProps }) {
-  const [election, setElection] = useState('ogy2018')
+  const [election, setElection] = useState(process.env.NEXT_PUBLIC_DEFAULT_ELECTION)
 
   return (
     <AppContext.Provider value={{ election, setElection }}>
