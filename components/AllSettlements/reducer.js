@@ -294,186 +294,189 @@ const getNextLatLng = ({ lng, lat }, direction) => {
 const reducer = (state, { type, payload }) => {
   // console.log(type, payload)
   let hasActiveLine = false
-
-  switch(type){
-    case TOGGLE_SETTLEMENT_TO_OEVK: return {
-      ...state,
-      settlementOevkGroupping: getGroupping(state, payload)
-    }
-
-    case TOGGLE_CITY_SZK_TO_OEVK: return {
-      ...state,
-      citySzkOevkGroupping: getSzkGroupping(state, payload)
-    }
-
-    case TOGGLE_ACTIVE_SETTLEMENT: return {
-      ...state,
-      activeSzk: null,
-      activeSettlement: state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
-    }
-
-    case TOGGLE_ACTIVE_CITY_SZK: return {
-      ...state,
-      activeSettlement: null,
-      activeSzk: state.cityVotersNumberObject[payload.citySzkId] || null,
-    }
-
-    case LOAD_GROUPPING: return {
-      ...state,
-      citySzkOevkGroupping: payload.citySzkOevkGroupping,
-      settlementOevkGroupping: payload.settlementOevkGroupping,
-    }
-
-    case ADD_POLYLINE_POINT: return {
-      ...state,
-      polyLines: [...state.polyLines.map(pl => {
-        if (pl.isActive){
-          hasActiveLine = true
-          return {
-            ...pl,
-            points: [
-              ...pl.points.map(pt => ({
-                ...pt,
-                isSelected: false
-              })),
-              {
-                id: + new Date(),
-                isSelected: true,
-                ...payload
-              }
-            ]
-          }
-        }
-        return pl
-      }),
-      ...(hasActiveLine ? [] : [{
-        id: + new Date(),
-        isActive: true,
-        points: [{
-          id: + new Date(),
-          isSelected: true,
-          ...payload
-        }]
-      }])]
-    }
-
-    case SELECT_POINT: return {
-      ...state,
-      polyLines: state.polyLines.map(pl => {
-        if (pl.id === payload.lineId){
-          return {
-            ...pl,
-            isActive: true,
-            points: pl.points.map(pt => {
-              if (pt.id === payload.pointId){
-                return {
-                  ...pt,
-                  isSelected: true
-                }
-              }
-              return {
-                ...pt,
-                isSelected: false
-              }
-            })
-          }
-        }
-        return {
-          ...pl,
-          isActive: false
-        }
-      })
-    }
-
-    case DESELECT_POLYLINES: return {
-      ...state,
-      polyLines: state.polyLines.map(pl => ({
-        ...pl,
-        isActive: false
-      }))
-    }
-
-    case SELECT_POLYLINE: return {
-      ...state,
-      polyLines: state.polyLines.map(p => ({
-        ...p,
-        isActive: p.id === payload
-      }))
-    }
-
-    case REMOVE_SELECTED_POLYLINE: return {
-      ...state,
-      polyLines: state.polyLines.filter(({ isActive }) => !isActive)
-    }
-
-    case TOGGLE_DRAWING: return {
-      ...state,
-      isDrawing: !state.isDrawing
-    }
-
-    case RESET_POLYLINES: return {
-      ...state,
-      polyLines: initialState.polyLines
-    }
-
-    case ADD_POLYLINES_JSON: 
-      try {
-        return {
-          ...state,
-          polyLines: JSON.parse(payload)
-        }
-      } catch(e){
-        return state
+    try {
+    switch(type){
+      case TOGGLE_SETTLEMENT_TO_OEVK: return {
+        ...state,
+        settlementOevkGroupping: getGroupping(state, payload)
       }
 
-    case MOVE_ACTIVE_POINT: return {
-      ...state,
-      polyLines: state.polyLines.map(pl => {
-        if (pl.isActive) {
-          return {
-            ...pl,
-            points: pl.points.map(pt => {
-              if (pt.isSelected === true) {
+      case TOGGLE_CITY_SZK_TO_OEVK: return {
+        ...state,
+        citySzkOevkGroupping: getSzkGroupping(state, payload)
+      }
+
+      case TOGGLE_ACTIVE_SETTLEMENT: return {
+        ...state,
+        activeSzk: null,
+        activeSettlement: state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
+      }
+
+      case TOGGLE_ACTIVE_CITY_SZK: return {
+        ...state,
+        activeSettlement: null,
+        activeSzk: state.cityVotersNumberObject[payload.citySzkId] || null,
+      }
+
+      case LOAD_GROUPPING: return {
+        ...state,
+        citySzkOevkGroupping: payload.citySzkOevkGroupping,
+        settlementOevkGroupping: payload.settlementOevkGroupping,
+      }
+
+      case ADD_POLYLINE_POINT: return {
+        ...state,
+        polyLines: [...state.polyLines.map(pl => {
+          if (pl.isActive){
+            hasActiveLine = true
+            return {
+              ...pl,
+              points: [
+                ...pl.points.map(pt => ({
+                  ...pt,
+                  isSelected: false
+                })),
+                {
+                  id: + new Date(),
+                  isSelected: true,
+                  ...payload
+                }
+              ]
+            }
+          }
+          return pl
+        }),
+        ...(hasActiveLine ? [] : [{
+          id: + new Date(),
+          isActive: true,
+          points: [{
+            id: + new Date(),
+            isSelected: true,
+            ...payload
+          }]
+        }])]
+      }
+
+      case SELECT_POINT: return {
+        ...state,
+        polyLines: state.polyLines.map(pl => {
+          if (pl.id === payload.lineId){
+            return {
+              ...pl,
+              isActive: true,
+              points: pl.points.map(pt => {
+                if (pt.id === payload.pointId){
+                  return {
+                    ...pt,
+                    isSelected: true
+                  }
+                }
                 return {
                   ...pt,
-                  ...getNextLatLng(pt, payload)
+                  isSelected: false
                 }
-              }
-              return pt
-            })
+              })
+            }
           }
-        }
-        return pl
-      })      
-    }
-
-    case DELETE_ACTIVE_POINT: return {
-      ...state,
-      polyLines: state.polyLines.map(pl => {
-        if (pl.isActive) {
           return {
             ...pl,
-            points: pl.points.filter(({ isSelected }) => !isSelected)
+            isActive: false
           }
+        })
+      }
+
+      case DESELECT_POLYLINES: return {
+        ...state,
+        polyLines: state.polyLines.map(pl => ({
+          ...pl,
+          isActive: false
+        }))
+      }
+
+      case SELECT_POLYLINE: return {
+        ...state,
+        polyLines: state.polyLines.map(p => ({
+          ...p,
+          isActive: p.id === payload
+        }))
+      }
+
+      case REMOVE_SELECTED_POLYLINE: return {
+        ...state,
+        polyLines: state.polyLines.filter(({ isActive }) => !isActive)
+      }
+
+      case TOGGLE_DRAWING: return {
+        ...state,
+        isDrawing: !state.isDrawing
+      }
+
+      case RESET_POLYLINES: return {
+        ...state,
+        polyLines: initialState.polyLines
+      }
+
+      case ADD_POLYLINES_JSON: 
+        try {
+          return {
+            ...state,
+            polyLines: JSON.parse(payload)
+          }
+        } catch(e){
+          return state
         }
-        return pl
-      })        
-    }
 
-    case COPY_POINT: return {
-      ...state,
-      copiedPoints: [
-        ...state.copiedPoints,
-        getActivePointCoordinates({ polyLines: state.polyLines })
-      ]
-    }
+      case MOVE_ACTIVE_POINT: return {
+        ...state,
+        polyLines: state.polyLines.map(pl => {
+          if (pl.isActive) {
+            return {
+              ...pl,
+              points: pl.points.map(pt => {
+                if (pt.isSelected === true) {
+                  return {
+                    ...pt,
+                    ...getNextLatLng(pt, payload)
+                  }
+                }
+                return pt
+              })
+            }
+          }
+          return pl
+        })      
+      }
 
-    case EDIT_COPIED_POINTS_JSON: return {
-      ...state,
-      copiedPoints: JSON.parse(payload)
-    }
+      case DELETE_ACTIVE_POINT: return {
+        ...state,
+        polyLines: state.polyLines.map(pl => {
+          if (pl.isActive) {
+            return {
+              ...pl,
+              points: pl.points.filter(({ isSelected }) => !isSelected)
+            }
+          }
+          return pl
+        })        
+      }
 
-    default: return state
+      case COPY_POINT: return {
+        ...state,
+        copiedPoints: [
+          ...state.copiedPoints,
+          getActivePointCoordinates({ polyLines: state.polyLines })
+        ]
+      }
+
+      case EDIT_COPIED_POINTS_JSON: return {
+        ...state,
+        copiedPoints: JSON.parse(payload)
+      }
+
+      default: return state
+    }
+  } catch(error){
+    return state
   }
 }
 
