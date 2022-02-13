@@ -29,6 +29,7 @@ import reducer, {
   MOVE_ACTIVE_POINT,
   DELETE_ACTIVE_POINT,
   COPY_POINT,
+  EDIT_COPIED_POINTS_JSON,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -182,6 +183,10 @@ const AllSettlements = ({
 
   const handleAddPolylinesJson = ({ target: { value }}) => {
     dispatch({ type: ADD_POLYLINES_JSON, payload: value })
+  }
+
+  const handleCopiendPointsEdit = ({ target: { value }}) => {
+    dispatch({ type: EDIT_COPIED_POINTS_JSON, payload: value })
   }
 
   const handleClickSzkPolygon = (citySzkId) => {
@@ -522,6 +527,7 @@ const AllSettlements = ({
               />
               <textarea
                 value={JSON.stringify(copiedPoints, null, 2)}
+                onChange={handleCopiendPointsEdit}
               />
             </Space>
             <Space direction='vertical'>

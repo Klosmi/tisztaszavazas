@@ -16,6 +16,7 @@ export const SELECT_POINT = 'SELECT_POINT'
 export const MOVE_ACTIVE_POINT = 'MOVE_ACTIVE_POINT'
 export const DELETE_ACTIVE_POINT = 'DELETE_ACTIVE_POINT'
 export const COPY_POINT = 'COPY_POINT'
+export const EDIT_COPIED_POINTS_JSON = 'EDIT_COPIED_POINTS_JSON'
 
 export const initialState = {
   activeSettlement: null,
@@ -465,6 +466,11 @@ const reducer = (state, { type, payload }) => {
         ...state.copiedPoints,
         getActivePointCoordinates({ polyLines: state.polyLines })
       ]
+    }
+
+    case EDIT_COPIED_POINTS_JSON: return {
+      ...state,
+      copiedPoints: JSON.parse(payload)
     }
 
     default: return state
