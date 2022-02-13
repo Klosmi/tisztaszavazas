@@ -15,6 +15,7 @@ export const ADD_POLYLINES_JSON = 'ADD_POLYLINES_JSON'
 export const SELECT_POINT = 'SELECT_POINT'
 export const MOVE_ACTIVE_POINT = 'MOVE_ACTIVE_POINT'
 export const DELETE_ACTIVE_POINT = 'DELETE_ACTIVE_POINT'
+export const COPY_POINT = 'COPY_POINT'
 
 export const initialState = {
   activeSettlement: null,
@@ -27,7 +28,8 @@ export const initialState = {
   szavazatokVarosiSzavazokorben: {},
   activeSzk: null,
   polyLines: [],
-  isDrawing: false
+  isDrawing: false,
+  copiedPoints: []
 }
 
 const getOevkAggregations = ({
@@ -226,9 +228,6 @@ export const mapStateToValues = state => {
 
   const activeSettlement = state.activeSettlement
 
-  const activePointCoordinates = getActivePointCoordinates({
-    polyLines: state.polyLines
-  })
 
   return {
     activeSettlement,
@@ -247,7 +246,7 @@ export const mapStateToValues = state => {
     activeOevkId: activeSettlementOevkId || activeSzkOevkId,
     polyLines: state.polyLines,
     isDrawing: state.isDrawing,
-    activePointCoordinates,
+    copiedPoints: state.copiedPoints,
   }
 }
 
@@ -458,6 +457,14 @@ const reducer = (state, { type, payload }) => {
         }
         return pl
       })        
+    }
+
+    case COPY_POINT: return {
+      ...state,
+      copiedPoints: [
+        ...state.copiedPoints,
+        getActivePointCoordinates({ polyLines: state.polyLines })
+      ]
     }
 
     default: return state

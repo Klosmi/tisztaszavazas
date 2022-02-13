@@ -28,6 +28,7 @@ import reducer, {
   SELECT_POINT,
   MOVE_ACTIVE_POINT,
   DELETE_ACTIVE_POINT,
+  COPY_POINT,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -108,7 +109,7 @@ const AllSettlements = ({
     activeOevkId,
     polyLines,
     isDrawing,
-    activePointCoordinates,
+    copiedPoints,
   } = useMemo(() => mapStateToValues(state), [state])
 
 
@@ -160,6 +161,10 @@ const AllSettlements = ({
 
   const handleResetPoligons = () => {
     dispatch({ type: RESET_POLYLINES })
+  }
+
+  const handleCopyPoint = () => {
+    dispatch({ type: COPY_POINT })
   }
 
   const handleClickRemovePolyline = () => {
@@ -516,7 +521,7 @@ const AllSettlements = ({
                 onChange={handleAddPolylinesJson}
               />
               <textarea
-                value={JSON.stringify(activePointCoordinates, null, 2)}
+                value={JSON.stringify(copiedPoints, null, 2)}
               />
             </Space>
             <Space direction='vertical'>
@@ -534,6 +539,11 @@ const AllSettlements = ({
                 onClick={handleResetPoligons}
                 >
                 Alaphelyzetbe állítás
+              </Button>
+              <Button
+                onClick={handleCopyPoint}
+                >
+                Másolás
               </Button>
             </Space>
             <Space direction='vertical'>
