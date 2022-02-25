@@ -17,6 +17,9 @@ export const MOVE_ACTIVE_POINT = 'MOVE_ACTIVE_POINT'
 export const DELETE_ACTIVE_POINT = 'DELETE_ACTIVE_POINT'
 export const COPY_POINT = 'COPY_POINT'
 export const EDIT_COPIED_POINTS_JSON = 'EDIT_COPIED_POINTS_JSON'
+export const SELECT_CITY_AREA = 'SELECT_CITY_AREA'
+export const TOGGLE_AREA_TO_OEVK = 'TOGGLE_AREA_TO_OEVK'
+export const ADD_SZK_TO_AREA = 'ADD_SZK_TO_AREA'
 
 export const initialState = {
   activeSettlement: null,
@@ -30,7 +33,8 @@ export const initialState = {
   activeSzk: null,
   polyLines: [],
   isDrawing: false,
-  copiedPoints: []
+  copiedPoints: [],
+  cityAreas: []
 }
 
 const getOevkAggregations = ({
@@ -127,12 +131,15 @@ const getOevkAggregations = ({
 const getActiveCountyOevkData = ({
   activeSettlementVotersNumer,
   countiesAndOevksObject,
-  activeSzk
+  activeSzk,
+  activeArea,
 }) => {
 
   const activeCountyOevkData = (
     activeSzk ? 
     countiesAndOevksObject[activeSzk.megyeKod] : 
+    activeArea ?
+    countiesAndOevksObject[activeArea.megyeKod] :
     countiesAndOevksObject[activeSettlementVotersNumer?.megyeKod]
   )
   return activeCountyOevkData
@@ -205,6 +212,7 @@ export const mapStateToValues = state => {
   const activeCountyOevkData = getActiveCountyOevkData({
     activeSzk: state.activeSzk,
     activeSettlementVotersNumer,
+    activeArea: state.activeArea,
     countiesAndOevksObject: state.countiesAndOevksObject,
   })
 
@@ -243,11 +251,13 @@ export const mapStateToValues = state => {
     citySzkOevkGroupping,
     activeSzk,
     activeSzkId,
-    activeAdminUnitName: activeSettlement?.name || activeSzk?.citySzkId,
+    activeAdminUnitName: state.activeArea?.name || activeSettlement?.name || activeSzk?.citySzkId,
     activeOevkId: activeSettlementOevkId || activeSzkOevkId,
     polyLines: state.polyLines,
     isDrawing: state.isDrawing,
     copiedPoints: state.copiedPoints,
+    activeArea: state.activeArea,
+    activeAreaSzkIds: state.activeArea?.properties?.szavazokorok?.map(szkNum => `${state.activeArea.cityName}${CITY_SZK_ID_JOINER}${szkNum}`) || []
   }
 }
 
@@ -268,8 +278,31 @@ const getSzkGroupping = (state, { oevkId }) => {
   }
 }
 
+const groupSzksViaArea = (state, { oevkId }) => {
+  const { cityName, properties } = state.activeArea
+  const oevkIdArr = oevkId.split(CITY_SZK_ID_JOINER).map(n => parseInt(n))
+  const { szavazokorok } = properties || {}
+
+  let addingSzks = {}
+  let szkIdToSelect
+
+  for (let szkNum of szavazokorok){
+    szkIdToSelect = `${cityName}${CITY_SZK_ID_JOINER}${szkNum}`
+    addingSzks[szkIdToSelect] = oevkIdArr
+  }
+
+  
+  return {
+    citySzkOevkGroupping: {
+      ...state.citySzkOevkGroupping,
+      ...addingSzks,
+    },
+    activeSzk: state.cityVotersNumberObject[szkIdToSelect] || {},
+  }
+}
+
 const getNextLatLng = ({ lng, lat }, direction) => {
-  console.log({ lng, lat, direction })
+  // console.log({ lng, lat, direction })
   let nextLng = lng
   let nextLat = lat
 
@@ -291,6 +324,18 @@ const getNextLatLng = ({ lng, lat }, direction) => {
   }
 }
 
+const toggleToActiveAreaSzks = (state, { citySzkId }) => {
+  const szkNum = parseInt(citySzkId.split(CITY_SZK_ID_JOINER)[1])
+  const { szavazokorok } = state.activeArea?.properties || {}
+
+  return szavazokorok?.includes(szkNum) ? 
+  szavazokorok.filter(s => s !== szkNum) :
+  [
+    ...(szavazokorok || []),
+    szkNum
+  ]  
+}
+
 const reducer = (state, { type, payload }) => {
   // console.log(type, payload)
   let hasActiveLine = false
@@ -306,16 +351,35 @@ const reducer = (state, { type, payload }) => {
         citySzkOevkGroupping: getSzkGroupping(state, payload)
       }
 
+      case TOGGLE_AREA_TO_OEVK: return {
+        ...state,
+        ...groupSzksViaArea(state, payload)
+      }
+
       case TOGGLE_ACTIVE_SETTLEMENT: return {
         ...state,
         activeSzk: null,
+        activeArea: null,
         activeSettlement: state.allSettlements.features.find(({ _id }) => _id === payload.settlementId) || null,
       }
 
       case TOGGLE_ACTIVE_CITY_SZK: return {
         ...state,
         activeSettlement: null,
-        activeSzk: state.cityVotersNumberObject[payload.citySzkId] || null,
+        activeArea: null,
+        activeSzk: state.cityVotersNumberObject[payload.citySzkId] || {},
+      }
+
+      case SELECT_CITY_AREA: return {
+        ...state,
+        activeSettlement: null,
+        activeSzk: null,
+        activeArea: {
+          ...state.cityAreas.features.find(({ name }) => name === payload.cityName)?.features.find(({ id }) => id === payload.cityAreaId),
+          cityName: payload.cityName,
+          megyeKod: payload.megyeKod,
+          megyeNeve: state.countiesAndOevksObject[payload.megyeKod]?.megyeNeve
+        }
       }
 
       case LOAD_GROUPPING: return {
@@ -473,9 +537,21 @@ const reducer = (state, { type, payload }) => {
         copiedPoints: JSON.parse(payload)
       }
 
+      case ADD_SZK_TO_AREA: return {
+        ...state,
+        activeArea: {
+          ...state.activeArea,
+          properties: {
+            ...(state.activeArea.properties || {}),
+            szavazokorok: toggleToActiveAreaSzks(state, payload)
+          }
+        }
+      }
+
       default: return state
     }
   } catch(error){
+    console.log(error)
     return state
   }
 }

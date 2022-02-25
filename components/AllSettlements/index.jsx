@@ -5,6 +5,8 @@ import {
   Modal,
   Button,
   Space,
+  Checkbox,
+  Typography
 } from 'antd';
 import MapBase from '../MapBase'
 import Legend from '../Legend'
@@ -17,6 +19,7 @@ import reducer, {
   TOGGLE_ACTIVE_SETTLEMENT,
   TOGGLE_ACTIVE_CITY_SZK,
   TOGGLE_CITY_SZK_TO_OEVK,
+  TOGGLE_AREA_TO_OEVK,
   LOAD_GROUPPING,
   ADD_POLYLINE_POINT,
   DESELECT_POLYLINES,
@@ -30,6 +33,8 @@ import reducer, {
   DELETE_ACTIVE_POINT,
   COPY_POINT,
   EDIT_COPIED_POINTS_JSON,
+  SELECT_CITY_AREA,
+  ADD_SZK_TO_AREA,
 } from './reducer';
 import { OEVK_ID_JOINER } from '../../constants';
 import SettlementSaveLoad from './SettlementSaveLoad'
@@ -51,7 +56,10 @@ import {
 const getFillColor = ({
   numberOfVoters,
   isInSelectedOevk,
+  isInActiveCityArea,
 }) => {
+
+  if (isInActiveCityArea) return 'red'
 
   const baseColor =
     isInSelectedOevk ? `#28457B` : 
@@ -94,6 +102,7 @@ const AllSettlements = ({
     szavazatokVarosiSzavazokorben,
     settlementOevkGroupping: initialSettlementOevkGroupping,
     citySzkOevkGroupping: initialCitySzkOevkGroupping,
+    cityAreas,
   })
 
   const {
@@ -111,6 +120,8 @@ const AllSettlements = ({
     polyLines,
     isDrawing,
     copiedPoints,
+    activeArea,
+    activeAreaSzkIds,
   } = useMemo(() => mapStateToValues(state), [state])
 
 
@@ -118,8 +129,10 @@ const AllSettlements = ({
   const [isLoadPopoverOpen, setLoadPopoverOpen] = useState(false)
   const [saveError, setSaveError] = useState('')
   const [savedSets, setSavedSets] = useState({})
+  const [showAreas, setShowAreas] = useState(false)
+  const [szkAddingMode, setSzkAddingMode] = useState(false)
 
-  console.log({
+  // console.log({
     // polyLines
   //   activeSettlement,
   //   activeCountyName,
@@ -133,13 +146,19 @@ const AllSettlements = ({
   //   activeOevkId,
     // settlementOevkGroupping,
   //   initialSettlementOevkGroupping,
-  })
+  // activeAreaSzkIds
+  // })
 
   if (!allSettlements?.features) return null  
 
   const handleClickPolygon = (settlementId, e) => {
     dispatch({ type: DESELECT_POLYLINES })
     dispatch({ type: TOGGLE_ACTIVE_SETTLEMENT, payload: { settlementId } })
+  }
+  
+  const handleClickCityArea = (cityName, cityAreaId, megyeKod) => {
+    dispatch({ type: DESELECT_POLYLINES })
+    dispatch({ type: SELECT_CITY_AREA, payload: { cityName, cityAreaId, megyeKod } })
   }
   
   const handleClickMap = () => {
@@ -190,8 +209,12 @@ const AllSettlements = ({
   }
 
   const handleClickSzkPolygon = (citySzkId) => {
-    dispatch({ type: TOGGLE_ACTIVE_CITY_SZK, payload: { citySzkId } })
     dispatch({ type: DESELECT_POLYLINES })
+    if (szkAddingMode){
+      dispatch({ type: ADD_SZK_TO_AREA, payload: { citySzkId } })
+    } else {
+      dispatch({ type: TOGGLE_ACTIVE_CITY_SZK, payload: { citySzkId } })
+    }
   }
 
   const movePoint = direction => {
@@ -256,6 +279,8 @@ const AllSettlements = ({
   const handleAddToOevk = oevkId => {
     if (activeSzk){
       dispatch({ type: TOGGLE_CITY_SZK_TO_OEVK, payload: { oevkId } })
+    } else if (activeArea) {
+      dispatch({ type: TOGGLE_AREA_TO_OEVK, payload: { oevkId } })
     } else {
       dispatch({ type: TOGGLE_SETTLEMENT_TO_OEVK, payload: { oevkId } })
     }
@@ -279,16 +304,18 @@ const AllSettlements = ({
             onRightClick={handleRightClick}
             onClick={handleClickMap}
           >
-            {cityAreas.features.map(({ features }) => (
-              features.map(({ id, geometry }) => (
+
+            {cityAreas.features.map(({ features, name: cityName, properties: cityProperty }) => (
+              features.map(({ id, geometry, properties }) => (
                 <MapBase.Polygon
                   key={id}
                   geometry={geometry}
+                  onClick={() => handleClickCityArea(cityName, id, cityProperty?.megyeKod)}
                   options={{
-                    strokeColor: "#7a59126c",
-                    fillColor: "#d8c34f86",
+                    strokeColor: id === activeArea?.id ? "black" : showAreas ? "#7a59126c" : "#7a591233",
+                    fillColor: properties?.highlighted ? "#dd555588" : "transparent",
                     strokeWeight: 3,
-                    zIndex: 1
+                    zIndex: showAreas && !szkAddingMode ? 8 : 0
                   }}
                 />
               ))
@@ -344,8 +371,9 @@ const AllSettlements = ({
                   fillColor: getFillColor({
                     numberOfVoters: valasztokSzama,
                     isInSelectedOevk: activeOevkId && citySzkOevkGroupping[citySzkId]?.join(OEVK_ID_JOINER) === activeOevkId,
+                    isInActiveCityArea: activeAreaSzkIds.includes(citySzkId)
                   }),
-                  ...(activeSzk?.citySzkId === citySzkId ? {
+                  ...(activeSzk?.citySzkId === citySzkId && !showAreas ? {
                     strokeOpacity: 1,
                     strokeColor: 'black',
                     strokeWeight: 3,
@@ -419,7 +447,13 @@ const AllSettlements = ({
               </article>
               <article>
                 <Space>
-                  <SettlementSaveLoad
+                  <Checkbox
+                    onChange={() => setShowAreas(!showAreas)}
+                    value={showAreas}
+                  >Városrészek használata
+                  </Checkbox>
+                    
+{/*                   <SettlementSaveLoad
                     onConfirmSave={handleSave}
                     isPopoverOpen={isSavePopoverOpen}
                     onClickSave={() => setSavePopoverOpen(true)}
@@ -430,7 +464,7 @@ const AllSettlements = ({
                     loadOptions={Object.keys(savedSets).map(name => ({ id: name, name }))}
                     onCancelLoad={() => setLoadPopoverOpen(false)}
                     onConfirmLoad={handleLoadGroupping}
-                  />
+                  /> */}
                   
                   <Button
                     onClick={toggleDrawing}
@@ -442,33 +476,44 @@ const AllSettlements = ({
             </BottomInner>
         </Drawer>        
         <Drawer
-          visible={!!activeSettlement || !!activeSzk}
+          visible={!!activeSettlement || !!activeSzk || !!activeArea}
           onClose={handleClickDrawerClose}
           maskClosable={false}
           mask={false}
           >
-            {(activeSettlement || activeSzk) && (
+            {(activeSettlement || activeSzk || activeArea) && (
               <Descriptions column={1} title={
                 <p>{activeAdminUnitName}</p>
               } layout="vertical">
-                <Descriptions.Item label="Választók száma">
-                  <strong>
-                    {
-                      activeSettlementVotersNumer?.valasztokSzama ||
-                      activeSzk?.valasztokSzama
-                    }
-                  </strong>
-                </Descriptions.Item>
+                {!activeArea && (
+                  <Descriptions.Item label="Választók száma">
+                    <strong>
+                      {
+                        activeArea ? '-' :
+                        activeSettlementVotersNumer?.valasztokSzama ||
+                        activeSzk?.valasztokSzama
+                      }
+                    </strong>
+                  </Descriptions.Item>
+                )}
+                {activeArea && (
+                  <Descriptions.Item label="Szavazókörök">
+                    <strong>
+                      {`${activeArea?.properties?.szavazokorok.join(', ')}`}
+                    </strong>
+                  </Descriptions.Item>
+                )}
                 <Descriptions.Item
-                  label={`Melyik OEVK-ba kerüljön a ${activeSettlement ? 'település' : 'szavazókör'}?`}
+                  label={`Melyik OEVK-ba kerüljön a ${activeSettlement ? 'település' : activeArea ? 'városrész összes szavazóköre' : 'szavazókör'}?`}
                 >
                 <OevkSetter>
                 <thead>
                   <tr>
-                    <th colspan={3}>
+                    <th colSpan={3}>
                     {
                     activeSettlementVotersNumer?.megyeNeve ||
-                    activeSzk?.megyeNeve
+                    activeSzk?.megyeNeve ||
+                    activeArea?.megyeNeve
                   }
                     </th>
                   </tr>
@@ -504,13 +549,25 @@ const AllSettlements = ({
               </Descriptions.Item>
               </Descriptions>                
             )}
-            
+            <>
+              <Checkbox
+                onChange={() => setSzkAddingMode(!szkAddingMode)}
+                value={szkAddingMode}
+              >
+                Szavazókörök hozzáadása
+              </Checkbox>
+              {szkAddingMode && (
+                <Typography.Text type="secondary">
+                  Kattints a szavazókörre a hozzáadáshoz
+                </Typography.Text>
+              )}
+            </>
             <DrawerFooter>
               <TisztaszavazasLogoStyled />
             </DrawerFooter>
         </Drawer>
-        <Modal title="Vonal rajzolása"
-          visible={isDrawing}
+        <Modal title={isDrawing ? "Vonal rajzolása" : "Szavazókör városrészhez adása"}
+          visible={isDrawing || szkAddingMode}
           onCancel={toggleDrawing}
           cancelText="Bezár"
           footer={null}
@@ -519,49 +576,62 @@ const AllSettlements = ({
           style={{ marginLeft: 40 }}
           maskStyle={{ pointerEvents: 'none' }}
           >
-          <Space>
-            <Space direction='vertical'>
-              <textarea
-                value={JSON.stringify(polyLines, null, 2)}
-                onChange={handleAddPolylinesJson}
-              />
-              <textarea
-                value={JSON.stringify(copiedPoints, null, 2)}
-                onChange={handleCopiendPointsEdit}
-              />
-            </Space>
-            <Space direction='vertical'>
-              <Button
-                onClick={handleClickRemovePolyline}
-                >
-                Kijelölt görbe törlése
-              </Button>
-              <Button
-                onClick={handleDeletePoint}
-                >
-                Kijelölt pont törlése
-              </Button>
-              <Button
-                onClick={handleResetPoligons}
-                >
-                Alaphelyzetbe állítás
-              </Button>
-              <Button
-                onClick={handleCopyPoint}
-                >
-                Másolás
-              </Button>
-            </Space>
-            <Space direction='vertical'>
-              <h5 style={{ textAlign: 'center' }}>Pont mozgatása</h5>
-              <Button onClick={() => movePoint('up')} style={{ marginLeft: 30 }}>Fel</Button>
-              <Space>
-                <Button onClick={() => movePoint('left')}>Bal</Button>
-                <Button onClick={() => movePoint('right')}>Jobb</Button>
+          {isDrawing && (
+            <Space>
+              <Space direction='vertical'>
+                <textarea
+                  value={JSON.stringify(polyLines, null, 2)}
+                  onChange={handleAddPolylinesJson}
+                />
+                <textarea
+                  value={JSON.stringify(copiedPoints, null, 2)}
+                  onChange={handleCopiendPointsEdit}
+                />
               </Space>
-              <Button onClick={() => movePoint('down')} style={{ marginLeft: 30 }}>Le</Button>
+              <Space direction='vertical'>
+                <Button
+                  onClick={handleClickRemovePolyline}
+                  >
+                  Kijelölt görbe törlése
+                </Button>
+                <Button
+                  onClick={handleDeletePoint}
+                  >
+                  Kijelölt pont törlése
+                </Button>
+                <Button
+                  onClick={handleResetPoligons}
+                  >
+                  Alaphelyzetbe állítás
+                </Button>
+                <Button
+                  onClick={handleCopyPoint}
+                  >
+                  Másolás
+                </Button>
+              </Space>
+              <Space direction='vertical'>
+                <h5 style={{ textAlign: 'center' }}>Pont mozgatása</h5>
+                <Button onClick={() => movePoint('up')} style={{ marginLeft: 30 }}>Fel</Button>
+                <Space>
+                  <Button onClick={() => movePoint('left')}>Bal</Button>
+                  <Button onClick={() => movePoint('right')}>Jobb</Button>
+                </Space>
+                <Button onClick={() => movePoint('down')} style={{ marginLeft: 30 }}>Le</Button>
+              </Space>
             </Space>
-          </Space>
+          )}
+          {szkAddingMode && (
+            <textarea
+              value={
+              JSON.stringify({
+                id: activeArea.id,
+                name: activeArea.name,
+                type: activeArea.type,
+                properties: activeArea.properties,
+                geometry: activeArea.geometry,
+              }, null, 2)} />
+          )}
         </Modal>          
               
       </Wrap>
