@@ -337,7 +337,7 @@ const toggleToActiveAreaSzks = (state, { citySzkId }) => {
 }
 
 const reducer = (state, { type, payload }) => {
-  // console.log(type, payload)
+  console.log(type, payload)
   let hasActiveLine = false
     try {
     switch(type){

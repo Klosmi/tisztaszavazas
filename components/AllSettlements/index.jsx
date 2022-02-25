@@ -131,6 +131,7 @@ const AllSettlements = ({
   const [savedSets, setSavedSets] = useState({})
   const [showAreas, setShowAreas] = useState(false)
   const [szkAddingMode, setSzkAddingMode] = useState(false)
+  const [hideAddedSzks, setHideAddedSzks] = useState(false)
 
   // console.log({
     // polyLines
@@ -158,7 +159,9 @@ const AllSettlements = ({
   
   const handleClickCityArea = (cityName, cityAreaId, megyeKod) => {
     dispatch({ type: DESELECT_POLYLINES })
-    dispatch({ type: SELECT_CITY_AREA, payload: { cityName, cityAreaId, megyeKod } })
+    if (!szkAddingMode){
+      dispatch({ type: SELECT_CITY_AREA, payload: { cityName, cityAreaId, megyeKod } })
+    }
   }
   
   const handleClickMap = () => {
@@ -362,6 +365,7 @@ const AllSettlements = ({
               valasztokSzama,
               megyeNeve,
             }) => (
+              !(activeAreaSzkIds.includes(citySzkId) && hideAddedSzks) && (
               <MapBase.Polygon
                 key={citySzkId}
                 geometry={korzethatar}
@@ -385,7 +389,7 @@ const AllSettlements = ({
                     zIndex: 1
                   })
                 }}                  
-              />
+              />)
             ))}
             {countyBorders.features.map(({ geometry }) => (
               <MapBase.Polygon
@@ -622,6 +626,7 @@ const AllSettlements = ({
             </Space>
           )}
           {szkAddingMode && (
+            <Space>
             <textarea
               value={
               JSON.stringify({
@@ -631,6 +636,12 @@ const AllSettlements = ({
                 properties: activeArea.properties,
                 geometry: activeArea.geometry,
               }, null, 2)} />
+              <Checkbox
+                onChange={() => setHideAddedSzks(!hideAddedSzks)}
+              >
+                Hozzáadottak elrejtése
+              </Checkbox>
+              </Space>
           )}
         </Modal>          
               
