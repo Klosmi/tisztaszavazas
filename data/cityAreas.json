@@ -12,6 +12,18 @@
           "id": "szeged-1",
           "name":"Szeged-1",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              102,
+              202,
+              301,
+              201,
+              2,
+              401,
+              101,
+              1
+            ]
+          },          
           "geometry": {
             "type":"Polygon",
             "coordinates": [[
@@ -102,8 +114,31 @@
           "id": "szeged-2",
           "name": "Szeged-2",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              307,
+              207,
+              112,
+              312,
+              212,
+              407,
+              12,
+              107,
+              7,
+              13,
+              408,
+              308,
+              208,
+              412,
+              108,
+              4,
+              8,
+              413,
+              313
+            ]
+          },          
           "geometry": {
-            "type": "Polygon",
+            "type": "Polygon",            
             "coordinates": [[
               [
                 20.184682789941135,
@@ -184,6 +219,22 @@
           "id": "szeged-3",
           "name": "Szeged-Újszeged",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              319,
+              119,
+              419,
+              219,
+              19,
+              418,
+              118,
+              218,
+              18,
+              220,
+              120,
+              318
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -258,6 +309,14 @@
           "id": "szeged-4",
           "name": "Szeged-Szőreg",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              520,
+              420,
+              20,
+              320
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -336,6 +395,26 @@
           "id": "szeged-5",
           "name": "Szeged-Felsőváros-Észak",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              313,
+              113,
+              316,
+              16,
+              216,
+              417,
+              117,
+              317,
+              217,
+              17,
+              416,
+              115,
+              415,
+              315,
+              15,
+              215
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -370,6 +449,26 @@
           "id": "szeged-6",
           "name": "Szeged-Északi város",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              209,
+              409,
+              109,
+              309,
+              414,
+              114,
+              214,
+              14,
+              110,
+              10,
+              404,
+              304,
+              204,
+              9,
+              213,
+              104
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -416,6 +515,20 @@
           "id": "szeged-7",
           "name": "Szeged-Felsőváros-Dél",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              116,
+              310,
+              314,
+              410,
+              210,
+              611,
+              211,
+              411,
+              311,
+              511
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -466,6 +579,14 @@
           "id": "szeged-8",
           "name": "Szeged-Móraváros-Észak",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              502,
+              402,
+              404,
+              302
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -504,6 +625,16 @@
           "id": "szeged-9",
           "name": "Szeged-Móraváros-Dél",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              105,
+              5,
+              505,
+              205,
+              305,
+              405
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -538,6 +669,14 @@
           "id": "szeged-10",
           "name": "Szeged-Belváros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              406,
+              11,
+              306,
+              111
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -580,6 +719,14 @@
           "id": "szeged-11",
           "name": "Szeged-Alsóváros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              206,
+              6,
+              305,
+              106
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -614,6 +761,17 @@
           "id": "szeged-12",
           "name": "Szeged-Dél-Nyugat",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              3,
+              203,
+              103,
+              503,
+              603,
+              403,
+              303
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [[
@@ -705,6 +863,12 @@
           "id": "Nyíregyháza-1",
           "name": "Nyíregyháza-1",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              72,
+              83
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -761,6 +925,16 @@
           "id": "Nyíregyháza-2",
           "name": "Nyíregyháza-Garden-City",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              74,
+              100,
+              73,
+              70,
+              75,
+              71
+            ]
+          },        
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -813,6 +987,14 @@
           "id": "Nyíregyháza-3",
           "name": "Nyíregyháza-3",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              84,
+              77,
+              85,
+              86
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -889,6 +1071,14 @@
           "id": "Nyíregyháza-4",
           "name": "Nyíregyháza-Felsőpázsit-Nyírszőlős",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              42,
+              41,
+              40,
+              39
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -945,6 +1135,18 @@
           "id": "Nyíregyháza-5",
           "name": "Nyíregyháza-Sóstó",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              37,
+              35,
+              33,
+              43,
+              36,
+              34,
+              38,
+              32
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1017,6 +1219,19 @@
           "id": "Nyíregyháza-6",
           "name": "Nyíregyháza-6",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              19,
+              18,
+              16,
+              15,
+              14,
+              10,
+              17,
+              11,
+              9
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1081,6 +1296,13 @@
           "id": "Nyíregyháza-7",
           "name": "Nyíregyháza-Hímes",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              29,
+              28,
+              22
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1117,6 +1339,14 @@
           "id": "Nyíregyháza-8",
           "name": "Nyíregyháza-Jósaváros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              7,
+              8,
+              12,
+              13
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1209,6 +1439,18 @@
           "id": "Nyíregyháza-10",
           "name": "Nyíregyháza-örökösföld",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              62,
+              68,
+              65,
+              69,
+              66,
+              67,
+              64,
+              63
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1257,6 +1499,17 @@
           "id": "Nyíregyháza-11",
           "name": "Nyíregyháza-Oros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              97,
+              98,
+              99,
+              96,
+              95,
+              94,
+              93
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1369,6 +1622,18 @@
           "id": "Nyíregyháza-13",
           "name": "Nyíregyháza-Belváros-2",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              56,
+              47,
+              48,
+              44,
+              46,
+              45,
+              58,
+              57
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1417,6 +1682,15 @@
           "id": "Nyíregyháza-14",
           "name": "Nyíregyháza-Érkert",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              53,
+              51,
+              50,
+              49,
+              52
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1457,6 +1731,20 @@
           "id": "Nyíregyháza-15",
           "name": "Nyíregyháza-Borbánya",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              82,
+              80,
+              79,
+              81,
+              91,
+              87,
+              89,
+              90,
+              88,
+              92
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1526,6 +1814,17 @@
           "id": "Győr-1",
           "name": "Győr-Győrszentiván",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              82,
+              84,
+              83,
+              86,
+              85,
+              87,
+              88
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1586,6 +1885,11 @@
           "id": "Győr-2",
           "name": "Győr-Likócs",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              38
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1638,6 +1942,20 @@
           "id": "Győr-3",
           "name": "Győr-Révfalu-Sárás-Bácsa",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              26,
+              24,
+              21,
+              22,
+              25,
+              23,
+              13,
+              20,
+              19,
+              18
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1698,6 +2016,17 @@
           "id": "Győr-4",
           "name": "Győr-4",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              16,
+              15,
+              7,
+              14,
+              8,
+              17,
+              9
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1742,6 +2071,14 @@
           "id": "Győr-5",
           "name": "Győr-Gyárváros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              37,
+              34,
+              35,
+              36
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1794,6 +2131,18 @@
           "id": "Győr-6",
           "name": "Győr-Sziget-Pinnyéd-Gorkijváros-Somosmajor",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              6,
+              2,
+              5,
+              1,
+              11,
+              4,
+              12,
+              3
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1842,6 +2191,16 @@
           "id": "Győr-7",
           "name": "Győr-Rabkert-Góré-dűlő-Marcalváros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              27,
+              66,
+              65,
+              68,
+              69,
+              67
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1878,6 +2237,15 @@
           "id": "Győr-8",
           "name": "Győr-Nádorváros-1",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              28,
+              29,
+              60,
+              61,
+              30
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1914,6 +2282,19 @@
           "id": "Győr-9",
           "name": "Győr-Nádorváros-2-Jancsifalu",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              33,
+              32,
+              39,
+              45,
+              59,
+              58,
+              31,
+              40,
+              46
+            ]
+          },        
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1950,6 +2331,30 @@
           "id": "Győr-10",
           "name": "Győr-Adyváros",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              43,
+              54,
+              57,
+              56,
+              63,
+              44,
+              42,
+              50,
+              49,
+              48,
+              52,
+              47,
+              41,
+              60,
+              61,
+              62,
+              53,
+              55,
+              51,
+              64
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -1990,6 +2395,11 @@
           "id": "Győr-11",
           "name": "Győr-Szalmatelep",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              71
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -2050,6 +2460,21 @@
           "id": "Győr-12",
           "name": "Győr-Kismegyer-József Attila városrész",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              76,
+              78,
+              81,
+              80,
+              79,
+              77,
+              70,
+              73,
+              74,
+              72,
+              75
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -2110,6 +2535,18 @@
           "id": "Győr-13",
           "name": "Győr-Ménfőcsanak",
           "type": "Feature",
+          "properties": {
+            "szavazokorok": [
+              96,
+              89,
+              91,
+              95,
+              94,
+              93,
+              92,
+              90
+            ]
+          },          
           "geometry": {
             "type": "Polygon",
             "coordinates": [

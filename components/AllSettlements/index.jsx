@@ -314,6 +314,7 @@ const AllSettlements = ({
                   key={id}
                   geometry={geometry}
                   onClick={() => handleClickCityArea(cityName, id, cityProperty?.megyeKod)}
+                  onRightClick={handleRightClick}
                   options={{
                     strokeColor: id === activeArea?.id ? "black" : showAreas ? "#7a59126c" : "#7a591233",
                     fillColor: properties?.highlighted ? "#dd555588" : "transparent",
@@ -572,7 +573,7 @@ const AllSettlements = ({
         </Drawer>
         <Modal title={isDrawing ? "Vonal rajzolása" : "Szavazókör városrészhez adása"}
           visible={isDrawing || szkAddingMode}
-          onCancel={toggleDrawing}
+          onCancel={szkAddingMode ? () => setSzkAddingMode(false) : toggleDrawing}
           cancelText="Bezár"
           footer={null}
           maskClosable={false}
@@ -634,10 +635,11 @@ const AllSettlements = ({
                 name: activeArea.name,
                 type: activeArea.type,
                 properties: activeArea.properties,
-                geometry: activeArea.geometry,
+                // geometry: activeArea.geometry,
               }, null, 2)} />
               <Checkbox
                 onChange={() => setHideAddedSzks(!hideAddedSzks)}
+                value={hideAddedSzks}
               >
                 Hozzáadottak elrejtése
               </Checkbox>
